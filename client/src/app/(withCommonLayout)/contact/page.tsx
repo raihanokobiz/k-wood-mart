@@ -23,13 +23,14 @@ const Contact = async () => {
             <div className="text-xl">Our Information</div>
             <div className="mt-2">
               <div className="font-bold">Address:</div>
-              <div>Dhaka, Bangladesh</div>
+              <div>সাঁতারকুল রোড,  পশ্চিম পদরদিয়া, লেন নাম্বার ৪,  বাইতুল মামুর মসজিদ রোড, বাড়ি নম্বর ৬০,  বাড্ডা ঢাকা- ২৯৪১.
+                OFFICE ADD  RD-122,H 37 GULSHAN-1 DHAKA 1212</div>
             </div>
             <div className="mt-2">
-              <span className="font-bold">Hotline: </span> +8801735775093
+              <span className="font-bold">Hotline: </span> 01712044438
             </div>
             <div className="mt-2">
-              <span className="font-bold">Email: </span> info@nohasan.com
+              <span className="font-bold">Email: </span> kalam7829@gmail.com
             </div>
           </div>
         </div>

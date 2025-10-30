@@ -220,10 +220,10 @@ const BulkForm = () => {
                 <div className="flex items-center gap-2">
                   <FaEnvelope className="text-gray-600" />
                   <a
-                    href="mailto:mail@nohasan.com"
+                    href="mailto:mail@K.WOOD MARTcom"
                     className="text-gray-600 hover:underline"
                   >
-                    mail@nohasan.com
+                    mail@K.WOOD MARTcom
                   </a>
                 </div>
               </li>

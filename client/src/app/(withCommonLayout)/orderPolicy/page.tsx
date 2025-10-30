@@ -113,7 +113,7 @@ const orderPolicy = async () => {
                     or exchanges are allowed.
                   </li>
                   <li>
-                    Customer Service Contact: +880 1735 775 093 (Sunday –
+                    Customer Service Contact: 01712044438 (Sunday –
                     Thursday, 10:00 AM – 06:30 PM)
                   </li>
                   <li>

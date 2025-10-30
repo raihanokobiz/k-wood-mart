@@ -2,14 +2,11 @@
 
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import logo from "@/assets/logo/Noha.png";
-import SearchForm from "../SearchForm/SearchForm";
+import logo from "@/assets/logo/KWoodMart.jpeg";
 import { menuList } from "@/utilits/menuList";
 import Link from "next/link";
 import { BsCart2 } from "react-icons/bs";
 import { FiUser } from "react-icons/fi";
-import { RiCloseFill, RiMenuAddFill } from "react-icons/ri";
-import { IoSearchOutline } from "react-icons/io5";
 import DropDownMenu from "../DropDownMenu/DropDownMenu";
 import { AnimatePresence, motion } from "framer-motion";
 import ResponsiveSearchForm from "../ResponsiveSearchForm/ResponsiveSearchForm";
@@ -23,6 +20,7 @@ import { getUser, setCorrelation } from "@/services/auth";
 import UserPopover from "@/shared/UserPopover/UserPopover";
 import { TUser } from "@/types";
 import { usePathname } from "next/navigation";
+import { RiCloseFill, RiMenuAddFill } from "react-icons/ri";
 
 // import { useCartRefresh } from "@/context/CartRefreshContext";
 
@@ -125,22 +123,20 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
               <div className="flex items-center lg:gap-0 gap-2">
                 <div className="w-[80px]">
                   <Link href="/">
-                    <Image
+                    {/* <Image
                       src={logo || null}
                       alt="NoHasan | Best E-commerce platform in BD"
                       width={100}
                       height={80}
                       className="w-full h-full"
-                    />
+                    /> */}
+                    LOGO
                   </Link>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center  2xl:gap-16   gap-2 xl:relative">
-              <div className="">
-                <SearchForm onClose={() => {}} />
-              </div>
               <div className="lg:flex hidden items-center justify-center  ml-8">
                 {menuList?.map((menu, index) => (
                   <div
@@ -182,12 +178,6 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
               </div>
             </div>
             <div className="flex items-center justify-center xl:gap-4 gap-2">
-              <div
-                onClick={() => setShowSearch(true)}
-                className="px-2 py-2 border rounded lg:hidden"
-              >
-                <IoSearchOutline />
-              </div>
               <Link href="/cart">
                 <div className="px-2 py-2 border rounded relative">
                   <BsCart2 />
@@ -251,12 +241,6 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
 
             <div className="flex items-center justify-center 2xl:gap-16 xl:gap-8 lg:gap-4 gap-2 xl:relative">
               <div className="flex items-center justify-center xl:gap-4 gap-2">
-                <div
-                  onClick={() => setShowSearch(true)}
-                  className="px-2 py-2 border rounded cursor-pointer"
-                >
-                  <IoSearchOutline />
-                </div>
                 <Link href="/cart">
                   <div className="px-2 py-2 border rounded relative">
                     <BsCart2 />

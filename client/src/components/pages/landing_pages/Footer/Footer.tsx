@@ -107,16 +107,21 @@ const Footer: React.FC<FooterProps> = ({ userCartProducts }) => {
           </div>
         </div>
       </div>
-      <div className="Container bg-[#CCD5AE] py-10 lg:py-16">
+      <div className="Container py-10 lg:py-16">
         <div className="max-w-[1280px] mx-auto flex flex-col lg:flex-row justify-between space-y-5">
           <div>
             <div className="text-black font-semibold mb-[20px] text-xl">
               Contact Info
             </div>
             <div className="text-black text-md lg:text-lg flex flex-col space-y-1">
-              <div>Contact: +880 1735 775 093</div>
-              <div>Whats app: +880 1735 775 093</div>
-              <div>Address: Dhaka, Bangladesh</div>
+              <div>Contact: 01712044438</div>
+              <div>Whats app: 01972044438</div>
+              <div>Address:
+                সাঁতারকুল রোড,  পশ্চিম পদরদিয়া, লেন নাম্বার ৪,<br />
+                বাইতুল মামুর মসজিদ রোড, বাড়ি নম্বর ৬০,   <br />
+                বাড্ডা ঢাকা- ২৯৪১. <br />
+                OFFICE ADD  RD-122,H 37 GULSHAN-1 DHAKA 1212
+              </div>
             </div>
           </div>
           <div>
@@ -216,8 +221,9 @@ const Footer: React.FC<FooterProps> = ({ userCartProducts }) => {
           </div>
         </div>
       </div>
-      <div className="bg-[#D4A373] text-white text-center py-4 border-t">
-        Copyright © 2025 NOHASAN. All Right Reserved. Developed by{" "}
+
+      <div className="  text-center py-4 border-t">
+        Copyright © 2025 K.WOOD MART All Right Reserved. Developed by{" "}
         <a target="_blank" href="https://okobiz.com/">
           okobiz
         </a>

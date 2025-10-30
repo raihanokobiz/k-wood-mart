@@ -29,7 +29,7 @@ import Blogs from "@/components/pages/landing_pages/Blogs/Blogs";
 export const metadata: Metadata = {
   title: "NOHASAN",
   description:
-    "Shop online at NOHASAN – Bangladesh's best perfumes e-commerce platform. Discover premium perfumes for men and women unisex at NOHASAN. Shop 100% authentic branded fragrances in Bangladesh with fast delivery and great prices.",
+    "Shop online at NOHASAN – Bangladesh's best perfumes e-commerce platform. Discover premium perfumes for men and women unisex at K.WOOD MART Shop 100% authentic branded fragrances in Bangladesh with fast delivery and great prices.",
 };
 
 const page = async () => {
@@ -58,13 +58,13 @@ const page = async () => {
       <div className="">
         <Banner banners={[]} />
         <Category />
-        <BestSelling products={bestSelling} />
-        <Newest products={allproducts} />
-        <DiscountProduct products={productWithDiscount} />
-        <Brand brands={brands} />
+        {/* <BestSelling products={bestSelling} /> */}
+        {/* <Newest products={allproducts} /> */}
+        {/* <DiscountProduct products={productWithDiscount} /> */}
+        {/* <Brand brands={brands} /> */}
 
-        <Campaign campaign={campaign[0]} />
-        <Blogs  />
+        {/* <Campaign campaign={campaign[0]} />
+        <Blogs  /> */}
       </div>
 
       <CartSideBar cartProducts={products?.data} />

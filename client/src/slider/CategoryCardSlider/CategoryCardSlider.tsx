@@ -21,18 +21,18 @@ const CategoryCardSlider: React.FC<CategoryProps> = ({ categoriesList }) => {
   const nextRef = useRef(null);
 
   return (
-    <div className="relative w-full px-4 sm:px-8 md:px-12 lg:px-24 xl:px-32 2xl:px-80 mt-4">
+    <div className="relative w-full mt-4">
       {showCustomArrows && (
         <>
           <button
             ref={prevRef}
-            className="absolute left-0 sm:left-4 md:left-8 lg:left-20 xl:left-26 2xl:left-76 top-1/2 -translate-y-1/2 z-10 p-2 bg-[#D4A373] rounded-full hover:bg-[#CCD5AE] text-white duration-300 cursor-pointer"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 bg-[#D4A373] rounded-full hover:bg-[#CCD5AE] text-white duration-300 cursor-pointer"
           >
             <ChevronLeft size={20} />
           </button>
           <button
             ref={nextRef}
-            className="absolute right-0 sm:right-4 md:right-8 lg:right-20 xl:right-26 2xl:right-76 top-1/2 -translate-y-1/2 z-10 p-2 bg-[#D4A373] rounded-full hover:bg-[#CCD5AE] text-white duration-300 cursor-pointer"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 bg-[#D4A373] rounded-full hover:bg-[#CCD5AE] text-white duration-300 cursor-pointer"
           >
             <ChevronRight size={20} />
           </button>
@@ -45,10 +45,10 @@ const CategoryCardSlider: React.FC<CategoryProps> = ({ categoriesList }) => {
         loop={true}
         breakpoints={{
           640: { slidesPerView: 2 },
-          768: { slidesPerView: 3 },
-          1024: { slidesPerView: 4 },
-          1280: { slidesPerView: 4 },
-          1536: { slidesPerView: 4 },
+          768: { slidesPerView: 2 },
+          1024: { slidesPerView: 2 },
+          1280: { slidesPerView: 2 },
+          1536: { slidesPerView: 2 },
         }}
         modules={[Navigation]}
         navigation={{

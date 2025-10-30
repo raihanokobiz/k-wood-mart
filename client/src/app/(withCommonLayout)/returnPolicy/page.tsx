@@ -116,10 +116,10 @@ const ReturnPolicy = async () => {
                 </h2>
                 <ul className="list-disc list-inside text-gray-700 space-y-1">
                   <li>
-                    Call: +880 1735 775 093 (Sunday to Friday, 9:30 AM - 6:30
+                    Call: 01712044438 (Sunday to Friday, 9:30 AM - 6:30
                     PM)
                   </li>
-                  <li>Email: support@nohasan.com</li>
+                  <li>Email: support@K.WOOD MARTcom</li>
                 </ul>
               </section>
 

@@ -4,8 +4,8 @@ import { lato } from "./font";
 import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
-  title: "NOHASAN",
-  description: "Best E-commerce platform in BD",
+  title: "K Wood Mart",
+  description: "K Wood Mart is your one-stop destination for premium quality wooden furniture and elegant curtains, crafted with care and designed for comfort and style.",
 };
 
 export default function RootLayout({

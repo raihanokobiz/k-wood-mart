@@ -10,7 +10,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "server.nohasan.com",
+        hostname: "server.K.WOOD MARTcom",
         pathname: "/**",
       },
     ],

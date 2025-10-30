@@ -20,7 +20,7 @@ interface BannerProps {
 const BannerSlider: React.FC<BannerProps> = ({ banners }) => {
   const swiperRef = useRef<SwiperClass | null>(null);
   return (
-    <div className="relative Container rounded">
+    <div className="relative rounded">
       <Swiper
         spaceBetween={50}
         slidesPerView={1}

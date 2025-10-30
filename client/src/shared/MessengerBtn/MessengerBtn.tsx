@@ -36,7 +36,8 @@ const MessengerBtn = () => {
         <div className="absolute -top-32 right-0 mt-2 flex flex-col space-y-2">
           {/* WhatsApp Button */}
           <a
-            href="https://wa.me/+8801735775093"
+            href="https://wa.me/+8801712044438"
+
             target="_blank"
             rel="noopener noreferrer"
             className="bg-green-500 text-white w-12 h-12 mx-auto flex justify-center items-center rounded-full shadow-md hover:scale-110  transition duration-300"
