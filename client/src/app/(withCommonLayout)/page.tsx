@@ -25,11 +25,16 @@ import { getCampaign } from "@/services/campaign";
 import { Metadata } from "next";
 import CartSideBar from "@/components/pages/cartSideBar/CartSideBar";
 import Blogs from "@/components/pages/landing_pages/Blogs/Blogs";
+import Banner2 from "@/components/pages/landing_pages/Banner/Banner2";
+import SignatureCollections from "@/components/pages/landing_pages/SignatureCollections/SignatureCollections";
+import BeforeAfterSection from "@/components/pages/landing_pages/BeforeAfterSection/BeforeAfterSection";
+import WhyChooseUs from "@/components/pages/landing_pages/whyChooseUs/WhyChooseUs";
+import FurnitureProducts from "@/components/pages/landing_pages/whyChooseUs/WhyChooseUs";
 
 export const metadata: Metadata = {
-  title: "NOHASAN",
+  title: "K Wood Mart",
   description:
-    "Shop online at NOHASAN – Bangladesh's best perfumes e-commerce platform. Discover premium perfumes for men and women unisex at K.WOOD MART Shop 100% authentic branded fragrances in Bangladesh with fast delivery and great prices.",
+    "K Wood Mart – Premium Furniture & Elegant Curtains for Modern Homes. Discover luxury living with our handcrafted furniture and bespoke curtain collections.",
 };
 
 const page = async () => {
@@ -51,13 +56,16 @@ const page = async () => {
   const productWithDiscount = await getAllDiscountProduct();
   const brands = await getAllBrands();
 
-
   return (
     <>
       <NavBar userCartProducts={products?.data} />
       <div className="">
-        <Banner banners={[]} />
-        <Category />
+        {/* <Banner banners={[]} /> */}
+        <Banner2 />
+        {/* <Category /> */}
+        <SignatureCollections />
+        <BeforeAfterSection />
+        <WhyChooseUs />
         {/* <BestSelling products={bestSelling} /> */}
         {/* <Newest products={allproducts} /> */}
         {/* <DiscountProduct products={productWithDiscount} /> */}
