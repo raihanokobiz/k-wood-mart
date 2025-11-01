@@ -30,7 +30,7 @@ const Contact = async () => {
               <span className="font-bold">Hotline: </span> 01712044438
             </div>
             <div className="mt-2">
-              <span className="font-bold">Email: </span> kalam7829@gmail.com
+              <span className="font-bold">Email: </span> k............@gmail.com
             </div>
           </div>
         </div>

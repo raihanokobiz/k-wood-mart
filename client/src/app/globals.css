@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+html,
+body {
+  font-family: "Georgia", serif;
+}
+
 @layer base {
   .Container {
     @apply 2xl:px-28 xl:px-20 lg:px-10 md:px-10 px-4;
@@ -15,7 +20,7 @@
   }
 
   .text-secondary {
-    @apply text-[#5772B3]
+    @apply text-[#ed1c24]
   }
 
   .bg-secondary {
@@ -25,6 +30,7 @@
   .button-primary {
     @apply bg-[#1D4092] text-white font-bold py-1.5 rounded-md cursor-pointer;
   }
+
   .button-primary:hover {
     @apply bg-blue-800;
   }
@@ -141,7 +147,17 @@
 }
 
 @keyframes spinner-fzua35 {
-  0%, 10%, 20%, 30%, 50%, 60%, 70%, 80%, 90%, 100% {
+
+  0%,
+  10%,
+  20%,
+  30%,
+  50%,
+  60%,
+  70%,
+  80%,
+  90%,
+  100% {
     transform: rotate(calc(var(--rotation) * 1deg)) translate(0, calc(var(--translation) * 1%));
   }
 

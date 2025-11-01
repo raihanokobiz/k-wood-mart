@@ -157,7 +157,7 @@ export default function LoginPage() {
       <div className="max-h-screen flex justify-center items-center">
         <Image
           src={logo}
-          alt="Login to NoHasan"
+          alt="Login to K Wood Mart"
           // height={1600}
           // width={800}
           quality={100}

@@ -12,7 +12,7 @@ import { TbShoppingCartOff } from "react-icons/tb";
 import NavBar from "@/components/pages/header/NavBar/NavBar";
 
 export const metadata: Metadata = {
-  title: "NOHASAN | cart",
+  title: "K Wood Mart | cart",
   description: "Best E-commerce platform in BD",
 };
 
@@ -240,7 +240,7 @@ const Cart = async () => {
             * If you wish to make a bulk order, please call us at{" "}
             <span className="font-bold text-black">+8801735775093</span> or
             email at{" "}
-            <span className="font-bold text-black">kalam7829@gmail.com</span> for
+            <span className="font-bold text-black">k............@gmail.com</span> for
             more information.
           </span>
         </div>

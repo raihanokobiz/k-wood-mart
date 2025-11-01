@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { TGender, TShopSideBar, TShopSideBarResponsive } from "@/types";
+import { TShopSideBar, TShopSideBarResponsive } from "@/types";
 import { usePathname } from "next/navigation";
 import { getShopSidebar } from "@/services/shopSidebar";
 import ShopPageSidebar from "./ShopPageSidebar";
@@ -47,7 +47,6 @@ const ResponsiveNavSidBar: React.FC<ResponsiveNavSidBarProps> = ({
   const defaultProducts: TShopSideBarResponsive = {
     brands: [],
     categories: [],
-    genders: null as unknown as TGender, // Replace with a valid default value for TGender
     priceRange: { minPrice: 0, maxPrice: 0 }, // Set default values for minPrice and maxPrice
     sizes: [],
   };

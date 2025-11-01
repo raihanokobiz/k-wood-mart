@@ -16,85 +16,13 @@ export const getAllProducts = async () => {
   return res.json();
 };
 
-// export const getAllProductsForShop = async (
-//   categorySlug?: string,
-//   subCategorySlug?: string,
-//   childCategorySlug?: string,
-//   gender?: string,
-//   brand?: string,
-//   page?: number
-// ) => {
-//   const searchParams = new URLSearchParams();
 
-//   if (categorySlug) {
-//     const categories = categorySlug.split(",");
-//     categories.forEach((cat) => {
-//       searchParams.append("categorySlug", cat);
-//     });
-//   }
-
-//   if (subCategorySlug) {
-//     const subCategories = subCategorySlug.split(",");
-//     subCategories.forEach((sub) => {
-//       searchParams.append("subCategorySlug", sub);
-//     });
-//   }
-
-//   if (childCategorySlug) {
-//     const childCategories = childCategorySlug.split(",");
-//     childCategories.forEach((child) => {
-//       searchParams.append("childCategorySlug", child);
-//     });
-//   }
-//   if (gender) {
-//     const genders = gender.split(",");
-//     genders.forEach((child) => {
-//       searchParams.append("gender", child);
-//     });
-//   }
-//   if (brand) {
-//     const brands = brand.split(",");
-//     brands.forEach((child) => {
-//       searchParams.append("brand", child);
-//     });
-//   }
-
-//   if (page) {
-//     searchParams.append("page", page.toString()); // ✅ Add page to URL
-//   }
-
-//   const url = `${apiBaseUrl}/product/pagination?${searchParams.toString()}`;
-
-//   const res = await fetch(url);
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch products");
-//   }
-
-//   return res.json();
-// };
-
-// export const getAllProductsForShop = async (
-//   categorySlug?: string,
-//   subCategorySlug?: string,
-//   childCategorySlug?: string,
-//   brand?: string,
-//   gender?: string,
-//   page?: number,
-//   limit?: number,
-//   minPrice?: number,
-//   maxPrice?: number,
-//   sortBy?: string,
-
-//   level?: string,
-//   color?: string
-// ) => {
   export const getAllProductsForShop = async (
     {
       categorySlug,
       subCategorySlug,
       childCategorySlug,
       brand,
-      gender,
       page,
       limit,
       minPrice,
@@ -107,7 +35,6 @@ export const getAllProducts = async () => {
       subCategorySlug?: string;
       childCategorySlug?: string;
       brand?: string;
-      gender?: string;
       page?: number;
       limit?: number;
       minPrice?: number;
@@ -117,18 +44,7 @@ export const getAllProducts = async () => {
       color?: string;
     }
   ) => {
-    // console.log("---categorySlug--", categorySlug);
-    // console.log("---subCategorySlug--", subCategorySlug);
-    // console.log("---childCategorySlug--", childCategorySlug);
-    // console.log("---brand--", brand);
-    // console.log("---gender--", gender);
-    // console.log("---page--", page);
-    // console.log("---limit--", limit);
-    // console.log("---minPrice--", minPrice);
-    // console.log("---maxPrice--", maxPrice);
-    // console.log("---sortBy--", sortBy);
-    // console.log("---level--", level);
-    // console.log("---color--", color);
+
   const searchParams = new URLSearchParams();
 
   if (categorySlug) {
@@ -152,12 +68,6 @@ export const getAllProducts = async () => {
     });
   }
 
-  if (gender) {
-    const genders = gender.split(",");
-    genders.forEach((g) => {
-      searchParams.append("gender", g);
-    });
-  }
 
   if (brand) {
     const brands = brand.split(",");

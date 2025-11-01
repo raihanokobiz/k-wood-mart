@@ -22,7 +22,6 @@ const PerfurmCard: React.FC<Product> = ({ product }) => {
     inventoryType,
     slug,
     _id,
-    gender,
     brandRef,
   } = product;
 
@@ -136,9 +135,6 @@ const PerfurmCard: React.FC<Product> = ({ product }) => {
               <h2 className="text-base font-medium line-clamp-1 capitalize">
                 {name}
               </h2>
-              <div className="flex items-center gap-1 lowercase text-[#D4A373]">
-                <p>{gender}</p>
-              </div>
               <div className="relative pt-1">
                 {/* <div className="inline-flex item-center justify-center gap-2 xl:text-base lg:text-[12px] text-base ">
                   <p className="flex  items-center gap-1">

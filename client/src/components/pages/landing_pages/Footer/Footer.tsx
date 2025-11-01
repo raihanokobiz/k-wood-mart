@@ -58,9 +58,9 @@ const Footer: React.FC<FooterProps> = ({ userCartProducts }) => {
   ];
 
   return (
-    <div className="relative">
-      <div className="Container py-10 lg:py-16">
-        <div className="max-w-[1280px] mx-auto flex flex-col lg:flex-row justify-between space-y-5">
+    <div className="relative bg-gray-100">
+      <div className="py-4 md:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between space-y-5">
           <div>
             <div className="text-black font-semibold mb-[20px] text-xl">
               Contact Info
@@ -120,7 +120,7 @@ const Footer: React.FC<FooterProps> = ({ userCartProducts }) => {
             <div className="">
               <div className="flex lg:justify-center lg:items-center gap-2 mt-4">
                 <a
-                  href="https://www.facebook.com/people/Nohasan/61574046337876/"
+                  href="https://www.facebook.com/people/K Wood Mart/61574046337876/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-2 py-2 bg-[#2563EB] rounded text-[#fff] border border-[#fff]/0 hover:scale-95 hover:border-[#fff] hover:border duration-300"
@@ -161,7 +161,7 @@ const Footer: React.FC<FooterProps> = ({ userCartProducts }) => {
 
               {/* <div className="mt-2">
                 <iframe
-                  title="NoHasan Location"
+                  title="K Wood Mart Location"
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.887678301881!2d90.35840537590783!3d23.751612289096654!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c0a0f9dbecab%3A0x1a5d5cce63cc8693!2sFabrilife!5e0!3m2!1sen!2sbd!4v1712391482365!5m2!1sen!2sbd"
                   width="500vh"
                   height="160vh"

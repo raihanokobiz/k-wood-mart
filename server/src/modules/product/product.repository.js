@@ -56,7 +56,6 @@ class ProductRepository extends BaseRepository {
         popular,
         bestSell,
         featured,
-        gender,
       } = payload;
       console.log('Payload MIN AND MAX PRODUCT=========',{minPrice,maxPrice})
 
@@ -210,10 +209,6 @@ console.log('filter log',filter)
         };
       }
 
-      if (gender) {
-        filter.gender = gender;
-      }
-
       // Sorting logic based on filters
       let sortCriteria = { [sortBy]: -1 };
 
@@ -289,16 +284,14 @@ console.log('filter log',filter)
             minPrice: { $min: "$price" },
             maxPrice: { $max: "$price" },
             sizes: { $push: "$inventoryRef.variants.sizeOptions" },
-            genders: { $addToSet: "$gender" },
           },
         },
-        { $project: { _id: 0, minPrice: 1, maxPrice: 1, genders: 1 } },
+        { $project: { _id: 0, minPrice: 1, maxPrice: 1 } },
       ]);
 console.log('filter aggrigation',filterAggregation)
       const filterOptions = filterAggregation[0] || {
         colors: [],
         sizes: [],
-        genders: [],
         minPrice: 0,
         maxPrice: 0,
       };
@@ -326,7 +319,6 @@ console.log('filter aggrigation',filterAggregation)
           brands,
           colors: filterOptions.colors,
           sizes: uniqueSizes,
-          genders: filterOptions.genders || [],
           priceRange: {
             // minPrice: filterOptions.minPrice,
             minPrice: 0,

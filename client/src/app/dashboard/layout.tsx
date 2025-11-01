@@ -70,7 +70,7 @@ export default function Layout({
               <div className="w-[120px] mx-auto">
                 <Image
                   src={logo}
-                  alt="NoHasan | Best E-commerce platform in BD"
+                  alt="K Wood Mart | Best E-commerce platform in BD"
                   width={120}
                   height={60}
                   className="w-full h-full"
@@ -116,7 +116,7 @@ export default function Layout({
             <div className="w-[120px] mx-auto">
               <Image
                 src={logo}
-                alt="NoHasan | Best E-commerce platform in BD"
+                alt="K Wood Mart | Best E-commerce platform in BD"
                 width={120}
                 height={60}
                 className="w-full h-full"

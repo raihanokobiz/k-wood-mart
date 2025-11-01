@@ -30,6 +30,9 @@ import SignatureCollections from "@/components/pages/landing_pages/SignatureColl
 import BeforeAfterSection from "@/components/pages/landing_pages/BeforeAfterSection/BeforeAfterSection";
 import WhyChooseUs from "@/components/pages/landing_pages/whyChooseUs/WhyChooseUs";
 import FurnitureProducts from "@/components/pages/landing_pages/whyChooseUs/WhyChooseUs";
+import NewArrivals from "@/components/pages/landing_pages/NewArrivals/NewArrivals";
+import FeaturedProducts from "@/components/pages/landing_pages/FeaturedProducts/FeaturedProducts";
+import NewsUpdates from "@/components/pages/landing_pages/NewsUpdates/NewsUpdates";
 
 export const metadata: Metadata = {
   title: "K Wood Mart",
@@ -62,10 +65,13 @@ const page = async () => {
       <div className="">
         {/* <Banner banners={[]} /> */}
         <Banner2 />
-        {/* <Category /> */}
         <SignatureCollections />
+        <NewArrivals />
+        <FeaturedProducts />
         <BeforeAfterSection />
+        {/* <Category /> */}
         <WhyChooseUs />
+        <NewsUpdates/>
         {/* <BestSelling products={bestSelling} /> */}
         {/* <Newest products={allproducts} /> */}
         {/* <DiscountProduct products={productWithDiscount} /> */}

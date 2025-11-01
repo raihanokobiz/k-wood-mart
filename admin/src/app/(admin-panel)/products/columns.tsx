@@ -232,17 +232,6 @@ export const columns: ColumnDef<TProduct>[] = [
     },
   },
   {
-    header: "Gender",
-    accessorKey: "gender",
-    // cell: ({ row }) => {
-    //   return (
-    //     <div>
-    //       <p>{upperFirst(row.original.categoryRef?.name)}</p>
-    //     </div>
-    //   );
-    // },
-  },
-  {
     header: "Brand",
     accessorKey: "brandRef",
     cell: ({ row }) => {

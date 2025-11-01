@@ -13,7 +13,7 @@ import { Metadata } from "next";
 import NavBar from "@/components/pages/header/NavBar/NavBar";
 
 export const metadata: Metadata = {
-  title: "NOHASAN | All Product",
+  title: "K Wood Mart | All Product",
   description: "Best E-commerce platform in BD",
 };
 
@@ -43,9 +43,6 @@ export default async function ShopPage({
     ? params.brand[0]
     : params.brand || "";
 
-  const gender = Array.isArray(params.gender)
-    ? params.gender[0]
-    : params.gender || "";
 
   const minPrice = params.minPrice ? Number(params.minPrice) : undefined;
   const maxPrice = params.maxPrice ? Number(params.maxPrice) : undefined;
@@ -55,7 +52,6 @@ export default async function ShopPage({
   //   subCategorySlug,
   //   childCategorySlug,
   //   brandSlug,
-  //   genderSlug,
   //   minPrice,
   //   maxPrice
   // );
@@ -65,7 +61,6 @@ export default async function ShopPage({
     subCategorySlug,
     childCategorySlug,
     brand,
-    gender,
     minPrice,
     maxPrice,
   });
@@ -95,7 +90,6 @@ export default async function ShopPage({
             subCategorySlug={subCategorySlug} 
             childCategorySlug={childCategorySlug}
             brand={brand}
-            gender={gender}
           />
         </div>
         <CartSideBar cartProducts={cartProducts?.data} />

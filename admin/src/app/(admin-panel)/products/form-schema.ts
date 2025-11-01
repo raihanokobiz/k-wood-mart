@@ -3,7 +3,6 @@ import { z } from "zod";
 export const productFormSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
-  gender: z.string().optional(),
   brandRef: z.string().nonempty("Brand is required"),
   discountType: z.string().optional(),
   discount: z.string().optional(),

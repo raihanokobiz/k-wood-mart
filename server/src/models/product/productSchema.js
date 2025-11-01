@@ -82,10 +82,7 @@ const Productschema = new Schema(
       type: Number,
       // required: true,
     },
-    gender: {
-      type: String,
-      enum: ["men", "women", "unisex"],
-    },
+  
     inventoryType: {
       type: String,
       enum: [

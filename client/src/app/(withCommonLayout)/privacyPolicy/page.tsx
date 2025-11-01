@@ -27,7 +27,7 @@ const privacyPolicy = async () => {
                   information we collect may include:
                 </h2>
                 <ul className="list-disc list-inside text-gray-700 space-y-1">
-                  <li>Name, title, gender, and date of birth</li>
+                  <li>Name, title, and date of birth</li>
                   <li>
                     Email, postal address, and delivery address (if different)
                   </li>

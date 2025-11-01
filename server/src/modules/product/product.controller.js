@@ -13,8 +13,6 @@ class ProductController {
     const payload = {
       name: req.body.name,
       description: req.body.description,
-      gender: req.body.gender,
-
       warehousePrice: req.body.warehousePrice,
       warehouseProfit: req.body.warehouseProfit,
       wholesalePrice: req.body.wholesalePrice,
@@ -87,7 +85,6 @@ class ProductController {
   getAllProductByBrandOrGender = catchError(async (req, res) => {
     const payload = {
       limit: req?.query?.limit,
-      gender: req?.query?.gender,
       brandRef: req?.query?.brandRef,
     };
     const productResult = await ProductService.getAllProductByBrandOrGender(
@@ -162,7 +159,6 @@ class ProductController {
       popular: req.query.popular,
       bestSell: req.query.bestSell,
       featured: req.query.featured,
-      gender: req.query.gender,
     };
 
     // Fetch products and filter options
@@ -218,8 +214,6 @@ class ProductController {
       const payload = {
         name: req.body.name,
         description: req.body.description,
-        gender: req.body.gender,
-
         warehousePrice: req.body.warehousePrice,
         warehouseProfit: req.body.warehouseProfit,
         wholesalePrice: req.body.wholesalePrice,

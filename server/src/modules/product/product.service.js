@@ -331,7 +331,7 @@ class ProductService extends BaseService {
   }
 
   async getAllProductByBrandOrGender(payload) {
-    const { brandRef, gender } = payload;
+    const { brandRef } = payload;
 
     const filter = {};
 
@@ -339,9 +339,6 @@ class ProductService extends BaseService {
       filter.brandRef = brandRef;
     }
 
-    if (gender) {
-      filter.gender = gender;
-    }
 
     const products = await this.#repository.findAll(filter);
     console.log(products, "products from brand gender service");

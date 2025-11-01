@@ -188,7 +188,7 @@ const BulkForm = () => {
                 <div className="flex items-start gap-2">
                   <FaMapMarkerAlt className="text-gray-600 mt-1" />
                   <span>
-                    NoHasan
+                    K Wood Mart
                     <br />
                     Mirpur, Dhaka-1216, Bangladesh.
                   </span>
@@ -237,7 +237,7 @@ const BulkForm = () => {
 
             <div className="mt-6">
               <iframe
-                title="NoHasan Location"
+                title="K Wood Mart Location"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.887678301881!2d90.35840537590783!3d23.751612289096654!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c0a0f9dbecab%3A0x1a5d5cce63cc8693!2sFabrilife!5e0!3m2!1sen!2sbd!4v1712391482365!5m2!1sen!2sbd"
                 width="100%"
                 height="300"

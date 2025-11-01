@@ -48,7 +48,6 @@ const defaultValues = {
   name: "",
   description: "",
   brandRef: "",
-  gender: "men",
   discountType: "",
   discount: "",
   // mrpPrice: "",
@@ -69,11 +68,6 @@ export const discountTypes = [
   { name: "Percentage", key: "percent" },
 ];
 
-export const genderEnums = [
-  { name: "Male", key: "men" },
-  { name: "Female", key: "women" },
-  { name: "Unisex", key: "unisex" },
-];
 
 export const inventoryTypes = [
   { name: "Color", key: "colorInventory" },
@@ -235,23 +229,58 @@ export const CreateProductForm: React.FC = () => {
         >
           {/* Text Inputs */}
           <div className="col-span-2">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Product Name <b className="text-red-500">*</b>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter product name" {...field} />
-                  </FormControl>
-                  <FormDescription className="text-red-400 text-xs min-h-4">
-                    {form.formState.errors.name?.message}
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-1">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Product Name <b className="text-red-500">*</b>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter product name" {...field} />
+                    </FormControl>
+                    <FormDescription className="text-red-400 text-xs min-h-4">
+                      {form.formState.errors.name?.message}
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="brandRef"
+                render={({ field }) => (
+                  <div className="flex items-end gap-2 w-full">
+                    <FormItem className="flex-1">
+                      <FormLabel>
+                        Brand<b className="text-red-500">*</b>
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select brand" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {brands.map((item, index) => (
+                              <SelectItem key={index} value={String(item._id)}>
+                                {item.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription className="text-red-400 text-xs min-h-4">
+                        {form.formState.errors.brandRef?.message}
+                      </FormDescription>
+                    </FormItem>
+                  </div>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="description"
@@ -269,25 +298,6 @@ export const CreateProductForm: React.FC = () => {
               )}
             />
             <div className="grid grid-cols-3 gap-1">
-              {/* <FormField
-                control={form.control}
-                name="mrpPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      MRP (Maximum Retail Price){" "}
-                      <b className="text-red-500">*</b>
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter MRP price" {...field} />
-                    </FormControl>
-                    <FormDescription className="text-red-400 text-xs min-h-4">
-                      {form.formState.errors.mrpPrice?.message}
-                    </FormDescription>
-                  </FormItem>
-                )}
-              /> */}
-
               <FormField
                 control={form.control}
                 name="freeShipping"
@@ -366,70 +376,7 @@ export const CreateProductForm: React.FC = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <div className="flex items-end gap-2 w-full">
-                    <FormItem className="flex-1">
-                      <FormLabel>Gender</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {genderEnums.map((type) => (
-                              <SelectItem key={type.key} value={type.key}>
-                                {type.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {form.formState.errors.gender?.message}
-                      </FormDescription>
-                    </FormItem>
-                  </div>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="brandRef"
-                render={({ field }) => (
-                  <div className="flex items-end gap-2 w-full">
-                    <FormItem className="flex-1">
-                      <FormLabel>
-                        Brand<b className="text-red-500">*</b>
-                      </FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select brand" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {brands.map((item, index) => (
-                              <SelectItem key={index} value={String(item._id)}>
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {form.formState.errors.brandRef?.message}
-                      </FormDescription>
-                    </FormItem>
-                  </div>
-                )}
-              />
+
               <FormField
                 control={form.control}
                 name="categoryRef"
@@ -571,87 +518,70 @@ export const CreateProductForm: React.FC = () => {
                 >
                   {(selectedInventoryType === "colorInventory" ||
                     selectedInventoryType === "colorLevelInventory") && (
-                    <Controller
-                      control={control}
-                      name={`inventories.${index}.color`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel>Color</FormLabel>
-                          <FormControl>
-                            <ColorPicker
-                              value={field.value || "#1677ff"}
-                              showText
-                              allowClear
-                              onChange={(color) =>
-                                field.onChange(color.toHexString())
+                      <Controller
+                        control={control}
+                        name={`inventories.${index}.color`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Color</FormLabel>
+                            <FormControl>
+                              <ColorPicker
+                                value={field.value || "#1677ff"}
+                                showText
+                                allowClear
+                                onChange={(color) =>
+                                  field.onChange(color.toHexString())
+                                }
+                              />
+                            </FormControl>
+                            <FormDescription className="text-red-400 text-xs min-h-4">
+                              {
+                                formState.errors?.inventories?.[index]?.color
+                                  ?.message
                               }
-                            />
-                          </FormControl>
-                          <FormDescription className="text-red-400 text-xs min-h-4">
-                            {
-                              formState.errors?.inventories?.[index]?.color
-                                ?.message
-                            }
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-                  )}
+                            </FormDescription>
+                          </FormItem>
+                        )}
+                      />
+                    )}
 
                   {(selectedInventoryType === "colorInventory" ||
                     selectedInventoryType === "colorLevelInventory") && (
-                    <FormItem>
-                      <FormLabel>Color Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter color name"
-                          {...register(`inventories.${index}.colorName`)}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {
-                          formState.errors?.inventories?.[index]?.colorName
-                            ?.message
-                        }
-                      </FormDescription>
-                    </FormItem>
-                  )}
-
-                  {(selectedInventoryType === "levelInventory" ||
-                    selectedInventoryType === "colorLevelInventory") && (
-                    <FormItem>
-                      <FormLabel>Size</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter size"
-                          {...register(`inventories.${index}.size`)}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {formState.errors?.inventories?.[index]?.size?.message}
-                      </FormDescription>
-                    </FormItem>
-                  )}
-
-                  {selectedInventoryType !== "" && (
-                    <>
                       <FormItem>
-                        <FormLabel>
-                          Quantity <b className="text-red-500">*</b>
-                        </FormLabel>
+                        <FormLabel>Color Name</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter quantity"
-                            {...register(`inventories.${index}.quantity`)}
+                            placeholder="Enter color name"
+                            {...register(`inventories.${index}.colorName`)}
                           />
                         </FormControl>
                         <FormDescription className="text-red-400 text-xs min-h-4">
                           {
-                            formState.errors?.inventories?.[index]?.quantity
+                            formState.errors?.inventories?.[index]?.colorName
                               ?.message
                           }
                         </FormDescription>
                       </FormItem>
+                    )}
+
+                  {(selectedInventoryType === "levelInventory" ||
+                    selectedInventoryType === "colorLevelInventory") && (
+                      <FormItem>
+                        <FormLabel>Size</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter size"
+                            {...register(`inventories.${index}.size`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.inventories?.[index]?.size?.message}
+                        </FormDescription>
+                      </FormItem>
+                    )}
+
+                  {selectedInventoryType !== "" && (
+                    <>
                       <FormItem>
                         <FormLabel>
                           MRP (Maximum Retail Price){" "}
@@ -758,28 +688,6 @@ export const CreateProductForm: React.FC = () => {
               </div>
             </div>
             <div className="">
-              <Label>Backview Image (Max 1 File)</Label>
-              <FormField
-                control={form.control}
-                name="backViewImage"
-                render={({ field }) => (
-                  <div>
-                    <Upload
-                      listType="picture-card"
-                      beforeUpload={() => false}
-                      fileList={backViewFileList}
-                      onChange={handleBackViewFileChange}
-                      multiple={false}
-                    >
-                      <div>
-                        <UploadOutlined />
-                        <div style={{ marginTop: 8 }}>Upload</div>
-                      </div>
-                    </Upload>
-                  </div>
-                )}
-              />
-
               <div className="mt-4">
                 {form.getValues("backViewImage") &&
                   form.getValues("backViewImage").length > 0 &&
@@ -854,55 +762,6 @@ export const CreateProductForm: React.FC = () => {
                 {form.formState.errors.images?.message}
               </div>
             </div>
-            {/* <div className="">
-              <Label>Size Chart Image (Max 1 File) </Label>
-              <FormField
-                control={form.control}
-                name="sizeChartImage"
-                render={({ field }) => (
-                  <div>
-                    <Upload
-                      listType="picture-card"
-                      beforeUpload={() => false}
-                      fileList={sizeChartFileList}
-                      onChange={handleSizeChartFileChange}
-                      multiple={false}
-                    >
-                      <div>
-                        <UploadOutlined />
-                        <div style={{ marginTop: 8 }}>Upload</div>
-                      </div>
-                    </Upload>
-                  </div>
-                )}
-              />
-
-              <div className="mt-4">
-                {form.getValues("sizeChartImage") &&
-                  form.getValues("sizeChartImage").length > 0 &&
-                  form.getValues("sizeChartImage").map((file, i) => (
-                    <div className="border-dashed border-2 rounded-lg p-2 px-3">
-                      <div
-                        key={i}
-                        className="flex flex-col gap-2 text-xs text-gray-500 justify-center h-full"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Paperclip className="h-4 w-4 stroke-current" />
-                          <span>{file.name}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <FileUp className="h-4 w-4 stroke-current" />
-                          <span>{humanFileSize(file.size)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-
-              <div className="text-red-400 text-xs min-h-4">
-                {form.formState.errors.sizeChartImage?.message}
-              </div>
-            </div> */}
           </div>
         </form>
       </Form>

@@ -366,7 +366,6 @@ export type TProduct = {
   status?: string;
   slug?: string;
   freeShipping: boolean;
-  gender: string;
   mainInventory?: number;
   quantity?: number;
   inventoryType?:

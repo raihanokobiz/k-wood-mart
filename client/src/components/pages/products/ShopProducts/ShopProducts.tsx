@@ -23,7 +23,6 @@ interface ShopProductsProps {
   pagination: Pagination;
   categorySlug: string;
   brand: string;
-  gender: string;
   subCategorySlug: string;
   childCategorySlug: string;
 }
@@ -34,7 +33,6 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
   categorySlug,
   subCategorySlug,
   brand,
-  gender,
 
   childCategorySlug,
 }) => {
@@ -58,7 +56,6 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
         subCategorySlug,
         childCategorySlug,
         brand,
-        gender,
         page,
       });
 
@@ -89,7 +86,6 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
     subCategorySlug,
     childCategorySlug,
     brand,
-    gender,
   ]);
 
   useEffect(() => {
@@ -104,7 +100,6 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
     subCategorySlug,
     childCategorySlug,
     brand,
-    gender,
   ]);
 
   useEffect(() => {
@@ -128,9 +123,7 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
     subCategorySlug,
     childCategorySlug,
     brand,
-    gender,
     fetchMoreProducts,
-
     hasMore,
   ]);
 

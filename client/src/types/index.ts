@@ -79,7 +79,7 @@ export type TBrands = {
   __v: number;
 };
 
-export type TGender = "unisex" | "men" | "women";
+
 export type TInventoryItem = {
   price: string;
   mrpPrice?: number;
@@ -110,7 +110,6 @@ export type TInventoryRef = {
 };
 export type TProduct = {
   brandRef?: TBrands;
-  gender?: "unisex" | "men" | "women";
   priceRange?: TPrice;
   inventory: TInventory;
   cartDetails?: any;
@@ -174,25 +173,11 @@ export type TResponse = {
   filterOptions: TProduct[];
 };
 
-// export type TShopSideBarResponsive = {
-//   result: TProduct[];
-//   pagination: any;
-//   filterOptions: {
-//     brands: TBrands[];
-//     categories: TCategory[];
-//     subCategories: TSubCategory[];
-//     childCategories: TChildCategory[];
-//     priceRange: TPrice;
-//     genders: TGender[];
-//     size: string[];
-//   };
-// };
 
 export interface TShopSideBarResponsive {
   // filterOptions: {
   brands: TBrand[];
   categories: TCategory[];
-  genders: TGender;
   priceRange: TPrice;
   sizes: any[];
   // };

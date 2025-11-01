@@ -3,13 +3,13 @@ import { MdArrowForwardIos } from "react-icons/md";
 import about from "@/assets/images/aboutUnicresent.png";
 import Image from "next/image";
 
-const AboutNoHasan = () => {
+const AboutK Wood Mart = () => {
   return (
     <div className="Container py-12">
       <div className="flex items-center md:flex-nowrap flex-wrap  gap-8">
         <div className="">
           <h2 className="flex items-center  gap-2  font-medium">
-            <span className="text-3xl">NoHasan</span>
+            <span className="text-3xl">K Wood Mart</span>
             <span>
               <MdArrowForwardIos className="text-2xl mt-1 text-[#5CB85C]" />
             </span>
@@ -40,4 +40,4 @@ const AboutNoHasan = () => {
   );
 };
 
-export default AboutNoHasan;
+export default AboutK Wood Mart;

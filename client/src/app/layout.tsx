@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { lato } from "./font";
 import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
@@ -15,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lato.className} antialiased`}>
+      <body className={`antialiased`}>
         <NextTopLoader showSpinner={false} color="#D4A373" />
         {children}
       </body>

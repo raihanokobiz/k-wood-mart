@@ -3,7 +3,6 @@
 import {
   TBrand,
   TChildCategory,
-  TGender,
   TShopSideBar,
   TShopSideBarResponsive,
   TSubCategory,
@@ -45,7 +44,6 @@ const ShopPageSidebar: React.FC<ShopProductsCategoriesProps> = ({
     string[]
   >([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
 
   const MIN = products?.priceRange?.minPrice || 0;
   // const MIN = 0;
@@ -59,21 +57,19 @@ const ShopPageSidebar: React.FC<ShopProductsCategoriesProps> = ({
     const subCats = searchParams.get("subCategory")?.split(",") || [];
     const childCats = searchParams.get("childCategory")?.split(",") || [];
     const brands = searchParams.get("brand")?.split(",") || [];
-    const genders = searchParams.get("gender")?.split(",") || [];
     const minPrice = Number(searchParams.get("minPrice")) || MIN;
     const maxPrice = Number(searchParams.get("maxPrice")) || MAX;
     console.log("for  brands", brands);
-    console.log("for  genders", genders);
+
     setSelectedCategories(cats);
     setSelectedSubCategories(subCats);
     setSelectedChildCategories(childCats);
     setSelectedBrands(brands);
-    setSelectedGenders(genders);
     setValues([minPrice, maxPrice]);
   }, [searchParams, MIN, MAX]);
 
   const updateParams = (
-    type: "category" | "subCategory" | "childCategory" | "brand" | "gender",
+    type: "category" | "subCategory" | "childCategory" | "brand" ,
     value: string
   ) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -305,31 +301,6 @@ const ShopPageSidebar: React.FC<ShopProductsCategoriesProps> = ({
                 </li>
               </ul>
             ))}
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div className="space-y-2 border border-[#D4A373] rounded px-3 py-4 h-[160px]">
-          <h2 className="pb-2 text-base font-semibold uppercase">Genders</h2>
-
-          <div>
-            {Array.isArray(products?.genders) &&
-              products?.genders?.map((gender: TGender) => (
-                <ul key={gender}>
-                  <li>
-                    <label className="flex items-center gap-2 cursor-pointer font-medium text-gray-700">
-                      <input
-                        type="checkbox"
-                        checked={selectedGenders.includes(gender)}
-                        onChange={() => updateParams("gender", gender)}
-                        className="accent-[#495588]"
-                      />
-                      {gender}
-                    </label>
-                  </li>
-                </ul>
-              ))}
           </div>
         </div>
       </div>
