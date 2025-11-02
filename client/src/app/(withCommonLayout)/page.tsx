@@ -33,6 +33,7 @@ import FurnitureProducts from "@/components/pages/landing_pages/whyChooseUs/WhyC
 import NewArrivals from "@/components/pages/landing_pages/NewArrivals/NewArrivals";
 import FeaturedProducts from "@/components/pages/landing_pages/FeaturedProducts/FeaturedProducts";
 import NewsUpdates from "@/components/pages/landing_pages/NewsUpdates/NewsUpdates";
+import FurnitureDemo from "@/components/pages/landing_pages/FurnitureDemo/FurnitureDemo";
 
 export const metadata: Metadata = {
   title: "K Wood Mart",
@@ -70,6 +71,7 @@ const page = async () => {
         <BeforeAfterSection />
         <FeaturedProducts />
         {/* <Category /> */}
+        <FurnitureDemo/>
         <WhyChooseUs />
         <NewsUpdates />
         {/* <BestSelling products={bestSelling} /> */}
