@@ -27,7 +27,7 @@ export default function NewArrivals() {
       >
         New Arrivals
       </h2>
-      <div className="bg-gray-100 p-4 md:p-6 lg:p-10 rounded">
+      <div className=" rounded">
         <div className="grid grid-cols-1 md:grid-cols-2  2xl:grid-cols-4 gap-4">
           {products.map((product, idx) => (
             <ProductCard
@@ -38,25 +38,12 @@ export default function NewArrivals() {
             />
           ))}
           {products.map((product, idx) => (
-            <div
+            <ProductCard
               key={idx}
-              className="bg-white shadow-md shadow-gray-400 rounded  text-center hover:shadow-lg transition-shadow"
-            >
-              <div className=" relative h-[400px] mb-4">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="mx-auto mb-4"
-                />
-              </div>
-              <h3 className="text-xl font-semibold mb-3 text-secondary text-left px-4">
-                {product.name}
-              </h3>
-              <p className="text-base text-secondary text-right px-8 pb-4" style={{ fontVariantNumeric: 'lining-nums' }}>
-                ৳ {product.price}
-              </p>
-            </div>
+              name={product.name}
+              image={product.image}
+              price={product.price}
+            />
           ))}
         </div>
       </div>

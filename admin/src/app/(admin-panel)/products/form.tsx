@@ -635,7 +635,7 @@ export const CreateProductForm: React.FC = () => {
           </div>
 
           {/* Image */}
-          <div className="col-span-1 min-h-[500px] grid grid-cols-2">
+          <div className="col-span-1 grid grid-cols-2">
             <div className="">
               <Label>
                 Thumbnail Image (Max 1 File) <b className="text-red-500">*</b>
@@ -687,33 +687,6 @@ export const CreateProductForm: React.FC = () => {
                 {form.formState.errors.thumbnailImage?.message}
               </div>
             </div>
-            <div className="">
-              <div className="mt-4">
-                {form.getValues("backViewImage") &&
-                  form.getValues("backViewImage").length > 0 &&
-                  form.getValues("backViewImage").map((file, i) => (
-                    <div className="border-dashed border-2 rounded-lg p-2 px-3">
-                      <div
-                        key={i}
-                        className="flex flex-col gap-2 text-xs text-gray-500 justify-center h-full"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Paperclip className="h-4 w-4 stroke-current" />
-                          <span>{file.name}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <FileUp className="h-4 w-4 stroke-current" />
-                          <span>{humanFileSize(file.size)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-
-              <div className="text-red-400 text-xs min-h-4">
-                {form.formState.errors.backViewImage?.message}
-              </div>
-            </div>{" "}
             <div className="">
               <Label>Optional Images</Label>
               <FormField

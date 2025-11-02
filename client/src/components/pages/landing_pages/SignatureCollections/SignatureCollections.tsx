@@ -25,17 +25,17 @@ export default function SignatureCollections() {
   return (
     <section className="py-4 md:px-6 lg:px-8">
       <h2
-        className=" text-[#ed1c24] text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-light text-center mb-6 rounded"
+        className=" text-[#ed1c24] text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-light text-center mb-6"
         style={{ fontFamily: "Georgia, serif" }}
       >
         Our Signature Collections
       </h2>
-      <div className="bg-gray-100 p-4 md:p-6 lg:p-10 rounded">
+      <div className="">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {collections.map((collection, idx) => (
             <div
               key={idx}
-              className="p-8 group relative overflow-hidden rounded-lg aspect-square cursor-pointer"
+              className="p-8 group relative overflow-hidden aspect-square cursor-pointer"
             >
               <Image
                 src={collection.image || "/placeholder.svg"}
@@ -43,7 +43,7 @@ export default function SignatureCollections() {
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
+              <div className="absolute inset-0 group-hover:bg-black/40 transition-colors" />
 
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
                 <h3 className="text-2xl font-light mb-2">{collection.title}</h3>

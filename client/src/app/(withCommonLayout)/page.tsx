@@ -67,11 +67,11 @@ const page = async () => {
         <Banner2 />
         <SignatureCollections />
         <NewArrivals />
-        <FeaturedProducts />
         <BeforeAfterSection />
+        <FeaturedProducts />
         {/* <Category /> */}
         <WhyChooseUs />
-        <NewsUpdates/>
+        <NewsUpdates />
         {/* <BestSelling products={bestSelling} /> */}
         {/* <Newest products={allproducts} /> */}
         {/* <DiscountProduct products={productWithDiscount} /> */}

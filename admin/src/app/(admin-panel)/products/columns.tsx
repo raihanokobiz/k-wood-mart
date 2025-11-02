@@ -33,44 +33,6 @@ export const columns: ColumnDef<TProduct>[] = [
     },
   },
   {
-    header: "Backview Image",
-    accessorKey: "backViewImage",
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.backViewImage && (
-            <Image
-              src={fileUrlGenerator(row.original.backViewImage)}
-              alt={row.original.name || ""}
-              width={600}
-              height={200}
-              className="w-32 object-cover"
-            />
-          )}
-        </div>
-      );
-    },
-  },
-  // {
-  //   header: "Size Chart Image",
-  //   accessorKey: "sizeChartImage",
-  //   cell: ({ row }) => {
-  //     return (
-  //       <div>
-  //         {row.original.sizeChartImage && (
-  //           <Image
-  //             src={fileUrlGenerator(row.original.sizeChartImage)}
-  //             alt={row.original.name || ""}
-  //             width={600}
-  //             height={200}
-  //             className="w-32 object-cover"
-  //           />
-  //         )}
-  //       </div>
-  //     );
-  //   },
-  // },
-  {
     header: "Additional Images",
     accessorKey: "images",
     cell: ({ row }) => {

@@ -789,18 +789,6 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                           </FormDescription>
                         </FormItem>
 
-                        {/* <FormLabel>
-                        MRP (Maximum Retail Price){" "}
-                        <b className="text-red-500">*</b>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter MRP price" {...field} />
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {form.formState.errors.mrpPrice?.message}
-                      </FormDescription> */}
-
-
                         <FormItem>
                           <FormLabel>
                             MRP (Maximum Retail Price){" "}
@@ -923,28 +911,6 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
               </div>
 
               <div className="">
-                <Label>Backview Image (Max 1 File) </Label>
-                <FormField
-                  control={form.control}
-                  name="backViewImage"
-                  render={({ field }) => (
-                    <div>
-                      <Upload
-                        listType="picture-card"
-                        beforeUpload={() => false}
-                        fileList={backViewFileList}
-                        onChange={handleBackViewFileChange}
-                        multiple={false}
-                      >
-                        <div>
-                          <UploadOutlined />
-                          <div style={{ marginTop: 8 }}>Upload</div>
-                        </div>
-                      </Upload>
-                    </div>
-                  )}
-                />
-
                 <div className="mt-4">
                   {form.getValues("backViewImage") &&
                     form.getValues("backViewImage").length > 0 &&
@@ -966,7 +932,6 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                       </div>
                     ))}
                 </div>
-
                 <div className="text-red-400 text-xs min-h-4">
                   {form.formState.errors.backViewImage?.message}
                 </div>

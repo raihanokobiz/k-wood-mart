@@ -75,13 +75,12 @@ export default function NewsUpdates() {
                     News & Updates
                 </h2>
             </div>
-
             {/* News Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4 gap-6">
                 {newsUpdates.map((news, idx) => (
                     <div
                         key={idx}
-                        className="bg-white p-8 shadow-md shadow-gray-400 rounded overflow-hidden hover:shadow-lg transition-all duration-300 group"
+                        className="bg-white p-8 shadow-md shadow-gray-200 rounded overflow-hidden hover:shadow-lg transition-all duration-300 group"
                     >
                         {/* Image */}
                         <div className="relative h-56 overflow-hidden">

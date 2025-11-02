@@ -36,12 +36,12 @@ export default function WhyChooseUs() {
       >
         Why Choose WoodMart?
       </h2>
-      <div className="bg-gray-100 p-4 md:p-6 lg:p-10 rounded">
+      <div className="">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {reasons.map((reason, idx) => (
             <div
               key={idx}
-              className="bg-white shadow-md shadow-gray-400 rounded p-8 text-center hover:shadow-lg transition-shadow"
+              className="bg-white shadow-md shadow-gray-200 rounded p-8 text-center hover:shadow-lg transition-shadow"
             >
               <div className="text-5xl mb-4">{reason.icon}</div>
               <h3 className="text-xl font-semibold mb-3 text-gray-700">

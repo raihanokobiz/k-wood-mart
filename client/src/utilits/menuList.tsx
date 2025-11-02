@@ -4,22 +4,27 @@ export const menuList = [
     link: "/",
   },
   {
-    title: "Shop",
-    link: "/shop",
+    title: "Furniture",
+    link: "/furniture",
     subMenu: true,
   },
   {
-    title: "About",
-    link: "/about",
+    title: "Curtains",
+    link: "/curtains",
+    subMenu: true,
   },
-  {
-    title: "Blogs",
-    link: "/blogs",
-  },
-  {
-    title: "Contact",
-    link: "/contact",
-  },
+  // {
+  //   title: "About",
+  //   link: "/about",
+  // },
+  // {
+  //   title: "Blogs",
+  //   link: "/blogs",
+  // },
+  // {
+  //   title: "Contact",
+  //   link: "/contact",
+  // },
   // {
   //   title: "Whole Sale",
   //   link: "/bulkOrder",

@@ -338,8 +338,7 @@ class ProductService extends BaseService {
     if (brandRef) {
       filter.brandRef = brandRef;
     }
-
-
+    
     const products = await this.#repository.findAll(filter);
     console.log(products, "products from brand gender service");
 
