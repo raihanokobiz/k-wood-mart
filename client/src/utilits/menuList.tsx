@@ -13,18 +13,18 @@ export const menuList = [
     link: "/curtains",
     subMenu: true,
   },
-  // {
-  //   title: "About",
-  //   link: "/about",
-  // },
-  // {
-  //   title: "Blogs",
-  //   link: "/blogs",
-  // },
-  // {
-  //   title: "Contact",
-  //   link: "/contact",
-  // },
+  {
+    title: "About",
+    link: "/about",
+  },
+  {
+    title: "Blogs",
+    link: "/blogs",
+  },
+  {
+    title: "Contact",
+    link: "/contact",
+  },
   // {
   //   title: "Whole Sale",
   //   link: "/bulkOrder",

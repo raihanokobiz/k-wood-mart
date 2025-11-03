@@ -36,8 +36,8 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [showSideMenu, setShowSideMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [shopSidebarFurniture, setShopSidebarFurniture] = useState(null);
-  const [shopSidebarCurtains, setShopSidebarCurtains] = useState(null);
+  const [furnitureSubCategory, setFurnitureSubCategory] = useState(null);
+  const [curtainsSubCategory, setCurtainsSubCategory] = useState(null);
   // const [productsByUser, setProductsByUser] = useState<{
   //   cartDetails: any[];
   // } | null>(null);
@@ -64,9 +64,9 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     const fetchSidebarData = async () => {
       try {
         const { data: furniture } = await getFurnitureSubCategory();
-        setShopSidebarFurniture(furniture);
+        setFurnitureSubCategory(furniture);
         const { data: curtain } = await getCurtainsSubCategory();
-        setShopSidebarCurtains(curtain);
+        setCurtainsSubCategory(curtain);
       } catch (error) {
         console.error("Error fetching sidebar data:", error);
       }
@@ -102,8 +102,8 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
 
   // Helper function to get correct sidebar data
   const getSidebarData = (menuTitle: string) => {
-    if (menuTitle === "Furniture") return shopSidebarFurniture;
-    if (menuTitle === "Curtains") return shopSidebarCurtains;
+    if (menuTitle === "Furniture") return furnitureSubCategory;
+    if (menuTitle === "Curtains") return curtainsSubCategory;
     return null;
   };
 
@@ -266,8 +266,10 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
       <AnimatePresence>
         {showSideMenu && (
           <ResponsiveNavSidBar
-            // menuList={menuList}
             onClose={() => setShowSideMenu(false)}
+            menuList={menuList}
+            furnitureSubCategory={furnitureSubCategory}
+            curtainsSubCategory={curtainsSubCategory}
           />
         )}
       </AnimatePresence>
