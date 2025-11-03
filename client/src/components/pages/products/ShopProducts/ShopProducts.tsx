@@ -8,6 +8,7 @@ import Lottie from "lottie-react";
 import loadingSpinner from "@/assets/animation/shop-page-loading.json";
 import { TProduct } from "@/types";
 import PerfurmCard from "../PerfurmCard/PerfurmCard";
+import ProductCardForFurniture from "../ProductCardForFurniture/ProductCardForFurniture";
 
 interface Pagination {
   currentPage: number;
@@ -41,8 +42,6 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
   const [hasMore, setHasMore] = useState(pagination.nextPage !== null);
   const [loading, setLoading] = useState(false);
 
-  console.log("-------for check find  products------", allProducts);
-
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   const fetchMoreProducts = useCallback(async () => {
@@ -55,7 +54,6 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
         categorySlug,
         subCategorySlug,
         childCategorySlug,
-        brand,
         page,
       });
 
@@ -128,7 +126,7 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
   ]);
 
   return (
-    <div className="p-4">
+    <div className="">
       <div className="pb-4">
         <SearchCancel />
       </div>
@@ -138,10 +136,14 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
           No products available for now.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {allProducts.map((product) => (
             // <ShopProductCard key={product._id} product={product} />
-            <PerfurmCard key={product._id} product={product} />
+            <>
+            <ProductCardForFurniture key={product._id} product={product} />
+            <ProductCardForFurniture key={product._id} product={product} />
+            <ProductCardForFurniture key={product._id} product={product} />
+            </>
           ))}
         </div>
       )}

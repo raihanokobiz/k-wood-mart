@@ -114,7 +114,7 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
         className={`hidden lg:block w-full py-6 z-40  bg-white transition-all duration-300 fixed top-0 ${isScrolled ? "shadow" : " relative "
           }`}
       >
-        <div className="Container">
+        <div className="px-4 md:px-6 lg:px-8">
           <div className="flex items-center justify-between relative">
             <div>
               <div className="flex items-center lg:gap-0 gap-2">

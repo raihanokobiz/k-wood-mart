@@ -20,7 +20,7 @@ export default function NewArrivals() {
 
 
   return (
-    <section className="pb-4 md:px-6 lg:px-8">
+    <section className="pb-4 py-8 md:py-12 lg:py-16 px-4 md:px-6 lg:px-8">
       <h2
         className="rounded text-[#ed1c24] text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-light text-center mb-6"
         style={{ fontFamily: "Georgia, serif" }}

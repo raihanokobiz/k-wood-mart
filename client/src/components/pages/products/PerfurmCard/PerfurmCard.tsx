@@ -25,8 +25,6 @@ const PerfurmCard: React.FC<Product> = ({ product }) => {
     brandRef,
   } = product;
 
-  console.log("for find product inventoryRef", inventoryRef);
-
   const controls = useAnimation();
   const [imageLoaded, setImageLoaded] = useState({
     back: false,
