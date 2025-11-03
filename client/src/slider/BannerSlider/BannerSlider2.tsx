@@ -40,9 +40,9 @@ export default function BannerSlider2({ banners }: { banners: Banner[] }) {
   }
 
   const currentBanner = banners[index];
-
+// h-[250px] sm:h-[350px] md:h-[450px] lg:h-[550px] xl:h-[650px]
   return (
-    <div className="relative w-full h-[250px] sm:h-[350px] md:h-[450px] lg:h-[550px] xl:h-[650px] overflow-hidden">
+    <div className="relative w-full min-h-screen overflow-hidden">
       <AnimatePresence>
         <motion.div
           key={index}
