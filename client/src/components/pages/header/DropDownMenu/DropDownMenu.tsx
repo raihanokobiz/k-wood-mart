@@ -1,34 +1,117 @@
-import { TMenuItem } from "@/types";
+"use client";
+
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import { IoIosArrowForward } from "react-icons/io";
+import { motion, AnimatePresence } from "framer-motion";
+
+type ChildCategory = {
+  _id: string;
+  name: string;
+  slug: string;
+  status: boolean;
+  subCategoryRef: string;
+};
+
+type SubCategory = {
+  _id: string;
+  name: string;
+  slug: string;
+  status: boolean;
+  categoryRef: string;
+  childCategories: ChildCategory[];
+};
+
+type CategoryData = {
+  _id: string;
+  name: string;
+  slug: string;
+  subCategories: SubCategory[];
+};
 
 type DropDownMenuProps = {
-  menu: TMenuItem; // now correctly typed as an array
+  menu: CategoryData;
 };
 
 const DropDownMenu: React.FC<DropDownMenuProps> = ({ menu }) => {
+  const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+
   return (
-    <div className="z-[999] relative bg-[#fff] w-full mt-1">
-      <div className="w-full border-b rounded-b border-[#262626]/50 rounded flex flex-wrap pb-0 pl-1">
-        {menu.map((item, index) => (
-          <div key={index} className="w-[200px] ml-2 my-2">
-            <h3 className="font-bold text-lg capitalize">
-              <Link href={`/shop?category=${item.slug}`}>{item.name}</Link>
-            </h3>
-            <ul className="mt-2 flex flex-col gap-1">
-              {item.subCategories.map((subItem, subIndex) => (
-                <li
-                  key={subIndex}
-                  className="text-gray-500 hover:text-gray-700 hover:underline cursor-pointer duration-300 xl:text-base text-sm"
+    <div className="z-[999] bg-white shadow-lg rounded-lg border mt-2 p-6 min-h-[300px]">
+      <div className="grid grid-cols-3 gap-6">
+        {/* Left side - Sub Categories */}
+        <div className="border-r pr-4">
+          <h3 className="font-bold text-lg mb-4 text-gray-800">{menu.name}</h3>
+          <ul className="space-y-1">
+            {menu.subCategories?.map((subCat) => (
+              <li
+                key={subCat._id}
+                onMouseEnter={() => setActiveSubCategory(subCat._id)}
+                className="group"
+              >
+                <Link
+                  href={`/${menu.slug}?subCategory=${subCat.slug}`}
+                  className="flex items-center justify-between py-2 px-3 rounded hover:bg-gray-50 transition-colors"
                 >
-                  <Link href={`/shop?subCategory=${subItem.slug}`}>
-                    {subItem.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+                  <span className="text-gray-600 group-hover:text-[#1E3E96] transition-colors">
+                    {subCat.name}000
+                  </span>
+                  {subCat.childCategories && subCat.childCategories.length > 0 && (
+                    <IoIosArrowForward className="text-gray-400 group-hover:text-[#1E3E96]" />
+                  )}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Right side - Child Categories */}
+        <div className="col-span-2">
+          <AnimatePresence mode="wait">
+            {activeSubCategory && (
+              <motion.div
+                key={activeSubCategory}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {(() => {
+                  const activeSubCat = menu.subCategories?.find(
+                    (sub) => sub._id === activeSubCategory
+                  );
+                  
+                  if (!activeSubCat || !activeSubCat.childCategories?.length) {
+                    return (
+                      <div className="text-gray-400 text-sm">
+                        No child categories available
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-3">
+                        {activeSubCat.name} Categories
+                      </h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        {activeSubCat.childCategories.map((child) => (
+                          <Link
+                            key={child._id}
+                            href={`/${menu.slug}?subCategory=${activeSubCat.slug}&childCategory=${child.slug}`}
+                            className="block py-2 px-3 text-gray-600 hover:text-[#1E3E96] hover:bg-gray-50 rounded transition-colors"
+                          >
+                            {child.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

@@ -47,15 +47,6 @@ export default async function ShopPage({
   const minPrice = params.minPrice ? Number(params.minPrice) : undefined;
   const maxPrice = params.maxPrice ? Number(params.maxPrice) : undefined;
 
-  // const { data: products } = await getAllProductsForShop(
-  //   categorySlug,
-  //   subCategorySlug,
-  //   childCategorySlug,
-  //   brandSlug,
-  //   minPrice,
-  //   maxPrice
-  // );
-
   const { data: products } = await getAllProductsForShop({
     categorySlug,
     subCategorySlug,

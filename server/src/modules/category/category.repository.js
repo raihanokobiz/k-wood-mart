@@ -21,8 +21,15 @@ class CategoryRepository extends BaseRepository {
     return categories;
   }
 
-  async getNavBar() {
+  // Repository
+  async getNavBarBySlug(categorySlug) {
     const navBar = await CategorySchema.aggregate([
+      // First match the specific category
+      {
+        $match: {
+          slug: categorySlug, // "furniture" or "curtains"
+        },
+      },
       {
         $lookup: {
           from: "subcategories",
@@ -39,27 +46,6 @@ class CategoryRepository extends BaseRepository {
           as: "childCategories",
         },
       },
-      {
-        $lookup: {
-          from: "subchildcategories",
-          localField: "childCategories._id",
-          foreignField: "childCategoryRef",
-          as: "subChildCategories",
-        },
-      },
-      // {
-      //   $addFields: {
-      //     "subCategories.childCategories": {
-      //       $filter: {
-      //         input: "$childCategories",
-      //         as: "child",
-      //         cond: {
-      //           $eq: ["$$child.subCategoryRef", "$$child.subCategoryRef"],
-      //         },
-      //       },
-      //     },
-      //   },
-      // },
       {
         $addFields: {
           subCategories: {
@@ -86,16 +72,71 @@ class CategoryRepository extends BaseRepository {
           },
         },
       },
-      
-
       {
         $project: {
           childCategories: 0,
         },
       },
     ]);
-    return navBar;
+
+    return navBar[0]; // Return first result (single category)
   }
+
+  // Or get all categories at once
+  async getNavBar() {
+    const navBar = await CategorySchema.aggregate([
+      {
+        $lookup: {
+          from: "subcategories",
+          localField: "_id",
+          foreignField: "categoryRef",
+          as: "subCategories",
+        },
+      },
+      {
+        $lookup: {
+          from: "childcategories",
+          localField: "subCategories._id",
+          foreignField: "subCategoryRef",
+          as: "childCategories",
+        },
+      },
+      {
+        $addFields: {
+          subCategories: {
+            $map: {
+              input: "$subCategories",
+              as: "sub",
+              in: {
+                $mergeObjects: [
+                  "$$sub",
+                  {
+                    childCategories: {
+                      $filter: {
+                        input: "$childCategories",
+                        as: "child",
+                        cond: {
+                          $eq: ["$$child.subCategoryRef", "$$sub._id"],
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          childCategories: 0,
+        },
+      },
+    ]);
+
+    return navBar; // Return all categories
+  }
+
   async getCategoryById(categoryId) {
     const category = await this.#model.aggregate([
       {

@@ -7,7 +7,8 @@ const CategoryRoute = Router();
 
 // Uncomment the line below if JWT authentication is required
 // CategoryRoute.use(jwtAuth());
-CategoryRoute.get("/navbar", controller.getNavBar);
+CategoryRoute.get("/navbar/furniture", controller.getNavBarForFurniture);
+CategoryRoute.get("/navbar/curtains", controller.getNavBarForCurtains);
 CategoryRoute.route("/")
   .post(upload.any(), controller.createCategory)
   .get(controller.getAllCategory);

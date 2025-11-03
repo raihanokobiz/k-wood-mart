@@ -29,13 +29,45 @@ class CategoryController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  getAllCategory = catchError(async (req, res, next) => {
-    const categoryResult = await CategoryService.getAllCategory();
-    const resDoc = responseHandler(200, "Get All Categorys", categoryResult);
+  // Controller Furniture
+  getNavBarForFurniture = catchError(async (req, res, next) => {
+    const navbarData = await CategoryService.getNavBarForFurniture();
+    const resDoc = responseHandler(200, "Get Furniture Navbar", navbarData);
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  getCategoryWithPagination = catchError(async (req, res, next) => {
+  // Controller Curtains
+  getNavBarForCurtains = catchError(async (req, res, next) => {
+    const navbarData = await CategoryService.getNavBarForCurtains();
+    const resDoc = responseHandler(200, "Get Curtains Navbar", navbarData);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  // Get all categories
+  getAllCategory = catchError(async (req, res) => {
+    const categories = await CategoryService.getAllCategory();
+    const resDoc = responseHandler(200, "Categories retrieved successfully", categories);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  // Or single endpoint with query param
+  getAllNavBar = catchError(async (req, res) => {
+    const { category } = req.query;
+
+    let navbarData;
+    if (category === "furniture") {
+      navbarData = await CategoryService.getNavBarForFurniture();
+    } else if (category === "curtains") {
+      navbarData = await CategoryService.getNavBarForCurtains();
+    } else {
+      navbarData = await CategoryService.getAllNavBar();
+    }
+
+    const resDoc = responseHandler(200, "Get Navbar", navbarData);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  getCategoryWithPagination = catchError(async (req, res) => {
     let payload = {
       page: req.query.page,
       limit: req.query.limit,
@@ -46,7 +78,7 @@ class CategoryController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  getSingleCategory = catchError(async (req, res, next) => {
+  getSingleCategory = catchError(async (req, res) => {
     const id = req.params.id;
     const categoryResult = await CategoryService.getSingleCategory(id);
     const resDoc = responseHandler(
@@ -57,9 +89,11 @@ class CategoryController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  getSingleCategoryWithSlug = catchError(async (req, res, next) => {
+  getSingleCategoryWithSlug = catchError(async (req, res) => {
     const slug = req.params.slug;
-    const categoryResult = await CategoryService.getSingleCategoryWithSlug(slug);
+    const categoryResult = await CategoryService.getSingleCategoryWithSlug(
+      slug
+    );
     const resDoc = responseHandler(
       201,
       "Single Category successfully",
@@ -68,17 +102,9 @@ class CategoryController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  getNavBar = catchError(async (req, res, next) => {
-    const navBarResult = await CategoryService.getNavBar();
-    const resDoc = responseHandler(
-      201,
-      "Single Navbar successfully",
-      navBarResult
-    );
-    res.status(resDoc.statusCode).json(resDoc);
-  });
-  
-  updateCategory = catchError(async (req, res, next) => {
+  // These methods are already defined above, removing duplicates
+
+  updateCategory = catchError(async (req, res) => {
     const id = req.params.id;
     const payloadFiles = {
       files: req?.files,
@@ -90,7 +116,7 @@ class CategoryController {
       status: req.body.status,
       colorCode: req.body.colorCode,
     };
-    const categoryResult = await CategoryService.updateCategory(
+    await CategoryService.updateCategory(
       id,
       payloadFiles,
       payload
@@ -99,10 +125,10 @@ class CategoryController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  updateCategoryStatus = catchError(async (req, res, next) => {
+  updateCategoryStatus = catchError(async (req, res) => {
     const id = req.params.id;
     const status = req.query.status;
-    const categoryResult = await CategoryService.updateCategoryStatus(
+    await CategoryService.updateCategoryStatus(
       id,
       status
     );
@@ -110,9 +136,9 @@ class CategoryController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  deleteCategory = catchError(async (req, res, next) => {
+  deleteCategory = catchError(async (req, res) => {
     const id = req.params.id;
-    const categoryResult = await CategoryService.deleteCategory(id);
+    await CategoryService.deleteCategory(id);
     const resDoc = responseHandler(200, "Category Deleted successfully");
     res.status(resDoc.statusCode).json(resDoc);
   });

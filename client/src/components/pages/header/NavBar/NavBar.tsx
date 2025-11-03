@@ -13,7 +13,7 @@ import ResponsiveSearchForm from "../ResponsiveSearchForm/ResponsiveSearchForm";
 import ResponsiveNavSidBar from "../ResponsiveNavSidBar/ResponsiveNavSidBar";
 import "../NavBar/NavBar.css";
 
-import { getShopSidebar } from "@/services/shopSidebar";
+import { getCurtainsSubCategory, getFurnitureSubCategory } from "@/services/shopSidebar";
 // import { getCartProducts } from "@/services/cart";
 import { getUser, setCorrelation } from "@/services/auth";
 
@@ -36,7 +36,8 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [showSideMenu, setShowSideMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [shopSidebarData, setShopSidebarData] = useState(null);
+  const [shopSidebarFurniture, setShopSidebarFurniture] = useState(null);
+  const [shopSidebarCurtains, setShopSidebarCurtains] = useState(null);
   // const [productsByUser, setProductsByUser] = useState<{
   //   cartDetails: any[];
   // } | null>(null);
@@ -62,8 +63,10 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
   useEffect(() => {
     const fetchSidebarData = async () => {
       try {
-        const { data } = await getShopSidebar();
-        setShopSidebarData(data);
+        const { data: furniture } = await getFurnitureSubCategory();
+        setShopSidebarFurniture(furniture);
+        const { data: curtain } = await getCurtainsSubCategory();
+        setShopSidebarCurtains(curtain);
       } catch (error) {
         console.error("Error fetching sidebar data:", error);
       }
@@ -96,12 +99,20 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     setCorrelationAsync();
   }, []);
 
+
+  // Helper function to get correct sidebar data
+  const getSidebarData = (menuTitle: string) => {
+    if (menuTitle === "Furniture") return shopSidebarFurniture;
+    if (menuTitle === "Curtains") return shopSidebarCurtains;
+    return null;
+  };
+
+
   return (
     <>
       <div
-        className={`hidden lg:block w-full py-6 z-40  bg-white transition-all duration-300 fixed top-0 ${
-          isScrolled ? "shadow" : " relative "
-        }`}
+        className={`hidden lg:block w-full py-6 z-40  bg-white transition-all duration-300 fixed top-0 ${isScrolled ? "shadow" : " relative "
+          }`}
       >
         <div className="Container">
           <div className="flex items-center justify-between relative">
@@ -129,33 +140,26 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                     onMouseEnter={() => setActiveMenu(menu.title)}
                     onMouseLeave={() => setActiveMenu(null)}
                     key={index}
+                    className="relative"
                   >
-                    {/* <Link href={menu.link}>
-                      <li className="list-none py-4  hover:text-[#1E3E96] tracking-wider duration-300 menuTitle">
-                        {menu.title}
-                      </li>
-                    </Link> */}
-
                     <Link href={menu.link}>
                       <li
-                        className={`list-none absolute hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${
-                          index === menuList.length - 1 ? "" : ""
-                        }`}
+                        className={`list-none py-4 hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${index === menuList.length - 1 ? "" : ""
+                          }`}
                       >
                         {menu.title}
                       </li>
                     </Link>
-
-                    {menu.subMenu === true && activeMenu === menu.title && (
+                    {menu?.subMenu === true && activeMenu === menu.title && (
                       <motion.div
                         initial={{ opacity: 0, y: 4 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
                         transition={{ duration: 0.3 }}
-                        className="fixed right-12 xl:w-[840px]"
+                        className="absolute left-0 top-full w-[800px]"
                       >
-                        {shopSidebarData && (
-                          <DropDownMenu menu={shopSidebarData} />
+                        {getSidebarData(menu.title) && (
+                          <DropDownMenu menu={getSidebarData(menu.title)} />
                         )}
                       </motion.div>
                     )}
@@ -167,13 +171,11 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
               <Link href="/cart">
                 <div className="px-2 py-2 border rounded relative">
                   <BsCart2 />
-
                   <p className="top-[-12px] right-[-8px] absolute w-[20px] h-[20px] text-sm text-[#fff] text-center rounded-full bg-[#D4A373]">
                     {userCartProducts?.cartDetails?.length || 0}
                   </p>
                 </div>
               </Link>
-
               <div>
                 {userName ? (
                   <div className="p-1 border rounded">
@@ -201,9 +203,8 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
             <div className="flex space-x-3 lg:gap-0 gap-2">
               <div
                 onClick={() => setShowSideMenu(!showSideMenu)}
-                className={`pr-3  border-gray-300 cursor-pointer mt-6 ${
-                  isShopPage ? "lg:hidden" : "lg:block"
-                }`}
+                className={`pr-3  border-gray-300 cursor-pointer mt-6 ${isShopPage ? "lg:hidden" : "lg:block"
+                  }`}
               >
                 {showSideMenu ? (
                   <RiCloseFill className="text-2xl" />

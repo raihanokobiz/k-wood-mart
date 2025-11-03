@@ -66,15 +66,30 @@ class CategoryService extends BaseService {
     return categoryData;
   }
 
-  async getNavBar() {
+  // Service
+  async getNavBarForFurniture() {
+    const navbarData = await this.#repository.getNavBarBySlug("furniture");
+    if (!navbarData) throw new NotFoundError("Navbar Not Find for furniture");
+    return navbarData;
+  }
+
+  async getNavBarForCurtains() {
+    const navbarData = await this.#repository.getNavBarBySlug("curtains");
+    if (!navbarData) throw new NotFoundError("Navbar Not Find for curtains");
+    return navbarData;
+  }
+
+  // Or get all at once
+  async getAllNavBar() {
     const navbarData = await this.#repository.getNavBar();
-    if (!navbarData) throw new NotFoundError("Navbar Not Find");
+    if (!navbarData || navbarData.length === 0) {
+      throw new NotFoundError("Navbar data not found");
+    }
     return navbarData;
   }
 
   async updateCategory(id, payloadFiles, payload) {
     const { files } = payloadFiles;
-    const { name, slug, subCategoryRef, status, colorCode } = payload;
     if (files?.length) {
       const images = await ImgUploader(files);
       for (const key in images) {
