@@ -34,6 +34,7 @@ import NewArrivals from "@/components/pages/landing_pages/NewArrivals/NewArrival
 import FeaturedProducts from "@/components/pages/landing_pages/FeaturedProducts/FeaturedProducts";
 import NewsUpdates from "@/components/pages/landing_pages/NewsUpdates/NewsUpdates";
 import FurnitureDemo from "@/components/pages/landing_pages/FurnitureDemo/FurnitureDemo";
+import FurnitureCurtainGallery from "@/components/pages/landing_pages/FurnitureCurtainGallery/FurnitureCurtainGallery";
 
 export const metadata: Metadata = {
   title: "K Wood Mart",
@@ -67,8 +68,9 @@ const page = async () => {
         {/* <Banner banners={[]} /> */}
         <Banner2 />
         <SignatureCollections />
-        <NewArrivals />
         <BeforeAfterSection />
+        <NewArrivals />
+        <FurnitureCurtainGallery/>
         <FeaturedProducts />
         {/* <Category /> */}
         <FurnitureDemo/>

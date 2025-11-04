@@ -31,7 +31,7 @@ export default function SignatureCollections() {
         Our Signature Collections
       </h2>
       <div className="">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {collections.map((collection, idx) => (
             <div
               key={idx}
