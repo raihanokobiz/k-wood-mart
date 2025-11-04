@@ -55,14 +55,12 @@ export const FilterDrawer = ({
         );
     };
 
-
-
     return (
         <>
             {/* Backdrop */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                    className="fixed inset-0 bg-black/40 bg-opacity-50 z-40"
                     onClick={onClose}
                 />
             )}
@@ -129,7 +127,7 @@ export const FilterDrawer = ({
                                                 <input
                                                     type="checkbox"
                                                     checked={selectedFilters.subCategories.includes(cat.slug)}
-                                                    onChange={() => onFilterChange("subCategorie", cat.slug)}
+                                                    onChange={() => onFilterChange("subCategory", cat.slug)}
                                                     className="w-4 h-4 accent-brown-600"
                                                 />
                                                 <span className="text-sm text-black">{cat.name}</span>
@@ -208,8 +206,8 @@ export const FilterDrawer = ({
                                 onPriceChange(localPriceRange[0], localPriceRange[1]);
                                 onClose();
                             }}
-                            className="w-full bg-brown-600 text-white py-3 rounded-lg font-semibold hover:bg-brown-700 transition"
-                            style={{ backgroundColor: "#8B4513" }}
+                            className="w-full bg-red-500 cursor-pointer text-white py-3 rounded-lg font-semibold hover:bg-brown-700 transition"
+
                         >
                             Apply Filters
                         </button>
@@ -218,8 +216,8 @@ export const FilterDrawer = ({
                                 // Clear all filters logic here
                                 onClose();
                             }}
-                            className="w-full border border-brown-600 text-brown-600 py-3 rounded-lg font-semibold hover:bg-brown-50 transition"
-                            style={{ borderColor: "#8B4513", color: "#8B4513" }}
+                            className="bg-red-500 text-white cursor-pointer w-full border border-brown-600 text-brown-600 py-3 rounded-lg font-semibold hover:bg-brown-50 transition"
+
                         >
                             Clear All
                         </button>

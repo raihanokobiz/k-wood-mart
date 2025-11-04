@@ -140,8 +140,8 @@ class ProductController {
       page: req.query.page,
       limit: req.query.limit,
       order: req.query.order,
-      sortBy: req.query.sortBy, // e.g., 'name', 'mrpPrice', 'createdAt'
-      minPrice: req.query.minPrice, // Minimum price for filtering
+      sortBy: req.query.sortBy, 
+      minPrice: req.query.minPrice,
       maxPrice: req.query.maxPrice,
       categoryId: req.query.categoryId,
       categorySlug: req.query.categorySlug,

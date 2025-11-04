@@ -39,6 +39,7 @@ export default async function ShopPage({
     minPrice,
     maxPrice,
   });
+  
 
   const user = await getUser();
   const userId = user?.id;
@@ -48,7 +49,7 @@ export default async function ShopPage({
   return (
     <>
       <NavBar userCartProducts={cartProducts?.data} />
-      <div className="min-h-screen pb-8 md:pb-12 lg:pb-16 px-4 md:px-6 lg:px-8">
+      <div className="min-h-screen pb-8 md:pb-12 lg:pb-16 px-4 md:px-6 lg:px-8 2xl:px-12">
         {/* Furniture Sub Banner - same */}
         <div className="mb-6 md:mb-8 relative overflow-hidden h-64 md:h-80 lg:h-[400px]">
           <Image
