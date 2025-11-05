@@ -1,6 +1,4 @@
-// services/products.ts
-
-import { BASE_URL } from "@/config/config";
+import { apiBaseUrl } from "@/config/config";
 
 export const getProductReviewWithPagination = async (
   page?: string,
@@ -12,7 +10,7 @@ export const getProductReviewWithPagination = async (
 
   try {
     const response = await fetch(
-      `${BASE_URL}/product-review/pagination?${queryParams.toString()}`
+      `${apiBaseUrl}/product-review/pagination?${queryParams.toString()}`
     );
     return response.json();
   } catch (error) {
@@ -23,7 +21,7 @@ export const getProductReviewWithPagination = async (
 
 export const addProductReview = async (formData: FormData) => {
   try {
-    const res = await fetch(`${BASE_URL}/product-review`, {
+    const res = await fetch(`${apiBaseUrl}/product-review`, {
       method: "POST",
       body: formData,
     });
@@ -40,20 +38,4 @@ export const addProductReview = async (formData: FormData) => {
   }
 };
 
-export const deleteProductReview = async (id: string) => {
-  try {
-    const res = await fetch(`${BASE_URL}/product-review/${id}`, {
-      method: "DELETE",
-    });
 
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.message || "Failed to delete review");
-    }
-
-    return res.json();
-  } catch (err) {
-    console.error("Error deleting review:", err);
-    throw err;
-  }
-};

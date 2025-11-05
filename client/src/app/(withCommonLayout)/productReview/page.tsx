@@ -1,39 +1,23 @@
-import React from 'react'
-import { ContentLayout } from '../../../components/admin-panel/content-layout'
-import CreateProductReviewForm from './CreateProductReviewForm'
-import ProductReviewTable from './ProductReviewTable'
-import { getProductReviewWithPagination } from './productReviewAction';
-
-interface Props {
-    searchParams: {
-        [key: string]: string | string[] | undefined;
-    };
-}
-
-export default async function ProductReviewpage({ searchParams }: Props) {
-    const page = Array.isArray(searchParams.page)
-        ? searchParams.page[0]
-        : searchParams.page || "1";
-    const limit = Array.isArray(searchParams.limit)
-        ? searchParams.limit[0]
-        : searchParams.limit || "10";
-
-    const { data } = await getProductReviewWithPagination({ page: 1, limit: 100 })
-
-    console.log(data);
+import NavBar from "@/components/pages/header/NavBar/NavBar";
+import { getProductReviewWithPagination } from "./productReviewAction";
+import { getCartProducts } from "@/services/cart";
+import { getUser } from "@/services/auth";
 
 
-    return (
-        <ContentLayout title="Product">
-            <ProductReviewTable
-                data={data.result}
-                pagination={{
-                    page: parseInt(page),
-                    limit: parseInt(limit),
-                    total: data.pagination.total,
-                }}
-            />
+export default async function ProductReviewsPage() {
+  const user = await getUser();
+  const userRef = user?.id;
+  const coupon = "";
+  const userCartProducts = await getCartProducts(userRef, coupon);
+  const { data } = await getProductReviewWithPagination("1", "100");
 
-        </ContentLayout>
-    )
+  return (
+    <>
+      <NavBar userCartProducts={userCartProducts?.data} />
+      <div className="min-h-screen py-12 px-4 md:px-8 lg:px-16">
+        <div className="max-w-6xl mx-auto">
+        </div>
+      </div>
+    </>
+  );
 }
