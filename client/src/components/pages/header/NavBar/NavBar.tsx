@@ -6,21 +6,26 @@ import logo from "@/assets/logo/KWoodMart.jpeg";
 import { menuList } from "@/utilits/menuList";
 import Link from "next/link";
 import { BsCart2 } from "react-icons/bs";
-import { FiUser } from "react-icons/fi";
+import { FiMenu, FiUser, FiX } from "react-icons/fi";
 import DropDownMenu from "../DropDownMenu/DropDownMenu";
 import { AnimatePresence, motion } from "framer-motion";
 import ResponsiveSearchForm from "../ResponsiveSearchForm/ResponsiveSearchForm";
 import ResponsiveNavSidBar from "../ResponsiveNavSidBar/ResponsiveNavSidBar";
 import "../NavBar/NavBar.css";
+import { HiMenuAlt3, HiX } from "react-icons/hi";
 
-import { getCurtainsSubCategory, getFurnitureSubCategory } from "@/services/shopSidebar";
+import {
+  getCurtainsSubCategory,
+  getFurnitureSubCategory,
+} from "@/services/shopSidebar";
 // import { getCartProducts } from "@/services/cart";
 import { getUser, setCorrelation } from "@/services/auth";
 
 import UserPopover from "@/shared/UserPopover/UserPopover";
 import { TUser } from "@/types";
 import { usePathname } from "next/navigation";
-import { RiCloseFill, RiMenuAddFill } from "react-icons/ri";
+import { MdClose, MdMenu } from "react-icons/md";
+import { Menu, X } from "lucide-react";
 
 // import { useCartRefresh } from "@/context/CartRefreshContext";
 
@@ -99,7 +104,6 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     setCorrelationAsync();
   }, []);
 
-
   // Helper function to get correct sidebar data
   const getSidebarData = (menuTitle: string) => {
     if (menuTitle === "Furniture") return furnitureSubCategory;
@@ -107,12 +111,13 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     return null;
   };
 
-
   return (
     <>
+      {/* Desktop Navbar */}
       <div
-        className={`hidden lg:block w-full py-6 z-40  bg-white transition-all duration-300 fixed top-0 ${isScrolled ? "shadow" : " relative "
-          }`}
+        className={`hidden lg:block w-full py-6 z-50 transition-all duration-300 fixed top-0 ${
+          isScrolled ? "shadow bg-white" : "bg-transparent text-white"
+        }`}
       >
         <div className="px-4 md:px-6 lg:px-8">
           <div className="flex items-center justify-between relative">
@@ -144,8 +149,9 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                   >
                     <Link href={menu.link}>
                       <li
-                        className={`list-none py-4 hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${index === menuList.length - 1 ? "" : ""
-                          }`}
+                        className={`list-none py-4 hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${
+                          index === menuList.length - 1 ? "" : ""
+                        }`}
                       >
                         {menu.title}
                       </li>
@@ -194,33 +200,21 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
           </div>
         </div>
       </div>
-
+      {/* md and Mobile Navbar */}
       <div
-        className={`py-3 px-4 shadow-md border border-gray-200 fixed w-full z-30 top-0 bg-white transition-all duration-300 lg:hidden `}
+        className={`bg-white z-50 px-4 shadow-md border border-gray-200 fixed w-full top-0 transition-all duration-300 lg:hidden `}
       >
         <div className="">
           <div className="flex items-center justify-between relative">
             <div className="flex space-x-3 lg:gap-0 gap-2">
-              <div
-                onClick={() => setShowSideMenu(!showSideMenu)}
-                className={`pr-3  border-gray-300 cursor-pointer mt-6 ${isShopPage ? "lg:hidden" : "lg:block"
-                  }`}
-              >
-                {showSideMenu ? (
-                  <RiCloseFill className="text-2xl" />
-                ) : (
-                  <RiMenuAddFill className="text-2xl" />
-                )}
-              </div>
-
-              <div className="w-[80px]">
+              <div className="w-[70px]">
                 <Link href="/">
                   <Image
                     src={logo || null}
                     alt="K Wood Mart"
                     width={100}
-                    height={80}
-                    className="w-full h-full"
+                    height={60}
+                    className="w-full h-full rounded-full py-1"
                   />
                 </Link>
               </div>
@@ -251,18 +245,28 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                     </Link>
                   )}
                 </div>
+                <div
+                  onClick={() => setShowSideMenu(!showSideMenu)}
+                  className={`-ml-1.5 border-gray-300 cursor-pointer ${
+                    isShopPage ? "lg:hidden" : "lg:block"
+                  }`}
+                >
+                  {showSideMenu ? (
+                    <X className="w-12 h-12" />
+                  ) : (
+                    <Menu className="w-12 h-12" />
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
       <AnimatePresence>
         {showSearch && (
           <ResponsiveSearchForm onClose={() => setShowSearch(false)} />
         )}
       </AnimatePresence>
-
       <AnimatePresence>
         {showSideMenu && (
           <ResponsiveNavSidBar

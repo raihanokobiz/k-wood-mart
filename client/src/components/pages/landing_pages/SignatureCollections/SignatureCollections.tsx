@@ -23,7 +23,7 @@ export default function SignatureCollections() {
   ];
 
   return (
-    <section className="py-4 md:px-6 lg:px-8">
+    <section className="Container">
       <h2
         className=" text-[#ed1c24] text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-light text-center mb-6"
         style={{ fontFamily: "Georgia, serif" }}

@@ -65,7 +65,7 @@ export default function NewsUpdates() {
     };
 
     return (
-        <section className="pb-4 md:px-6 lg:px-8">
+        <section className="Container">
             {/* Section Title */}
             <div className="text-center mb-8">
                 <h2

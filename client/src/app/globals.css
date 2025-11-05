@@ -8,23 +8,23 @@ body {
 
 @layer base {
   .Container {
-    @apply 2xl:px-28 xl:px-20 lg:px-10 md:px-10 px-4;
+    @apply py-6 md:py-8 2xl:py-12 px-4 md:px-6 lg:px-8 2xl:px-12;
   }
 
   .text-primary {
-    @apply text-[#1C3E92]
+    @apply text-[#1C3E92];
   }
 
   .bg-primary {
-    @apply bg-[#1C3E92]
+    @apply bg-[#1C3E92];
   }
 
   .text-secondary {
-    @apply text-[#ed1c24]
+    @apply text-[#ed1c24];
   }
 
   .bg-secondary {
-    @apply bg-[#5772B3]
+    @apply bg-[#5772B3];
   }
 
   .button-primary {
@@ -50,13 +50,13 @@ body {
 }
 
 .custom-scroll::-webkit-scrollbar-thumb {
-  background-color: #D4A373;
+  background-color: #d4a373;
   border-radius: 4px;
   max-height: 50px;
 }
 
 .custom-scroll::-webkit-scrollbar-track {
-  background: #CCD5AE;
+  background: #ccd5ae;
   border-radius: 4px;
 }
 
@@ -70,7 +70,6 @@ body {
   cursor: crosshair;
 }
 
-
 .spinner {
   position: absolute;
   width: 9px;
@@ -82,7 +81,8 @@ body {
   width: 50%;
   height: 150%;
   background: #000000;
-  transform: rotate(calc(var(--rotation) * 1deg)) translate(0, calc(var(--translation) * 1%));
+  transform: rotate(calc(var(--rotation) * 1deg))
+    translate(0, calc(var(--translation) * 1%));
   animation: spinner-fzua35 1s calc(var(--delay) * 1s) infinite ease;
 }
 
@@ -147,7 +147,6 @@ body {
 }
 
 @keyframes spinner-fzua35 {
-
   0%,
   10%,
   20%,
@@ -158,10 +157,12 @@ body {
   80%,
   90%,
   100% {
-    transform: rotate(calc(var(--rotation) * 1deg)) translate(0, calc(var(--translation) * 1%));
+    transform: rotate(calc(var(--rotation) * 1deg))
+      translate(0, calc(var(--translation) * 1%));
   }
 
   50% {
-    transform: rotate(calc(var(--rotation) * 1deg)) translate(0, calc(var(--translation) * 1.5%));
+    transform: rotate(calc(var(--rotation) * 1deg))
+      translate(0, calc(var(--translation) * 1.5%));
   }
 }

@@ -4,9 +4,8 @@ import { useState } from "react";
 
 export default function FurnitureShowcaseFull() {
   const [startTableAnimation, setStartTableAnimation] = useState(false);
-
   return (
-    <div className="relative w-full min-h-screen overflow-hidden grid grid-cols-1 md:grid-cols-2 mb-12">
+    <div className=" relative w-full min-h-screen overflow-hidden grid grid-cols-1 md:grid-cols-2 ">
       {/* Left Image - Chair */}
       <motion.div
         className="relative w-full h-screen"
@@ -48,7 +47,6 @@ export default function FurnitureShowcaseFull() {
           <p className="text-2xl font-bold text-red-600">৳12,999</p>
         </motion.div>
       </motion.div>
-
       {/* Right Image - Table */}
       <motion.div
         className="relative w-full h-screen"
@@ -67,7 +65,9 @@ export default function FurnitureShowcaseFull() {
         {/* Text */}
         <motion.div
           initial={{ opacity: 0, y: -50 }}
-          animate={startTableAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: -50 }}
+          animate={
+            startTableAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: -50 }
+          }
           transition={{ delay: 0.5, duration: 1 }}
           className="absolute top-1/4 right-1/4 text-right"
         >
@@ -81,7 +81,11 @@ export default function FurnitureShowcaseFull() {
         {/* Price */}
         <motion.div
           initial={{ opacity: 0, scale: 0 }}
-          animate={startTableAnimation ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
+          animate={
+            startTableAnimation
+              ? { opacity: 1, scale: 1 }
+              : { opacity: 0, scale: 0 }
+          }
           transition={{ delay: 1, duration: 0.5 }}
           className="absolute bottom-12 right-12 bg-red-100/30 backdrop-blur-md px-6 py-3 rounded-full border border-red-200"
         >
@@ -89,7 +93,6 @@ export default function FurnitureShowcaseFull() {
           <p className="text-2xl font-bold text-red-600">৳24,999</p>
         </motion.div>
       </motion.div>
-
       {/* Bottom CTA */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}

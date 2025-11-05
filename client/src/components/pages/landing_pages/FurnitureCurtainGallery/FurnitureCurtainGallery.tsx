@@ -2,18 +2,8 @@ import React from 'react';
 
 export default function FurnitureCurtainGallery() {
   return (
-    <section className=" py-8 md:py-12 lg:py-16 px-4 md:px-6 lg:px-8">
+    <section className="pb-6 md:pb-8 2xl:pb-12 px-4 md:px-6 lg:px-8 2xl:px-12">
       <div className=" mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Our Collection
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover premium furniture and elegant curtains to transform your living space
-          </p>
-        </div>
-
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Left Column - Single Large Image */}
@@ -66,11 +56,11 @@ export default function FurnitureCurtainGallery() {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center mt-12">
+        {/* <div className="text-center mt-12">
           <button className="bg-red-500 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
             Explore Our Collection
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

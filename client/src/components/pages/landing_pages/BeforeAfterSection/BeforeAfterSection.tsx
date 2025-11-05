@@ -6,9 +6,8 @@ import A1 from "../../../../assets/beforeAfter/A1.jpg";
 
 export default function BeforeAfterSection() {
   const router = useRouter();
-
   return (
-    <section className="pb-8 py-12 md:px-6 lg:px-8">
+    <section className="Container">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Furniture Section (After) */}
         <div

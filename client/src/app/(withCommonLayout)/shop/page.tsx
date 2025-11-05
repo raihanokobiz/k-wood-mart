@@ -43,7 +43,6 @@ export default async function ShopPage({
     ? params.brand[0]
     : params.brand || "";
 
-
   const minPrice = params.minPrice ? Number(params.minPrice) : undefined;
   const maxPrice = params.maxPrice ? Number(params.maxPrice) : undefined;
 
@@ -78,7 +77,7 @@ export default async function ShopPage({
             products={products.result}
             pagination={products.pagination}
             categorySlug={categorySlug}
-            subCategorySlug={subCategorySlug} 
+            subCategorySlug={subCategorySlug}
             childCategorySlug={childCategorySlug}
             brand={brand}
           />

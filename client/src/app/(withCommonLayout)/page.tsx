@@ -70,12 +70,12 @@ const page = async () => {
         <SignatureCollections />
         <BeforeAfterSection />
         <NewArrivals />
-        <FurnitureCurtainGallery/>
+        <FurnitureCurtainGallery />
         <FeaturedProducts />
         {/* <Category /> */}
-        <FurnitureDemo/>
+        <FurnitureDemo />
         <WhyChooseUs />
-        <NewsUpdates />
+        {/* <NewsUpdates /> */}
         {/* <BestSelling products={bestSelling} /> */}
         {/* <Newest products={allproducts} /> */}
         {/* <DiscountProduct products={productWithDiscount} /> */}
