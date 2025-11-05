@@ -48,7 +48,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
     <div>
       <div className="relative flex justify-center">
         {/* Main image preview (Zoomable) */}
-        <div className="w-full  max-w-[320px] sm:max-w-[590px] h-full md:h-auto rounded overflow-hidden">
+        <div className="w-full  h-full md:h-auto rounded overflow-hidden">
           <Swiper
             modules={[Navigation]}
             // navigation
@@ -112,25 +112,26 @@ const ProductDetailsSlide: React.FC<Props> = ({
         </div> */}
       </div>
 
-      <div className="overflow-x-auto scrollbar-none  px-2">
-        <div className="flex gap-4  min-w-fit p-2 rounded">
+      <div className="overflow-x-auto scrollbar-none mt-4">
+        <div className="flex gap-4  min-w-fit py-2 rounded">
           {allImages.map((img, index) => (
             <div
               key={index}
               onClick={() => handleThumbnailClick(index)}
-              className="cursor-pointer border-2 rounded transition-all duration-200 hover:border-black"
+              className="cursor-pointer rounded transition-all duration-200"
               style={{
                 borderColor:
                   selectedImageIndex === index ? "#000" : "transparent",
               }}
             >
-              <Image
-                src={apiBaseUrl + img}
-                alt={`Thumbnail ${index}`}
-                width={120}
-                height={120}
-                className="rounded"
-              />
+              <div className="w-[170px] h-[120px] relative">
+                <Image
+                  src={apiBaseUrl + img}
+                  alt={`Thumbnail ${index}`}
+                  fill
+                  className="rounded"
+                />
+              </div>
             </div>
           ))}
         </div>

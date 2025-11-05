@@ -15,20 +15,20 @@ class ProductReviewService extends BaseService {
 
   async createProductReview(payload, payloadFiles, session) {
     const { files } = payloadFiles;
-    const { name, rating, comment, userRef, productRef } = payload;
+    const { name, comment } = payload;
     // if (!files) throw new Error("image is required");
-    const requiredFields = { name, rating, comment, userRef, productRef };
+    const requiredFields = { name, comment };
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value) throw new Error(`${key} is required`);
     }
-    const productPurchase = await this.#orderRepository.findOne({
-      userRef: payload.userRef,
-      "products.productRef": payload.productRef,
-    });
-    console.log("productPurchase", productPurchase);
-    if (!productPurchase) {
-      throw new NotFoundError("Product not purchased by user");
-    }
+    // const productPurchase = await this.#orderRepository.findOne({
+    //   userRef: payload.userRef,
+    //   "products.productRef": payload.productRef,
+    // });
+    // console.log("productPurchase", productPurchase);
+    // if (!productPurchase) {
+    //   throw new NotFoundError("Product not purchased by user");
+    // }
 
     if (files?.length) {
       const images = await ImgUploader(files);

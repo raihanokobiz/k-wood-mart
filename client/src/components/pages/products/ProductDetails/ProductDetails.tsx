@@ -125,7 +125,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
   };
 
   return (
-    <div className="Container  py-8 min-h-100 lg:mt-0 mt-22">
+    <div className="Container py-8 min-h-100 lg:mt-0 mt-16 md:mt-20">
       <div className="grid lg:grid-cols-2 gap-8 ">
         <ProductDetailsSlide
           controls={controls}

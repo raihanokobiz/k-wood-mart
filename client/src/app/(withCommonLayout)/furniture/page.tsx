@@ -8,7 +8,6 @@ import CartSideBar from "@/components/pages/cartSideBar/CartSideBar";
 import React from "react";
 import { Metadata } from "next";
 import NavBar from "@/components/pages/header/NavBar/NavBar";
-import Image from "next/image";
 import HatilFilterSystem from "./FilterSystem";
 
 // ... metadata এবং revalidate same থাকবে
@@ -59,10 +58,10 @@ export default async function ShopPage({
   return (
     <>
       <NavBar userCartProducts={cartProducts?.data} />
-      <div className="min-h-screen pb-8 md:pb-12 lg:pb-16 px-4 md:px-6 lg:px-8 2xl:px-12">
+      <div className="min-h-screen pb-8 md:pb-12 lg:pb-16 ">
         {/* Furniture Sub Banner - same */}
-        <div className="mb-6 md:mb-8 relative overflow-hidden h-64 md:h-80 lg:h-[400px]">
-          <div className="relative w-full h-[400px] rounded-2xl overflow-hidden">
+        <div className="mb-6 md:mb-8 relative overflow-hidden h-64 md:h-80 lg:h-[450px]">
+          <div className="relative w-full h-[450px] overflow-hidden">
             <video
               src="/F1.mp4"
               autoPlay
@@ -72,7 +71,7 @@ export default async function ShopPage({
               className="object-cover object-center w-full h-full"
             />
           </div>
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center pt-24 lg:pt-14 md:pt-28">
             <div className="text-white p-6 md:p-8 lg:p-12 max-w-2xl">
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-center">
                 Premium Furniture Collection
@@ -86,17 +85,19 @@ export default async function ShopPage({
         </div>
 
         {/* ✅ নতুন Filter System */}
-        <HatilFilterSystem
-          shopSideBar={shopSideBar}
-          products={products}
-          ShopProducts={ShopProducts}
-          ShopProductsCategories={ShopProductsCategories}
-          categorySlug={categorySlug}
-          subCategorySlug={subCategorySlug}
-          childCategorySlug={childCategorySlug}
-          brand={brand}
-        />
-        <CartSideBar cartProducts={cartProducts?.data} />
+        <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
+          <HatilFilterSystem
+            shopSideBar={shopSideBar}
+            products={products}
+            ShopProducts={ShopProducts}
+            ShopProductsCategories={ShopProductsCategories}
+            categorySlug={categorySlug}
+            subCategorySlug={subCategorySlug}
+            childCategorySlug={childCategorySlug}
+            brand={brand}
+          />
+          <CartSideBar cartProducts={cartProducts?.data} />
+        </div>
       </div>
     </>
   );

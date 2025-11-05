@@ -90,7 +90,7 @@ export default function BannerSlider2({ banners }: { banners: Banner[] }) {
             </div>
           )}
 
-          {/* 🪵 WoodMart Furniture & Curtain Style Text */}
+          {/*  WoodMart Furniture & Curtain Style Text */}
           <div className="absolute inset-0 flex items-center pt-24 lg:pt-14 md:pt-28  px-6 sm:px-12 lg:px-24">
             <div className="max-w-3xl">
               <motion.h2

@@ -3,30 +3,33 @@ const Schema = mongoose.Schema;
 
 const ProductReviewschema = new Schema(
   {
-    image: {
-      type: String,
-    },
     name: {
       type: String,
     },
-    rating: {
-      type: Number,
+    image: {
+      type: String,
+    },
+    district: {
+      type: String,
     },
     comment: {
       type: String,
     },
     status: {
       type: Boolean,
-      default: true,
+      default: false,
     },
-    userRef: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
-    },
-    productRef: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "product",
-    },
+    // rating: {
+    //   type: Number,
+    // },
+    // userRef: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "user",
+    // },
+    // productRef: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "product",
+    // },
   },
   { timestamps: true }
 );

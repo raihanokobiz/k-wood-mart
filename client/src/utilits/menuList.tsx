@@ -4,6 +4,10 @@ export const menuList = [
     link: "/",
   },
   {
+    title: "About",
+    link: "/about",
+  },
+  {
     title: "Furniture",
     link: "/furniture",
     subMenu: true,
@@ -14,15 +18,11 @@ export const menuList = [
     subMenu: true,
   },
   {
-    title: "About",
-    link: "/about",
-  },
-  {
     title: "Blogs",
     link: "/blogs",
   },
   {
-    title: "Contact",
+    title: "Contact Us",
     link: "/contact",
   },
   // {

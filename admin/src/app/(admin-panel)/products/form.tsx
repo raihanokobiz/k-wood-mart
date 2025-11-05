@@ -635,7 +635,7 @@ export const CreateProductForm: React.FC = () => {
           </div>
 
           {/* Image */}
-          <div className="col-span-1 grid grid-cols-2">
+          <div className="col-span-1 min-h-[500px] grid grid-cols-2">
             <div className="">
               <Label>
                 Thumbnail Image (Max 1 File) <b className="text-red-500">*</b>
@@ -650,7 +650,6 @@ export const CreateProductForm: React.FC = () => {
                       beforeUpload={() => false}
                       fileList={thumbnailFileList}
                       onChange={handleThumbnailFileChange}
-                      multiple={false}
                     >
                       <div>
                         <UploadOutlined />
@@ -682,11 +681,59 @@ export const CreateProductForm: React.FC = () => {
                     </div>
                   ))}
               </div>
-
               <div className="text-red-400 text-xs min-h-4">
                 {form.formState.errors.thumbnailImage?.message}
               </div>
             </div>
+            <div className="">
+              <Label>Backview Image (Max 1 File)</Label>
+              <FormField
+                control={form.control}
+                name="backViewImage"
+                render={({ field }) => (
+                  <div>
+                    <Upload
+                      listType="picture-card"
+                      beforeUpload={() => false}
+                      fileList={backViewFileList}
+                      onChange={handleBackViewFileChange}
+                      multiple={false}
+                    >
+                      <div>
+                        <UploadOutlined />
+                        <div style={{ marginTop: 8 }}>Upload</div>
+                      </div>
+                    </Upload>
+                  </div>
+                )}
+              />
+
+              <div className="mt-4">
+                {form.getValues("backViewImage") &&
+                  form.getValues("backViewImage").length > 0 &&
+                  form.getValues("backViewImage").map((file, i) => (
+                    <div className="border-dashed border-2 rounded-lg p-2 px-3">
+                      <div
+                        key={i}
+                        className="flex flex-col gap-2 text-xs text-gray-500 justify-center h-full"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Paperclip className="h-4 w-4 stroke-current" />
+                          <span>{file.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FileUp className="h-4 w-4 stroke-current" />
+                          <span>{humanFileSize(file.size)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              <div className="text-red-400 text-xs min-h-4">
+                {form.formState.errors.backViewImage?.message}
+              </div>
+            </div>{" "}
             <div className="">
               <Label>Optional Images</Label>
               <FormField
@@ -735,6 +782,55 @@ export const CreateProductForm: React.FC = () => {
                 {form.formState.errors.images?.message}
               </div>
             </div>
+            {/* <div className="">
+              <Label>Size Chart Image (Max 1 File) </Label>
+              <FormField
+                control={form.control}
+                name="sizeChartImage"
+                render={({ field }) => (
+                  <div>
+                    <Upload
+                      listType="picture-card"
+                      beforeUpload={() => false}
+                      fileList={sizeChartFileList}
+                      onChange={handleSizeChartFileChange}
+                      multiple={false}
+                    >
+                      <div>
+                        <UploadOutlined />
+                        <div style={{ marginTop: 8 }}>Upload</div>
+                      </div>
+                    </Upload>
+                  </div>
+                )}
+              />
+
+              <div className="mt-4">
+                {form.getValues("sizeChartImage") &&
+                  form.getValues("sizeChartImage").length > 0 &&
+                  form.getValues("sizeChartImage").map((file, i) => (
+                    <div className="border-dashed border-2 rounded-lg p-2 px-3">
+                      <div
+                        key={i}
+                        className="flex flex-col gap-2 text-xs text-gray-500 justify-center h-full"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Paperclip className="h-4 w-4 stroke-current" />
+                          <span>{file.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FileUp className="h-4 w-4 stroke-current" />
+                          <span>{humanFileSize(file.size)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              <div className="text-red-400 text-xs min-h-4">
+                {form.formState.errors.sizeChartImage?.message}
+              </div>
+            </div> */}
           </div>
         </form>
       </Form>

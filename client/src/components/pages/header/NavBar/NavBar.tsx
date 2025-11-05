@@ -12,7 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ResponsiveSearchForm from "../ResponsiveSearchForm/ResponsiveSearchForm";
 import ResponsiveNavSidBar from "../ResponsiveNavSidBar/ResponsiveNavSidBar";
 import "../NavBar/NavBar.css";
-import { HiMenuAlt3, HiX } from "react-icons/hi";
+import Logo from "../../../../assets/logo/Logo.png"
 
 import {
   getCurtainsSubCategory,
@@ -111,28 +111,42 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     return null;
   };
 
+
+  const pagesWithWhiteBg = [
+    "/product/",
+    "/contact",
+    "/blogs",
+    "/about",
+    "/shop",
+    "/cart",
+    "/login",
+    "/register"
+  ]
+
+  const shouldHaveWhiteBg = pagesWithWhiteBg.some(page => pathname.startsWith(page));
+
   return (
     <>
       {/* Desktop Navbar */}
       <div
-        className={`hidden lg:block w-full py-6 z-50 transition-all duration-300 fixed top-0 ${
-          isScrolled ? "shadow bg-white" : "bg-transparent text-white"
-        }`}
+        className={`hidden lg:block w-full py-2 z-50 transition-all duration-300 fixed top-0 ${isScrolled || shouldHaveWhiteBg
+          ? "shadow bg-white text-black"
+          : "bg-transparent text-white"
+          }`}
       >
-        <div className="px-4 md:px-6 lg:px-8">
+        <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
           <div className="flex items-center justify-between relative">
             <div>
               <div className="flex items-center lg:gap-0 gap-2">
                 <div className="w-[80px]">
                   <Link href="/">
-                    {/* <Image
-                      src={logo || null}
+                    <Image
+                      src={Logo || null}
                       alt="K Wood Mart | Best E-commerce platform in BD"
                       width={100}
                       height={80}
                       className="w-full h-full"
-                    /> */}
-                    LOGO
+                    />
                   </Link>
                 </div>
               </div>
@@ -149,9 +163,8 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                   >
                     <Link href={menu.link}>
                       <li
-                        className={`list-none py-4 hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${
-                          index === menuList.length - 1 ? "" : ""
-                        }`}
+                        className={`list-none py-4 text-2xl hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${index === menuList.length - 1 ? "" : ""
+                          }`}
                       >
                         {menu.title}
                       </li>
@@ -247,9 +260,8 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                 </div>
                 <div
                   onClick={() => setShowSideMenu(!showSideMenu)}
-                  className={`-ml-1.5 border-gray-300 cursor-pointer ${
-                    isShopPage ? "lg:hidden" : "lg:block"
-                  }`}
+                  className={`-ml-1.5 border-gray-300 cursor-pointer ${isShopPage ? "lg:hidden" : "lg:block"
+                    }`}
                 >
                   {showSideMenu ? (
                     <X className="w-12 h-12" />

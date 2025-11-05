@@ -10,10 +10,11 @@ class ProductReviewController {
     };
     const payload = {
       name: req?.body?.name,
-      rating: req?.body?.rating,
+      district: req?.body?.district,
       comment: req?.body?.comment,
-      userRef: req?.body?.userRef,
-      productRef: req?.body?.productRef,
+      // rating: req?.body?.rating,
+      // userRef: req?.body?.userRef,
+      // productRef: req?.body?.productRef,
     };
     const productReviewResult = await ProductReviewService.createProductReview(
       payload,
@@ -55,21 +56,25 @@ class ProductReviewController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  getProductReviewWithPaginationForClient = catchError(async (req, res, next) => {
-    let payload = {
-      page: req.query.page,
-      limit: req.query.limit,
-      order: req.query.order,
-    };
-    const productReview =
-      await ProductReviewService.getProductReviewWithPaginationForClient(payload);
-    const resDoc = responseHandler(
-      200,
-      "ProductReviews get successfully",
-      productReview
-    );
-    res.status(resDoc.statusCode).json(resDoc);
-  });
+  getProductReviewWithPaginationForClient = catchError(
+    async (req, res, next) => {
+      let payload = {
+        page: req.query.page,
+        limit: req.query.limit,
+        order: req.query.order,
+      };
+      const productReview =
+        await ProductReviewService.getProductReviewWithPaginationForClient(
+          payload
+        );
+      const resDoc = responseHandler(
+        200,
+        "ProductReviews get successfully",
+        productReview
+      );
+      res.status(resDoc.statusCode).json(resDoc);
+    }
+  );
 
   getSingleProductReview = catchError(async (req, res, next) => {
     const id = req.params.id;
@@ -92,8 +97,8 @@ class ProductReviewController {
     const { rating, comment, userRef, productRef } = req.body;
     console.log("rating", req.body);
     const payload = {
-      rating,
       comment,
+      rating,
       userRef,
       productRef,
     };

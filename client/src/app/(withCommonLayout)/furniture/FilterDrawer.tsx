@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface TBrand {
@@ -35,13 +36,19 @@ export const FilterDrawer = ({
     categories,
     brands,
     priceRange,
+    setPriceRange,
     selectedFilters,
+    setSelectedFilters,
     onFilterChange,
     onPriceChange,
 }: any) => {
-    const [localPriceRange, setLocalPriceRange] = useState(priceRange);
+    const [localPriceRange, setLocalPriceRange] = useState<[number | "", number | ""]>([
+        priceRange?.[0] ?? 0,
+        priceRange?.[1] ?? 10000,
+    ]);
     const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
     const [expandedSubCategories, setExpandedSubCategories] = useState<string[]>([]);
+    const router = useRouter();
 
     const toggleCategory = (slug: string) => {
         setExpandedCategories((prev) =>
@@ -93,9 +100,10 @@ export const FilterDrawer = ({
                                     <input
                                         type="number"
                                         value={localPriceRange[0]}
-                                        onChange={(e) =>
-                                            setLocalPriceRange([Number(e.target.value), localPriceRange[1]])
-                                        }
+                                        onChange={(e) => {
+                                            const value = e.target.value === "" ? "" : Number(e.target.value);
+                                            setLocalPriceRange([value, localPriceRange[1]]);
+                                        }}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brown-500"
                                     />
                                 </div>
@@ -213,7 +221,14 @@ export const FilterDrawer = ({
                         </button>
                         <button
                             onClick={() => {
-                                // Clear all filters logic here
+                                setSelectedFilters({
+                                    categories: [],
+                                    subCategories: [],
+                                    childCategories: [],
+                                    brands: [],
+                                });
+                                setPriceRange([0, 10000]);
+                                router.push('/furniture');
                                 onClose();
                             }}
                             className="bg-red-500 text-white cursor-pointer w-full border border-brown-600 text-brown-600 py-3 rounded-lg font-semibold hover:bg-brown-50 transition"

@@ -36,9 +36,11 @@ const Page = async ({ params }: PageProps) => {
   return (
     <div>
       <NavBar userCartProducts={userCartProducts?.data} />
+      <div className="lg:pt-24">
       <ProductDetails product={product} />
       {/* <ProductReview userRef={userRef} productRef={productId} /> */}
       <ReletiveProducts relativeProducts={relativeProducts} />
+      </div>
     </div>
   );
 };

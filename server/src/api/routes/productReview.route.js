@@ -14,6 +14,7 @@ ProductReviewRoute.get(
   "/pagination",
   controller.getProductReviewWithPagination
 );
+
 ProductReviewRoute.get(
   "/client/pagination",
   controller.getProductReviewWithPaginationForClient

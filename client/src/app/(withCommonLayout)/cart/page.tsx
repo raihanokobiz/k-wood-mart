@@ -22,12 +22,11 @@ const Cart = async () => {
   const coupon = "";
   const products = await getCartProducts(userId, coupon);
 
-  console.log("----checking for quintity-----", products);
 
   return (
     <>
       <NavBar userCartProducts={products?.data} />
-      <div className="Container w-full mx-auto  md:px-20 xl:px-60 2xl:px-60 lg:mt-0 mt-22">
+      <div className="Container w-full mx-auto  md:px-20 xl:px-60 2xl:px-60 mt-22">
         <div className="hidden lg:block">
           <h2 className="font-bold md:text-3xl text-xl text-center py-8">
             Your Cart
@@ -82,10 +81,10 @@ const Cart = async () => {
 
                     {product?.inventory?.price !==
                       product?.inventory?.mrpPrice && (
-                      <p className="text-red-600 line-through">
-                        ৳ {product?.inventory?.mrpPrice}
-                      </p>
-                    )}
+                        <p className="text-red-600 line-through">
+                          ৳ {product?.inventory?.mrpPrice}
+                        </p>
+                      )}
                   </div>
 
                   {/* Size */}
@@ -169,10 +168,10 @@ const Cart = async () => {
                         <p>৳ {product?.inventory?.price}</p>
                         {product?.inventory?.price !==
                           product?.inventory?.mrpPrice && (
-                          <p className="text-red-600 line-through">
-                            ৳ {product?.inventory?.mrpPrice}
-                          </p>
-                        )}
+                            <p className="text-red-600 line-through">
+                              ৳ {product?.inventory?.mrpPrice}
+                            </p>
+                          )}
                       </div>
                     </div>
 
@@ -238,7 +237,7 @@ const Cart = async () => {
         <div className="bg-[#F6F6F6] text-gray-600 rounded text-center py-5 px-8 my-5">
           <span>
             * If you wish to make a bulk order, please call us at{" "}
-            <span className="font-bold text-black">+8801735775093</span> or
+            <span className="font-bold text-black">+01712044438</span> or
             email at{" "}
             <span className="font-bold text-black">k............@gmail.com</span> for
             more information.

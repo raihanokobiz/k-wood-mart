@@ -41,10 +41,9 @@ export default function FurnitureShowcaseFull() {
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
-          className="absolute bottom-12 left-12 bg-red-100/30 backdrop-blur-md px-6 py-3 rounded-full border border-red-200"
+          className="absolute bottom-12 left-12 bg-white/20 backdrop-blur-md px-8 py-4 rounded-full border border-white/30"
         >
-          <p className="text-sm text-white">Starting from</p>
-          <p className="text-2xl font-bold text-red-600">৳12,999</p>
+          <p className="text-lg font-semibold text-white">Modern Collection</p>
         </motion.div>
       </motion.div>
       {/* Right Image - Table */}
@@ -81,20 +80,15 @@ export default function FurnitureShowcaseFull() {
         {/* Price */}
         <motion.div
           initial={{ opacity: 0, scale: 0 }}
-          animate={
-            startTableAnimation
-              ? { opacity: 1, scale: 1 }
-              : { opacity: 0, scale: 0 }
-          }
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
-          className="absolute bottom-12 right-12 bg-red-100/30 backdrop-blur-md px-6 py-3 rounded-full border border-red-200"
+          className="absolute bottom-12 right-12 bg-white/20 backdrop-blur-md px-8 py-4 rounded-full border border-white/30"
         >
-          <p className="text-sm text-white">Starting from</p>
-          <p className="text-2xl font-bold text-red-600">৳24,999</p>
+          <p className="text-lg font-semibold text-white">Modern Collection</p>
         </motion.div>
       </motion.div>
       {/* Bottom CTA */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2, duration: 0.8 }}
@@ -103,7 +97,7 @@ export default function FurnitureShowcaseFull() {
         <button className="bg-red-600 hover:bg-red-700 text-white px-12 py-4 rounded-full font-semibold text-lg shadow-lg transition-all duration-300 hover:scale-105">
           Explore Collection
         </button>
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 }

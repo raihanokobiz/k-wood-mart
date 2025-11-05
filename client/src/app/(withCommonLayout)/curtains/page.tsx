@@ -39,7 +39,7 @@ export default async function ShopPage({
     minPrice,
     maxPrice,
   });
-  
+
 
   const user = await getUser();
   const userId = user?.id;
@@ -49,40 +49,46 @@ export default async function ShopPage({
   return (
     <>
       <NavBar userCartProducts={cartProducts?.data} />
-      <div className="min-h-screen pb-8 md:pb-12 lg:pb-16 px-4 md:px-6 lg:px-8 2xl:px-12">
+      <div className="min-h-screen pb-8 md:pb-12 lg:pb-16">
         {/* Furniture Sub Banner - same */}
-        <div className="mb-6 md:mb-8 relative overflow-hidden h-64 md:h-80 lg:h-[400px]">
-          <Image
-            src="https://cdn.pixabay.com/photo/2024/08/01/06/22/ai-generated-8936264_640.jpg"
-            alt="Premium Furniture"
-            fill
-            className="object-cover object-center w-full h-full"
-            priority
-          />
+        <div className="mb-6 md:mb-8 relative overflow-hidden h-64 md:h-80 lg:h-[450px]">
+          <div className="relative w-full h-[450px] overflow-hidden">
+            <video
+              src="/C1.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="object-cover object-center w-full h-full"
+            />
+            <div className="absolute inset-0 bg-black/40 bg-opacity-50"></div>
+          </div>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-white p-6 md:p-8 lg:p-12 max-w-2xl">
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-center">
-                Premium Furniture Collection
+                Elegant Curtains Collection
               </h2>
               <p className="text-sm md:text-base lg:text-lg text-center">
-                Discover handcrafted wooden furniture that brings warmth and elegance to your home
+                Explore our exclusive range of premium curtains crafted to enhance your home’s beauty — from modern designs to classic drapes, find the perfect touch of elegance for every room.
               </p>
             </div>
           </div>
         </div>
 
         {/* ✅ নতুন Filter System */}
-        <HatilFilterSystem
-          shopSideBar={shopSideBar}
-          products={products}
-          ShopProducts={ShopProducts}
-          ShopProductsCategories={ShopProductsCategories}
-          categorySlug={categorySlug}
-          subCategorySlug={subCategorySlug}
-          childCategorySlug={childCategorySlug}
-          brand={brand}
-        />
-        <CartSideBar cartProducts={cartProducts?.data} />
+        <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
+          <HatilFilterSystem
+            shopSideBar={shopSideBar}
+            products={products}
+            ShopProducts={ShopProducts}
+            ShopProductsCategories={ShopProductsCategories}
+            categorySlug={categorySlug}
+            subCategorySlug={subCategorySlug}
+            childCategorySlug={childCategorySlug}
+            brand={brand}
+          />
+          <CartSideBar cartProducts={cartProducts?.data} />
+        </div>
       </div>
     </>
   );
