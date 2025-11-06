@@ -19,23 +19,5 @@ export const getProductReviewWithPagination = async (
   }
 };
 
-export const addProductReview = async (formData: FormData) => {
-  try {
-    const res = await fetch(`${apiBaseUrl}/product-review`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.message || "Failed to add review");
-    }
-
-    return res.json();
-  } catch (err) {
-    console.error("Error adding review:", err);
-    throw err;
-  }
-};
 
 

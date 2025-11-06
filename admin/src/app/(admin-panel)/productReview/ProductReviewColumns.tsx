@@ -148,22 +148,22 @@ export const createProductReviewColumns = (
     header: "District",
     cell: ({ row }) => row.original.district || "-",
   },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const isApproved = row.original.status;
-      return (
-        <Badge
-          className={`${
-            isApproved ? "bg-green-500" : "bg-yellow-500"
-          } text-white px-3 py-1 rounded-full`}
-        >
-          {isApproved ? "Accepted" : "Pending"}
-        </Badge>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "status",
+  //   header: "Status",
+  //   cell: ({ row }) => {
+  //     const isApproved = row.original.status;
+  //     return (
+  //       <Badge
+  //         className={`${
+  //           isApproved ? "bg-green-500" : "bg-yellow-500"
+  //         } text-white px-3 py-1 rounded-full`}
+  //       >
+  //         {isApproved ? "Accepted" : "Pending"}
+  //       </Badge>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "createdAt",
     header: "Date",
