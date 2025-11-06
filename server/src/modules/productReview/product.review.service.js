@@ -15,9 +15,10 @@ class ProductReviewService extends BaseService {
 
   async createProductReview(payload, payloadFiles, session) {
     const { files } = payloadFiles;
-    const { name, comment } = payload;
+    const { name } = payload;
+
     // if (!files) throw new Error("image is required");
-    const requiredFields = { name, comment };
+    const requiredFields = { name };
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value) throw new Error(`${key} is required`);
     }
@@ -30,12 +31,12 @@ class ProductReviewService extends BaseService {
     //   throw new NotFoundError("Product not purchased by user");
     // }
 
-    if (files?.length) {
-      const images = await ImgUploader(files);
-      for (const key in images) {
-        payload[key] = images[key];
-      }
-    }
+    // if (files?.length) {
+    //   const images = await ImgUploader(files);
+    //   for (const key in images) {
+    //     payload[key] = images[key];
+    //   }
+    // }
 
     const productReviewData = await this.#repository.createProductReview(
       payload
@@ -54,11 +55,9 @@ class ProductReviewService extends BaseService {
     return productReview;
   }
 
-  
   async getProductReviewWithPaginationForClient(payload) {
-    const productReview = await this.#repository.getProductReviewWithPaginationForClient(
-      payload
-    );
+    const productReview =
+      await this.#repository.getProductReviewWithPaginationForClient(payload);
     return productReview;
   }
 
@@ -68,23 +67,10 @@ class ProductReviewService extends BaseService {
     return productReviewData;
   }
 
-  async updateProductReview(id, payload, payloadFiles, session) {
-    const { files } = payloadFiles;
-    const { rating, comment, userRef, productRef, status } = payload;
-
-    if (files?.length) {
-      const images = await ImgUploader(files);
-      for (const key in images) {
-        payload[key] = images[key];
-      }
-    }
-
+  async updateProductReview(id, payload, session) {
     const productReviewData = await this.#repository.updateById(id, payload);
     if (!productReviewData) throw new NotFoundError("ProductReview Not Find");
 
-    if (files.length && productReviewData) {
-      await removeUploadFile(productReviewData?.image);
-    }
     return productReviewData;
   }
 
@@ -104,4 +90,3 @@ module.exports = new ProductReviewService(
   orderRepository,
   "productReview"
 );
-

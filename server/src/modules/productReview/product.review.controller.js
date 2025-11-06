@@ -5,20 +5,22 @@ const ProductReviewService = require("./product.review.service.js");
 
 class ProductReviewController {
   createProductReview = withTransaction(async (req, res, next, session) => {
-    const payloadFiles = {
-      files: req.files,
-    };
+
+    // const payloadFiles = {
+    //   files: req.files,
+    // };
     const payload = {
       name: req?.body?.name,
       district: req?.body?.district,
-      comment: req?.body?.comment,
+      youtubeUrl: req?.body?.youtubeUrl,
       // rating: req?.body?.rating,
       // userRef: req?.body?.userRef,
       // productRef: req?.body?.productRef,
     };
+    console.log(payload, "ok", req.body.name);
+    
     const productReviewResult = await ProductReviewService.createProductReview(
       payload,
-      payloadFiles,
       session
     );
     const resDoc = responseHandler(
@@ -90,21 +92,19 @@ class ProductReviewController {
 
   updateProductReview = catchError(async (req, res, next) => {
     const id = req.params.id;
-    console.log("id", id);
-    const payloadFiles = {
-      files: req?.files,
-    };
-    const { rating, comment, userRef, productRef } = req.body;
-    console.log("rating", req.body);
+    // const payloadFiles = {
+    //   files: req?.files,
+    // };
+    // const { rating, comment, userRef, productRef } = req.body;
+
     const payload = {
-      comment,
-      rating,
-      userRef,
-      productRef,
+      name: req?.body?.name,
+      district: req?.body?.district,
+      youtubeUrl: req?.body?.youtubeUrl,
     };
     const productReviewResult = await ProductReviewService.updateProductReview(
       id,
-      payloadFiles,
+      // payloadFiles,
       payload
     );
     const resDoc = responseHandler(201, "ProductReview Update successfully");

@@ -1,6 +1,5 @@
 import React from 'react'
 import { ContentLayout } from '../../../components/admin-panel/content-layout'
-import CreateProductReviewForm from './CreateProductReviewForm'
 import ProductReviewTable from './ProductReviewTable'
 import { getProductReviewWithPagination } from './productReviewAction';
 
@@ -20,8 +19,6 @@ export default async function ProductReviewpage({ searchParams }: Props) {
 
     const { data } = await getProductReviewWithPagination({ page: 1, limit: 100 })
 
-    console.log(data);
-
 
     return (
         <ContentLayout title="Product">
@@ -33,7 +30,6 @@ export default async function ProductReviewpage({ searchParams }: Props) {
                     total: data.pagination.total,
                 }}
             />
-
         </ContentLayout>
     )
 }

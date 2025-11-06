@@ -1,3 +1,8 @@
+"use client";
+
+import React, { useState } from "react";
+import { X } from "lucide-react";
+
 export const ReviewFormModal = ({
   isOpen,
   onClose,
@@ -5,45 +10,29 @@ export const ReviewFormModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: FormData) => Promise<void>;
 }) => {
   const [name, setName] = useState("");
   const [district, setDistrict] = useState("");
-  const [comment, setComment] = useState("");
-  const [image, setImage] = useState<File | null>(null);
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
 
   const handleSubmit = async () => {
-    if (!name || !comment) {
-      alert("Please fill in required fields");
-      return;
-    }
 
     setLoading(true);
-
     try {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("district", district);
-      formData.append("comment", comment);
-      if (image) formData.append("image", image);
+      formData.append("youtubeUrl", youtubeUrl);
+
 
       await onSubmit(formData);
 
+      // reset form
       setName("");
       setDistrict("");
-      setComment("");
-      setImage(null);
-      setPreviewUrl(null);
+      setYoutubeUrl("");
       onClose();
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -65,7 +54,7 @@ export const ReviewFormModal = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-2xl font-bold text-black">Write a Review</h2>
+            <h2 className="text-2xl font-bold text-black">Customer Review</h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-full transition"
@@ -75,6 +64,7 @@ export const ReviewFormModal = ({
           </div>
 
           <div className="p-6 space-y-4">
+            {/* Name */}
             <div>
               <label className="block text-sm font-semibold text-black mb-2">
                 Name *
@@ -88,6 +78,7 @@ export const ReviewFormModal = ({
               />
             </div>
 
+            {/* District */}
             <div>
               <label className="block text-sm font-semibold text-black mb-2">
                 District
@@ -101,40 +92,34 @@ export const ReviewFormModal = ({
               />
             </div>
 
+            {/* YouTube Link */}
             <div>
               <label className="block text-sm font-semibold text-black mb-2">
-                Review *
-              </label>
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Share your experience..."
-                rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 resize-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-black mb-2">
-                Upload Photo (Optional)
+                YouTube Video Link
               </label>
               <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
+                type="url"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                placeholder="Enter YouTube video URL"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
               />
-              {previewUrl && (
-                <div className="mt-3">
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
-                  />
+
+              {/* Preview YouTube video */}
+              {youtubeUrl && youtubeUrl.includes("youtube.com") && (
+                <div className="mt-3 aspect-video">
+                  <iframe
+                    className="w-full h-full rounded-lg border-2 border-gray-200"
+                    src={youtubeUrl.replace("watch?v=", "embed/")}
+                    title="YouTube video preview"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
                 </div>
               )}
             </div>
 
+            {/* Submit Button */}
             <button
               onClick={handleSubmit}
               disabled={loading}

@@ -6,15 +6,15 @@ const ProductReviewschema = new Schema(
     name: {
       type: String,
     },
-    image: {
+    youtubeUrl: {
       type: String,
     },
     district: {
       type: String,
     },
-    comment: {
-      type: String,
-    },
+    // comment: {
+    //   type: String,
+    // },
     status: {
       type: Boolean,
       default: false,
