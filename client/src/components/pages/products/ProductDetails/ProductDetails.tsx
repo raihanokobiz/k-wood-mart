@@ -22,14 +22,78 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [level, setLevel] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [emiMonths, setEmiMonths] = useState<number | null>(null);
 
   const [levelError, setLevelError] = useState(false);
   const [colorError, setColorError] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const controls = useAnimation();
+
   const handleIncrement = () => {
     setCount((prev) => prev + 1);
+  };
+
+  const handleBuyNow = async () => {
+    const user = await getUser();
+    setLoading(true);
+    if (!user) {
+      toast.error("Please login to proceed to checkout.");
+      router.push("/login");
+      return;
+    }
+    if (
+      (inventoryType === "levelInventory" ||
+        inventoryType === "colorLevelInventory") &&
+      !selectedLevel
+    ) {
+      setLevelError(true);
+      setLoading(false);
+      return;
+    }
+
+    if (
+      (inventoryType === "colorLevelInventory" ||
+        inventoryType === "colorInventory") &&
+      !selectedColor
+    ) {
+      setColorError(true);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const productPayload: {
+        quantity: number;
+        productRef: string;
+        userRef: string | undefined;
+        inventoryRef?: string | null;
+      } = {
+        quantity: count,
+        productRef: _id,
+        userRef: user?.id,
+      };
+
+      if (inventoryType == "inventory") {
+        productPayload.inventoryRef = Array.isArray(inventoryRef)
+          ? inventoryRef[0]._id
+          : undefined;
+      } else if (inventoryType == "levelInventory") {
+        productPayload.inventoryRef = selectedLevel;
+      } else if (inventoryType == "colorInventory") {
+        productPayload.inventoryRef = selectedColor;
+      } else if (inventoryType == "colorLevelInventory") {
+        productPayload.inventoryRef = selectedColor;
+      }
+
+      await addToCart(productPayload);
+      router.push("/checkout");
+    } catch (err) {
+      console.error("Failed to proceed to checkout:", err);
+      toast.error("Failed to start checkout.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDecrement = () => {
@@ -48,7 +112,40 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     _id,
   } = product;
 
-  // const userId = "67f4c99c11813048a36a2496";
+  const currentPrice = (() => {
+    let selectedItem: any;
+    if (
+      inventoryType === "levelInventory" ||
+      inventoryType === "colorLevelInventory"
+    ) {
+      selectedItem = Array.isArray(inventoryRef)
+        ? inventoryRef.find((item) => item._id === selectedLevel)
+        : undefined;
+    } else if (inventoryType === "colorInventory") {
+      selectedItem = Array.isArray(inventoryRef)
+        ? inventoryRef.find((item) => item._id === selectedColor)
+        : undefined;
+    }
+    const fallbackItem = Array.isArray(inventoryRef)
+      ? inventoryRef[0]
+      : undefined;
+    const price = selectedItem?.price ?? fallbackItem?.price;
+    return price ? Number(price) : 0;
+  })();
+
+  const interestRates: Record<number, number> = {
+    3: 0,
+    6: 0.05,
+    9: 0.08,
+    12: 0.09,
+  };
+  const interestRate = emiMonths ? interestRates[emiMonths] ?? 0 : 0;
+  const totalPayable = emiMonths
+    ? Number((currentPrice * (1 + interestRate)).toFixed(2))
+    : 0;
+  const monthlyPayment = emiMonths
+    ? Number((totalPayable / emiMonths).toFixed(2))
+    : 0;
 
   const handleAddToCart = async () => {
     const user = await getUser();
@@ -274,6 +371,37 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
             ) : null}
           </div>
 
+          <div className="mt-4 border rounded p-4">
+            <div className="flex flex-col gap-3">
+              <h3 className={`text-base font-semibold ${rajdhani.className}`}>
+                EMI Plan
+              </h3>
+              <select
+                className="border rounded px-3 py-2 w-full"
+                value={emiMonths ?? ""}
+                onChange={(e) =>
+                  setEmiMonths(e.target.value ? Number(e.target.value) : null)
+                }
+              >
+                <option value="">Select months</option>
+                <option value="3">3 months (0% interest)</option>
+                <option value="6">6 months (5% interest)</option>
+                <option value="9">9 months (8% interest)</option>
+                <option value="12">12 months (9% interest)</option>
+              </select>
+              {emiMonths ? (
+                <div className="text-sm text-[#262626] grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="font-semibold">
+                    Monthly Payment: ৳ {monthlyPayment.toFixed(2)}
+                  </div>
+                  <div className="font-semibold">
+                    Total Payable: ৳ {totalPayable.toFixed(2)}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+
           <div className="border-b pb-4">
             <div className="mt-4 flex items-center gap-2 ">
               <div className="flex items-center justify-between border rounded px-3 py-[7px] md:w-[25%] w-[30%]">
@@ -285,7 +413,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                   <FiPlus />
                 </p>
               </div>
-              <div className="w-full cursor-pointer">
+              <div className="w-full cursor-pointer flex gap-2">
                 <button
                   onClick={handleAddToCart}
                   className="bg-[#D4A373] hover:bg-[#CCD5AE] duration-300 flex items-center gap-1 px-6 py-2.5 font-semibold text-sm  rounded text-[#fff] cursor-pointer"
@@ -295,6 +423,12 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                   </span>
 
                   <span>{loading ? "Sending..." : "Add To Cart"}</span>
+                </button>
+                <button
+                  onClick={handleBuyNow}
+                  className="bg-[#262626] hover:bg-black duration-300 px-6 py-2.5 font-semibold text-sm rounded text-white"
+                >
+                  {loading ? "Processing..." : "Buy Now"}
                 </button>
               </div>
             </div>

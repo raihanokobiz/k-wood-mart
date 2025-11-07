@@ -43,7 +43,9 @@ const FilterDrawer = ({
 }: any) => {
   const [localPriceRange, setLocalPriceRange] = useState(priceRange);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-  const [expandedSubCategories, setExpandedSubCategories] = useState<string[]>([]);
+  const [expandedSubCategories, setExpandedSubCategories] = useState<string[]>(
+    []
+  );
 
   const toggleCategory = (slug: string) => {
     setExpandedCategories((prev) =>
@@ -92,23 +94,33 @@ const FilterDrawer = ({
               <h3 className="font-semibold text-black mb-4">Price Range</h3>
               <div className="flex gap-2 mb-4">
                 <div className="flex-1">
-                  <label className="text-sm text-gray-600 mb-1 block">Min</label>
+                  <label className="text-sm text-gray-600 mb-1 block">
+                    Min
+                  </label>
                   <input
                     type="number"
                     value={localPriceRange[0]}
                     onChange={(e) =>
-                      setLocalPriceRange([Number(e.target.value), localPriceRange[1]])
+                      setLocalPriceRange([
+                        Number(e.target.value),
+                        localPriceRange[1],
+                      ])
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brown-500"
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="text-sm text-gray-600 mb-1 block">Max</label>
+                  <label className="text-sm text-gray-600 mb-1 block">
+                    Max
+                  </label>
                   <input
                     type="number"
                     value={localPriceRange[1]}
                     onChange={(e) =>
-                      setLocalPriceRange([localPriceRange[0], Number(e.target.value)])
+                      setLocalPriceRange([
+                        localPriceRange[0],
+                        Number(e.target.value),
+                      ])
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brown-500"
                   />
@@ -129,7 +141,9 @@ const FilterDrawer = ({
                       <label className="flex items-center gap-2 cursor-pointer flex-1">
                         <input
                           type="checkbox"
-                          checked={selectedFilters.categories.includes(cat.slug)}
+                          checked={selectedFilters.categories.includes(
+                            cat.slug
+                          )}
                           onChange={() => onFilterChange("category", cat.slug)}
                           className="w-4 h-4 accent-brown-600"
                         />
@@ -150,76 +164,81 @@ const FilterDrawer = ({
                     </div>
 
                     {/* Subcategories */}
-                    {expandedCategories.includes(cat.slug) && cat.subCategories && (
-                      <div className="ml-6 mt-2 space-y-2">
-                        {cat.subCategories.map((subCat: TSubCategory) => (
-                          <div key={subCat._id}>
-                            <div className="flex items-center justify-between">
-                              <label className="flex items-center gap-2 cursor-pointer flex-1">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedFilters.subCategories.includes(
-                                    subCat.slug
-                                  )}
-                                  onChange={() =>
-                                    onFilterChange("subCategory", subCat.slug)
-                                  }
-                                  className="w-4 h-4 accent-brown-600"
-                                />
-                                <span className="text-sm text-gray-700">
-                                  {subCat.name}
-                                </span>
-                              </label>
-                              {subCat.childCategories &&
-                                subCat.childCategories.length > 0 && (
-                                  <button
-                                    onClick={() => toggleSubCategory(subCat.slug)}
-                                    className="p-1"
-                                  >
-                                    {expandedSubCategories.includes(subCat.slug) ? (
-                                      <ChevronUp className="w-4 h-4" />
-                                    ) : (
-                                      <ChevronDown className="w-4 h-4" />
+                    {expandedCategories.includes(cat.slug) &&
+                      cat.subCategories && (
+                        <div className="ml-6 mt-2 space-y-2">
+                          {cat.subCategories.map((subCat: TSubCategory) => (
+                            <div key={subCat._id}>
+                              <div className="flex items-center justify-between">
+                                <label className="flex items-center gap-2 cursor-pointer flex-1">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedFilters.subCategories.includes(
+                                      subCat.slug
                                     )}
-                                  </button>
+                                    onChange={() =>
+                                      onFilterChange("subCategory", subCat.slug)
+                                    }
+                                    className="w-4 h-4 accent-brown-600"
+                                  />
+                                  <span className="text-sm text-gray-700">
+                                    {subCat.name}
+                                  </span>
+                                </label>
+                                {subCat.childCategories &&
+                                  subCat.childCategories.length > 0 && (
+                                    <button
+                                      onClick={() =>
+                                        toggleSubCategory(subCat.slug)
+                                      }
+                                      className="p-1"
+                                    >
+                                      {expandedSubCategories.includes(
+                                        subCat.slug
+                                      ) ? (
+                                        <ChevronUp className="w-4 h-4" />
+                                      ) : (
+                                        <ChevronDown className="w-4 h-4" />
+                                      )}
+                                    </button>
+                                  )}
+                              </div>
+
+                              {/* Child Categories */}
+                              {expandedSubCategories.includes(subCat.slug) &&
+                                subCat.childCategories && (
+                                  <div className="ml-6 mt-2 space-y-2">
+                                    {subCat.childCategories.map(
+                                      (childCat: TChildCategory) => (
+                                        <label
+                                          key={childCat._id}
+                                          className="flex items-center gap-2 cursor-pointer"
+                                        >
+                                          <input
+                                            type="checkbox"
+                                            checked={selectedFilters.childCategories.includes(
+                                              childCat.slug
+                                            )}
+                                            onChange={() =>
+                                              onFilterChange(
+                                                "childCategory",
+                                                childCat.slug
+                                              )
+                                            }
+                                            className="w-4 h-4 accent-brown-600"
+                                          />
+                                          <span className="text-sm text-gray-600">
+                                            {childCat.name}
+                                          </span>
+                                        </label>
+                                      )
+                                    )}
+                                  </div>
                                 )}
                             </div>
-
-                            {/* Child Categories */}
-                            {expandedSubCategories.includes(subCat.slug) &&
-                              subCat.childCategories && (
-                                <div className="ml-6 mt-2 space-y-2">
-                                  {subCat.childCategories.map(
-                                    (childCat: TChildCategory) => (
-                                      <label
-                                        key={childCat._id}
-                                        className="flex items-center gap-2 cursor-pointer"
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          checked={selectedFilters.childCategories.includes(
-                                            childCat.slug
-                                          )}
-                                          onChange={() =>
-                                            onFilterChange(
-                                              "childCategory",
-                                              childCat.slug
-                                            )
-                                          }
-                                          className="w-4 h-4 accent-brown-600"
-                                        />
-                                        <span className="text-sm text-gray-600">
-                                          {childCat.name}
-                                        </span>
-                                      </label>
-                                    )
-                                  )}
-                                </div>
-                              )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                          ))}
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>
@@ -430,7 +449,10 @@ export default function HatilFilterSystem() {
             <SlidersHorizontal className="w-5 h-5" />
             Filters
           </button>
-          <SortDropdown onSortChange={setCurrentSort} currentSort={currentSort} />
+          <SortDropdown
+            onSortChange={setCurrentSort}
+            currentSort={currentSort}
+          />
         </div>
       </div>
 
@@ -442,7 +464,10 @@ export default function HatilFilterSystem() {
             onRemove={() => {}}
             onClearAll={() => {}}
           />
-          <SortDropdown onSortChange={setCurrentSort} currentSort={currentSort} />
+          <SortDropdown
+            onSortChange={setCurrentSort}
+            currentSort={currentSort}
+          />
         </div>
 
         <div className="flex gap-6">
@@ -478,7 +503,10 @@ export default function HatilFilterSystem() {
                 >
                   <div className="bg-gray-200 h-48 rounded-lg mb-3"></div>
                   <h3 className="font-semibold text-black mb-2">Product {i}</h3>
-                  <p className="text-brown-600 font-bold" style={{ color: "#8B4513" }}>
+                  <p
+                    className="text-brown-600 font-bold"
+                    style={{ color: "#8B4513" }}
+                  >
                     ৳ 12,500
                   </p>
                 </div>
