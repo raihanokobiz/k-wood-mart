@@ -112,16 +112,9 @@ class ProductController {
   });
 
   getAllProductForHomePage = catchError(async (req, res) => {
-    const payload = {
-      limit: req.query.limit,
-      viewType: req.query.viewType,
-    };
-    const productResult = await ProductService.getAllProductForHomePage(
-      payload
-    );
+    const productResult = await ProductService.getAllProductForHomePage();
     const data = {
       result: productResult?.product,
-      category: productResult?.subCategory,
     };
     const resDoc = responseHandler(200, "Get All Products", data);
     res.status(resDoc.statusCode).json(resDoc);

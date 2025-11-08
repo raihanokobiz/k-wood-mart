@@ -57,14 +57,18 @@ class ProductRepository extends BaseRepository {
         bestSell,
         featured,
       } = payload;
-      console.log('Payload MIN AND MAX PRODUCT=========',{minPrice,maxPrice})
+      console.log("Payload MIN AND MAX PRODUCT=========", {
+        minPrice,
+        maxPrice,
+      });
 
       const filter = {};
       if (minPrice && maxPrice) {
-        filter.price = {}; filter.price.$gte = parseFloat(minPrice);
-         filter.price.$lte = parseFloat(maxPrice);
+        filter.price = {};
+        filter.price.$gte = parseFloat(minPrice);
+        filter.price.$lte = parseFloat(maxPrice);
       }
-console.log('filter log',filter)
+      console.log("filter log", filter);
       const orCategoryIds = [];
 
       if (categoryId) {
@@ -276,9 +280,8 @@ console.log('filter log',filter)
 
       // Aggregation for filter options
       const filterAggregation = await this.#model.aggregate([
-        {$match:filter},
+        { $match: filter },
         {
-          
           $group: {
             _id: null,
             minPrice: { $min: "$price" },
@@ -288,14 +291,14 @@ console.log('filter log',filter)
         },
         { $project: { _id: 0, minPrice: 1, maxPrice: 1 } },
       ]);
-console.log('filter aggrigation',filterAggregation)
+      console.log("filter aggrigation", filterAggregation);
       const filterOptions = filterAggregation[0] || {
         colors: [],
         sizes: [],
         minPrice: 0,
         maxPrice: 0,
       };
-      console.log('filter option',filterOptions)
+      console.log("filter option", filterOptions);
 
       // Flatten and get unique sizes
       const flattenedSizes = Array.isArray(filterOptions.sizes)
@@ -307,10 +310,10 @@ console.log('filter aggrigation',filterAggregation)
       // Fetch categories with subcategories
       const categories = await this.getCategoriesWithSubcategoriesAndCounts();
       const brands = await this.#brandModel.find().sort({ name: -1 });
-      console.log('calculated products min and max price ==================',{
+      console.log("calculated products min and max price ==================", {
         minPrice: filterOptions.minPrice,
         maxPrice: filterOptions.maxPrice,
-      })
+      });
       return {
         result: productsWithPagination.result,
         pagination: productsWithPagination.pagination,
@@ -550,6 +553,7 @@ console.log('filter aggrigation',filterAggregation)
     );
     return data;
   }
+
   async addProductInventory(id, productRef, session) {
     console.log("done adding product", id);
     const data = await this.#model.findByIdAndUpdate(
@@ -559,16 +563,12 @@ console.log('filter aggrigation',filterAggregation)
     );
     return data;
   }
-  async getAllProductForHomePage(payload) {
-    const { limit = 10, subCategoryRef } = payload;
-    console.log("payload", payload);
+  async getAllProductForHomePage() {
     const product = await this.#model
-      .find({
-        subCategoryRef: subCategoryRef,
-      })
-      .limit(limit)
-      .populate()
+      .find({ featured: true })
       .sort({ createdAt: -1 });
+
+    console.log("Featured products found:", product.length);
     return product;
   }
 
@@ -610,79 +610,84 @@ console.log('filter aggrigation',filterAggregation)
     const { limit = 10 } = payload;
 
     let bestSellingProducts = await OrderSchema.aggregate([
-  { $unwind: "$products" },
-  {
-    $group: {
-      _id: "$products.productRef",
-      totalSold: { $sum: "$products.quantity" },
-    },
-  },
-  { $sort: { totalSold: -1 } },
-  { $limit: limit },
-  {
-    $lookup: {
-      from: "products",
-      localField: "_id",
-      foreignField: "_id",
-      as: "product",
-    },
-  },
-  { $unwind: "$product" },
-  {
-    $lookup: {
-      from: "inventories",
-      localField: "product.inventoryRef",
-      foreignField: "_id",
-      as: "product.inventoryRef",
-    },
-  },
-  { $unwind: { path: "$product.inventoryRef", preserveNullAndEmptyArrays: true } },
-  {
-    $project: {
-      _id: "$product._id",
-      name: "$product.name",
-      thumbnailImage: "$product.thumbnailImage",
-      backViewImage: "$product.backViewImage",
-      price: "$product.price",
-      mrpPrice: "$product.mrpPrice",
-      slug: "$product.slug",
-      totalSold: 1,
-      inventoryRef: "$product.inventoryRef",
-      inventoryType: "$product.inventoryType",
-    },
-  },
-  {
-    $group: {
-      _id: "$_id",
-      name: { $first: "$name" },
-      thumbnailImage: { $first: "$thumbnailImage" },
-      backViewImage: { $first: "$backViewImage" },
-      price: { $first: "$price" },
-      mrpPrice: { $first: "$mrpPrice" },
-      slug: { $first: "$slug" },
-      totalSold: { $first: "$totalSold" },
-      inventoryRef: { $first: "$inventoryRef" },
-      inventoryType: { $first: "$inventoryType" }
-    }
-  }
-]);
+      { $unwind: "$products" },
+      {
+        $group: {
+          _id: "$products.productRef",
+          totalSold: { $sum: "$products.quantity" },
+        },
+      },
+      { $sort: { totalSold: -1 } },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: "$product" },
+      {
+        $lookup: {
+          from: "inventories",
+          localField: "product.inventoryRef",
+          foreignField: "_id",
+          as: "product.inventoryRef",
+        },
+      },
+      {
+        $unwind: {
+          path: "$product.inventoryRef",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: "$product._id",
+          name: "$product.name",
+          thumbnailImage: "$product.thumbnailImage",
+          backViewImage: "$product.backViewImage",
+          price: "$product.price",
+          mrpPrice: "$product.mrpPrice",
+          slug: "$product.slug",
+          totalSold: 1,
+          inventoryRef: "$product.inventoryRef",
+          inventoryType: "$product.inventoryType",
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          name: { $first: "$name" },
+          thumbnailImage: { $first: "$thumbnailImage" },
+          backViewImage: { $first: "$backViewImage" },
+          price: { $first: "$price" },
+          mrpPrice: { $first: "$mrpPrice" },
+          slug: { $first: "$slug" },
+          totalSold: { $first: "$totalSold" },
+          inventoryRef: { $first: "$inventoryRef" },
+          inventoryType: { $first: "$inventoryType" },
+        },
+      },
+    ]);
 
     if (bestSellingProducts.length < 10) {
       const missingCount = 10 - bestSellingProducts.length;
-      const bestSellingProductIds = bestSellingProducts.map(p => p._id);
-console.log("bestSellingProducts",bestSellingProductIds)
+      const bestSellingProductIds = bestSellingProducts.map((p) => p._id);
+      console.log("bestSellingProducts", bestSellingProductIds);
       const fallbackProducts = await ProductSchema.find({
         _id: { $nin: bestSellingProductIds }, // Exclude already fetched products
       })
-        .limit(missingCount)  // fetch only missing products
-        .select("_id name thumbnailImage backViewImage price mrpPrice slug inventoryType")
+        .limit(missingCount) // fetch only missing products
+        .select(
+          "_id name thumbnailImage backViewImage price mrpPrice slug inventoryType"
+        )
         .populate("inventoryRef"); // populate inventoryRef if needed
-        // product _id is in  fallbackProducts do this 
-              const fallbackProductsIds = fallbackProducts.map(p => p._id);
-              console.log("fallbackProducts",fallbackProductsIds)
+      // product _id is in  fallbackProducts do this
+      const fallbackProductsIds = fallbackProducts.map((p) => p._id);
+      console.log("fallbackProducts", fallbackProductsIds);
 
-
-    
       const formattedFallbackProducts = fallbackProducts.map((product) => ({
         _id: product._id,
         name: product.name,
@@ -693,14 +698,17 @@ console.log("bestSellingProducts",bestSellingProductIds)
         slug: product.slug,
         totalSold: 0, // No sales info
         inventoryRef: product.inventoryRef,
-        inventoryType: product.inventoryType
+        inventoryType: product.inventoryType,
       }));
       // console.log("formattedFallbackProducts", formattedFallbackProducts)
-    
+
       // Push fallback products into bestSellingProducts
-      bestSellingProducts = [...bestSellingProducts, ...formattedFallbackProducts];
-                    const bestSellingProductsIds = bestSellingProducts.map(p => p._id);
-              console.log("bestSellingProductsIds",bestSellingProductsIds)
+      bestSellingProducts = [
+        ...bestSellingProducts,
+        ...formattedFallbackProducts,
+      ];
+      const bestSellingProductsIds = bestSellingProducts.map((p) => p._id);
+      console.log("bestSellingProductsIds", bestSellingProductsIds);
       // console.log("-----------------", bestSellingProducts)
     }
     return { products: bestSellingProducts };
@@ -709,8 +717,9 @@ console.log("bestSellingProducts",bestSellingProductIds)
   async getAllDiscountedProduct(payload) {
     return await ProductSchema.find({
       isDiscounted: true,
-    }).sort({ createdAt: -1 })
-    .populate("inventoryRef");
+    })
+      .sort({ createdAt: -1 })
+      .populate("inventoryRef");
   }
 }
 

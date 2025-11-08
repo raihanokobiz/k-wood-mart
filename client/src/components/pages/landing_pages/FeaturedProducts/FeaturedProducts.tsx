@@ -3,30 +3,9 @@ import Image from "next/image";
 import N1 from "../../../../assets/kwoodmart/N1.jpg"
 import ProductCard from "../../products/ProductCard/ProductCard";
 
-export default function FeaturedProducts() {
+export default async function FeaturedProducts() {
 
-  const products = [
-    {
-      name: "Oak Wood Chair",
-      image: N1,
-      price: 120, // price in USD or your currency
-    },
-    {
-      name: "Velvet Sofa",
-      image: N1,
-      price: 450,
-    },
-    {
-      name: "Custom Curtain Set",
-      image: N1,
-      price: 200,
-    },
-    {
-      name: "Wooden Coffee Table",
-      image: N1,
-      price: 180,
-    },
-  ];
+const products =  await getFeaturedProducts
 
 
   return (
@@ -39,16 +18,7 @@ export default function FeaturedProducts() {
       </h2>
       <div className="rounded">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  2xl:grid-cols-4 gap-4">
-          {products.map((product, idx) => (
-            <ProductCard
-              key={idx}
-              name={product.name}
-              image={product.image}
-              price={product.price}
-            />
-          ))}
-
-          {products.map((product, idx) => (
+          {products?.data?.result?.map((product, idx) => (
             <ProductCard
               key={idx}
               name={product.name}

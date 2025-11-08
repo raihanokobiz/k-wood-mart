@@ -325,23 +325,29 @@ class ProductService extends BaseService {
     ]);
   }
 
-  async getNewArrivalsProduct(payload) {
-    // Fetch all products based on payload (filters, etc.)
-    const allProducts = await this.#repository.find(payload);
+  async getNewArrivalsProduct() {
+    try {
+      const allProducts = await this.#repository.findAll({}, ["categoryRef"]);
 
-    // Filter by category
-    const furnitureProducts = allProducts
-      .filter((p) => p.category.toLowerCase() === "furniture")
-      .slice(0, 4); // take only 4
+      // Furniture products filter
+      const furnitureProducts = allProducts
+        .filter((p) => p.categoryRef?.name?.toLowerCase() === "furniture")
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 4);
 
-    const curtainsProducts = allProducts
-      .filter((p) => p.category.toLowerCase() === "curtains")
-      .slice(0, 4); // take only 4
+      // Curtains products filter
+      const curtainsProducts = allProducts
+        .filter((p) => p.categoryRef?.name?.toLowerCase() === "curtains")
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 4);
 
-    // Combine into one array
-    const newArrivals = [...furnitureProducts, ...curtainsProducts];
+      const newArrivals = [...furnitureProducts, ...curtainsProducts];
 
-    return { product: newArrivals };
+      return { product: newArrivals };
+    } catch (error) {
+      console.error("Get New Arrivals Error:", error);
+      throw error;
+    }
   }
 
   async getAllBestSellProduct(payload) {
@@ -369,18 +375,11 @@ class ProductService extends BaseService {
     return { products };
   }
 
-  async getAllProductForHomePage(payload) {
-    const { limit, viewType } = payload;
-    if (!viewType) throw new NotFoundError("viewType is required");
-    // find the viewType in the SubCategory collection
-    const subCategory = await this.#subCategoryRepository.findOne({
-      viewType: viewType,
-    });
-    if (!subCategory) throw new NotFoundError("SubCategory not found");
-    payload.subCategoryRef = subCategory?._id;
-    const product = await this.#repository.getAllProductForHomePage(payload);
-    return { product, subCategory };
+  async getAllProductForHomePage() {
+    const product = await this.#repository.getAllProductForHomePage();
+    return { product };
   }
+
   async getRelatedProduct(payload) {
     const product = await this.#repository.getRelatedProduct(payload);
     return product;
@@ -442,8 +441,8 @@ class ProductService extends BaseService {
       payload.inventoryType = inventoryType;
       payload.isDiscounted = false;
       if (featured !== undefined) {
-      payload.featured = featured;
-    }
+        payload.featured = featured;
+      }
       if (discountType && discount) {
         payload.isDiscounted = true;
         payload.discountType = discountType;

@@ -16,6 +16,11 @@ export const getAllProducts = async () => {
   return res.json();
 };
 
+export const getFeaturedProducts = async () => {
+  const res = await fetch(`${apiBaseUrl}/product/for-home-page`);
+  return res.json();
+};
+
 
   export const getAllProductsForShop = async (
     {
