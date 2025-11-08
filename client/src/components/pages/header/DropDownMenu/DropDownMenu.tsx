@@ -34,10 +34,16 @@ type DropDownMenuProps = {
 };
 
 const DropDownMenu: React.FC<DropDownMenuProps> = ({ menu }) => {
-  const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+  const [activeSubCategory, setActiveSubCategory] = useState<string | null>(
+    null
+  );
 
   return (
-    <div className="z-[999] bg-white shadow-lg rounded-lg border mt-2 p-6 min-h-[300px]">
+    <div
+      className={`-ml-52 z-[999] bg-white shadow-lg rounded-lg border mt-2 p-6 min-h-[200px]
+    ${menu.name === "Curtains" ? "-ml-[380px]" : "-ml-48"}
+    `}
+    >
       <div className="grid grid-cols-3 gap-6">
         {/* Left side - Sub Categories */}
         <div className="border-r pr-4">
@@ -54,17 +60,17 @@ const DropDownMenu: React.FC<DropDownMenuProps> = ({ menu }) => {
                   className="flex items-center justify-between py-2 px-3 rounded hover:bg-gray-50 transition-colors"
                 >
                   <span className="text-gray-600 group-hover:text-[#1E3E96] transition-colors">
-                    {subCat.name}000
+                    {subCat.name}
                   </span>
-                  {subCat.childCategories && subCat.childCategories.length > 0 && (
-                    <IoIosArrowForward className="text-gray-400 group-hover:text-[#1E3E96]" />
-                  )}
+                  {subCat.childCategories &&
+                    subCat.childCategories.length > 0 && (
+                      <IoIosArrowForward className="text-gray-400 group-hover:text-[#1E3E96]" />
+                    )}
                 </Link>
               </li>
             ))}
           </ul>
         </div>
-
         {/* Right side - Child Categories */}
         <div className="col-span-2">
           <AnimatePresence mode="wait">
@@ -80,7 +86,7 @@ const DropDownMenu: React.FC<DropDownMenuProps> = ({ menu }) => {
                   const activeSubCat = menu.subCategories?.find(
                     (sub) => sub._id === activeSubCategory
                   );
-                  
+
                   if (!activeSubCat || !activeSubCat.childCategories?.length) {
                     return (
                       <div className="text-gray-400 text-sm">

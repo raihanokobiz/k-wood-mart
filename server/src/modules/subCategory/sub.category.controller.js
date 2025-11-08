@@ -6,7 +6,9 @@ const { ensureNullIfUndefined } = require("../../utils/helpers.js");
 
 class SubCategoryController {
   createSubCategory = withTransaction(async (req, res, next, session) => {
-    console.log(req.body);
+    try {
+    console.log("REQ BODY:", req.body);
+    console.log("REQ FILES:", req.files);
     const payloadFiles = {
       files: req.files,
     };
@@ -28,7 +30,14 @@ class SubCategoryController {
       subCategoryResult
     );
     res.status(resDoc.statusCode).json(resDoc);
-  });
+      } catch (error) {
+    console.error("❌ SubCategory create error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+  })
 
   getAllSubCategory = catchError(async (req, res, next) => {
     const subCategoryResult = await SubCategoryService.getAllSubCategory();

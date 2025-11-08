@@ -9,7 +9,13 @@ const SubCategoryRoute = Router();
 // SubCategoryRoute.use(jwtAuth());
 
 SubCategoryRoute.route("/")
-  .post(upload.any(), controller.createSubCategory)
+  .post(
+    upload.fields([
+      { name: "image", maxCount: 1 },
+      { name: "bannerImage", maxCount: 1 },
+    ]),
+    controller.createSubCategory
+  )
   .get(controller.getAllSubCategory);
 
 SubCategoryRoute.get("/pagination", controller.getSubCategoryWithPagination);

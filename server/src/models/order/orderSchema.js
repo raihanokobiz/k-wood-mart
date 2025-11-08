@@ -32,39 +32,30 @@ const Orderschema = new Schema(
     },
     customerName: {
       type: String,
-    
     },
     customerPhone: {
       type: String,
-     
     },
     customerEmail: {
       type: String,
-     
     },
     customerCity: {
       type: String,
-      
     },
     customerAddress: {
       type: String,
-      
     },
     customerHouse: {
       type: String,
-      
     },
     customerRoad: {
       type: String,
-      
     },
     customerThana: {
       type: String,
-      
     },
     customerAltPhone: {
       type: String,
-      
     },
     paymentMethod: {
       type: String,
@@ -127,10 +118,27 @@ const Orderschema = new Schema(
     note: {
       type: String,
     },
-    // cureis ssend or not 
+    // cureis ssend or not
     isCourierSend: {
       type: Boolean,
       default: false,
+    },
+     // ===== EMI Fields =====
+    isEMI: {
+      type: Boolean,
+      default: false, // Normal order হলে false
+    },
+    emiMonths: {
+      type: Number, // 3, 6, 9, 12
+      default: null,
+    },
+    emiMonthlyPayment: {
+      type: Number, // প্রতি মাসে কত টাকা
+      default: null,
+    },
+    emiTotalAmount: {
+      type: Number, // EMI সহ মোট টাকা
+      default: null,
     },
   },
   { timestamps: true }

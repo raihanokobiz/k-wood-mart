@@ -12,7 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ResponsiveSearchForm from "../ResponsiveSearchForm/ResponsiveSearchForm";
 import ResponsiveNavSidBar from "../ResponsiveNavSidBar/ResponsiveNavSidBar";
 import "../NavBar/NavBar.css";
-import Logo from "../../../../assets/logo/Logo.png"
+import Logo from "../../../../assets/logo/Logo.png";
 
 import {
   getCurtainsSubCategory,
@@ -111,7 +111,6 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     return null;
   };
 
-
   const pagesWithWhiteBg = [
     "/product/",
     "/contact",
@@ -121,19 +120,22 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     "/emi",
     "/cart",
     "/login",
-    "/register"
-  ]
+    "/register",
+  ];
 
-  const shouldHaveWhiteBg = pagesWithWhiteBg.some(page => pathname.startsWith(page));
+  const shouldHaveWhiteBg = pagesWithWhiteBg.some((page) =>
+    pathname.startsWith(page)
+  );
 
   return (
     <>
       {/* Desktop Navbar */}
       <div
-        className={`hidden lg:block w-full py-2 z-50 transition-all duration-300 fixed top-0 ${isScrolled || shouldHaveWhiteBg
-          ? "shadow bg-white text-black"
-          : "bg-transparent text-white"
-          }`}
+        className={`hidden lg:block w-full py-2 z-50 transition-all duration-300 fixed top-0 ${
+          isScrolled || shouldHaveWhiteBg
+            ? "shadow bg-white text-black"
+            : "bg-transparent text-white"
+        }`}
       >
         <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
           <div className="flex items-center justify-between relative">
@@ -164,8 +166,9 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                   >
                     <Link href={menu.link}>
                       <li
-                        className={`list-none py-4 text-2xl hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${index === menuList.length - 1 ? "" : ""
-                          }`}
+                        className={`list-none py-4 text-2xl hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${
+                          index === menuList.length - 1 ? "" : ""
+                        }`}
                       >
                         {menu.title}
                       </li>
@@ -176,7 +179,9 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
                         transition={{ duration: 0.3 }}
-                        className="absolute left-0 top-full w-[800px]"
+                        className={`absolute left-0 top-full ${
+                          menu.title === "Curtains" ? "w-[420px]" : "w-[570px]"
+                        }`}
                       >
                         {getSidebarData(menu.title) && (
                           <DropDownMenu menu={getSidebarData(menu.title)} />
@@ -261,8 +266,9 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                 </div>
                 <div
                   onClick={() => setShowSideMenu(!showSideMenu)}
-                  className={`-ml-1.5 border-gray-300 cursor-pointer ${isShopPage ? "lg:hidden" : "lg:block"
-                    }`}
+                  className={`-ml-1.5 border-gray-300 cursor-pointer ${
+                    isShopPage ? "lg:hidden" : "lg:block"
+                  }`}
                 >
                   {showSideMenu ? (
                     <X className="w-12 h-12" />

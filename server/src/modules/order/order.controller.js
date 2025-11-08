@@ -5,10 +5,9 @@ const OrderService = require("./order.service.js");
 
 class OrderController {
   createOrder = withTransaction(async (req, res, next, session) => {
-    console.log("-------body for order----",req.body)
+    console.log("-------body for order----", req.body);
     try {
       const {
-        // orderId,
         subTotalPrice,
         totalPrice,
         coupon,
@@ -24,11 +23,14 @@ class OrderController {
         customerThana,
         customerAltPhone,
         paymentMethod,
-        note
+        note,
+        isEMI,
+        emiMonths,
+        emiMonthlyPayment,
+        emiTotalAmount,
       } = req.body;
 
       const payload = {
-        // orderId,
         subTotalPrice,
         totalPrice,
         shippingCost,
@@ -44,7 +46,12 @@ class OrderController {
         customerThana,
         customerAltPhone,
         paymentMethod,
-        note
+        note,
+        // EMI fields
+        isEMI: isEMI || false,
+        emiMonths: emiMonths || null,
+        emiMonthlyPayment: emiMonthlyPayment || null,
+        emiTotalAmount: emiTotalAmount || null,
       };
 
       const orderResult = await OrderService.createOrder(payload, session);
@@ -159,13 +166,12 @@ class OrderController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-    isCourierSending = withTransaction(async (req, res, next, session) => {
-    const id = req.params.id;;
+  isCourierSending = withTransaction(async (req, res, next, session) => {
+    const id = req.params.id;
     await OrderService.isCourierSending(id, session);
     const resDoc = responseHandler(201, "Order Status Update successfully");
     res.status(resDoc.statusCode).json(resDoc);
   });
-
 
   deleteOrder = withTransaction(async (req, res, next, session) => {
     const id = req.params.id;

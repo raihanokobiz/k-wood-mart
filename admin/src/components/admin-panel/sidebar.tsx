@@ -9,18 +9,11 @@ import { Menu } from "@/components/admin-panel/menu";
 import { useSidebarToggle } from "@/hooks/store/use-sidebar-toggle";
 import { SidebarToggle } from "@/components/admin-panel/sidebar-toggle";
 import Image from "next/image";
-// import { getSetting } from "@/services/settings";
 import React from "react";
-import { fileUrlGenerator } from "@/utils/helpers";
 import logo from "@/assets/logo/main.png";
 
 export function Sidebar() {
   const sidebar = useStore(useSidebarToggle, (state) => state);
-  // const [setting, setSetting] = React.useState<Settings>();
-
-  // React.useEffect(() => {
-  //   getSetting().then((data) => setSetting(data));
-  // }, []);
 
   if (!sidebar) return null;
   const brandName = process.env.NEXT_PUBLIC_BRAND_NAME;

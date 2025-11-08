@@ -50,6 +50,7 @@ class OrderService extends BaseService {
     const orderId = await idGenerate("ORD-", "orderId", this.#repository);
     payload.orderId = orderId;
     // inventory update
+    
     const orderData = await this.#repository.createOrder(payload, session);
     console.log("orderData", orderData);
 
