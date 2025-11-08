@@ -133,7 +133,7 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
   const [childCategories, setChildCategories] = React.useState<
     TChildCategory[]
   >([]);
- 
+
 
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
@@ -148,6 +148,7 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
       subCategoryRef: "",
       childCategoryRef: "",
       inventoryType: "",
+      featured: false,
       images: [],
       thumbnailImage: [],
       backViewImage: [],
@@ -170,6 +171,7 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
         subCategoryRef: product.subCategoryRef?._id,
         childCategoryRef: product.childCategoryRef?._id,
         inventoryType: product.inventoryType,
+        featured: product.featured,
         images: [],
         thumbnailImage: [],
         backViewImage: [],
@@ -836,7 +838,28 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                   </Button>
                 )}
 
-              <div className="m-4 flex gap-2">
+
+              <FormField
+                control={form.control}
+                name="featured"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-2 mt-2 py-4">
+                    {/* Label */}
+                    <FormLabel className="mb-0">Featured Product</FormLabel>
+                    {/* Checkbox */}
+                    <FormControl className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                        className="w-5 h-5 accent-red-600 cursor-pointer"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <div className="my-4 flex gap-2">
                 <Button
                   // disabled
                   type="submit"

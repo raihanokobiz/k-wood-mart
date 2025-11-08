@@ -5,7 +5,6 @@ const CategoryService = require("./category.service.js");
 
 class CategoryController {
   createCategory = withTransaction(async (req, res, next, session) => {
-    console.log(req.body);
     const payloadFiles = {
       files: req.files,
     };

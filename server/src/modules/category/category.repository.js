@@ -17,7 +17,7 @@ class CategoryRepository extends BaseRepository {
   }
 
   async getAllCategory() {
-    const categories = await this.#model.find({}).sort({ createdAt: -1 });
+    const categories = await this.#model.find({});
     return categories;
   }
 

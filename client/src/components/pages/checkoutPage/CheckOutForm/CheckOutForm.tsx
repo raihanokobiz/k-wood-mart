@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface FormData {
   customerName: string;
@@ -54,6 +55,7 @@ const CheckOutForm: React.FC<Props> = ({
     formState: { errors },
     getValues,
   } = useForm<FormData>();
+  const router = useRouter();
 
   const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCity = e.target.value.toLowerCase();
@@ -76,6 +78,29 @@ const CheckOutForm: React.FC<Props> = ({
   const couponDiscount = products?.data?.couponDiscount;
   // const shippingCost = 60;
 
+  // state
+  const [emiMonths, setEmiMonths] = useState<number | "">("");
+
+  // EMI plans
+  const emiPlans: Record<number, { months: number; interest: number }> = {
+    3: { months: 3, interest: 0 },
+    6: { months: 6, interest: 5 },
+    9: { months: 9, interest: 8 },
+    12: { months: 12, interest: 9 },
+  };
+
+  const selectedPlan =
+    typeof emiMonths === "number" ? emiPlans[emiMonths] : undefined;
+
+  const interestRate = selectedPlan ? selectedPlan.interest / 100 : 0;
+  const emiBase = subTotalPrice || 0; // subtotal price
+  const emiTotalAmount = selectedPlan
+    ? Number((emiBase * (1 + interestRate)).toFixed(2))
+    : 0;
+  const emiMonthlyPayment = selectedPlan
+    ? Number((emiTotalAmount / selectedPlan.months).toFixed(2))
+    : 0;
+
   const onSubmit = async (data: FormData) => {
     // console.log(
     //   "product products?.data?.cartDetails.length",
@@ -92,6 +117,13 @@ const CheckOutForm: React.FC<Props> = ({
         totalPrice: payableAmount,
         couponDiscount,
         shippingCost: shipping || 0,
+        // emi fields
+        isEMI: typeof emiMonths === "number",
+        emiMonths: typeof emiMonths === "number" ? emiMonths : undefined,
+        emiMonthlyPayment:
+          typeof emiMonths === "number" ? emiMonthlyPayment : undefined,
+        emiTotalAmount:
+          typeof emiMonths === "number" ? emiTotalAmount : undefined,
         ...data,
       };
       console.log("products ===================== order", order);
@@ -123,7 +155,7 @@ const CheckOutForm: React.FC<Props> = ({
       // setFinalY(buttonBox.x + 150 );
       // }
       setTimeout(() => {
-        // router.push("/thank-you");
+        router.push("/thank-you");
         window.location.href = "/thank-you";
         // window.location.reload();
         toast.success("checkout done");
@@ -370,6 +402,71 @@ const CheckOutForm: React.FC<Props> = ({
             <p className="text-red-500 text-sm">
               {String(errors.paymentMethod?.message)}
             </p>
+          )}
+        </div>
+        {/* EMI selection next to payment method */}
+        {/* EMI selection next to payment method */}
+        <div className="mt-6 border border-[#D4A373]/30 rounded-xl p-4 bg-gradient-to-br from-white to-[#fefaf6] shadow-sm">
+          <h3 className="font-semibold text-lg text-[#8B4513] mb-3 flex items-center gap-2">
+            💳 Easy Monthly Installment (EMI)
+          </h3>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="text-sm font-medium text-gray-700">
+              Select EMI Plan:
+            </label>
+            <select
+              className="border border-black/20 p-2 rounded-md focus:border-[#D4A373] focus:ring-1 focus:ring-[#D4A373] outline-none text-sm"
+              value={emiMonths}
+              onChange={(e) => {
+                const v = e.target.value;
+                setEmiMonths(v ? Number(v) : "");
+              }}
+            >
+              <option value="">No EMI (Full Payment)</option>
+              <option value="3">3 Months — 0% Interest</option>
+              <option value="6">6 Months — 5% Interest</option>
+              <option value="9">9 Months — 8% Interest</option>
+              <option value="12">12 Months — 9% Interest</option>
+            </select>
+          </div>
+
+          {typeof emiMonths === "number" && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="mt-4 border border-[#D4A373]/20 rounded-lg p-4 bg-white shadow-inner"
+            >
+              <h4 className="font-semibold text-[#D4A373] mb-2 text-base">
+                📅 Installment Summary
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                <div className="bg-[#f9f6f2] rounded-md p-2 text-center">
+                  <p className="text-gray-600 text-xs">Duration</p>
+                  <p className="font-semibold text-[#8B4513]">
+                    {emiMonths} months
+                  </p>
+                </div>
+                <div className="bg-[#f9f6f2] rounded-md p-2 text-center">
+                  <p className="text-gray-600 text-xs">Monthly Payment</p>
+                  <p className="font-semibold text-[#8B4513]">
+                    ৳ {emiMonthlyPayment.toFixed(2)}
+                  </p>
+                </div>
+                <div className="bg-[#f9f6f2] rounded-md p-2 text-center">
+                  <p className="text-gray-600 text-xs">Total (with interest)</p>
+                  <p className="font-semibold text-[#8B4513]">
+                    ৳ {emiTotalAmount.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-500 mt-3 italic">
+                * Interest is applied only on subtotal. Shipping will be added
+                separately.
+              </p>
+            </motion.div>
           )}
         </div>
 

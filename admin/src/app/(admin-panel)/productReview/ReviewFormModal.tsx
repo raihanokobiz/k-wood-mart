@@ -14,24 +14,25 @@ export const ReviewFormModal = ({
 }) => {
   const [name, setName] = useState("");
   const [district, setDistrict] = useState("");
+  const [comment, setComment] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-
     setLoading(true);
     try {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("district", district);
+      formData.append("comment", comment);
       formData.append("youtubeUrl", youtubeUrl);
-
 
       await onSubmit(formData);
 
       // reset form
       setName("");
       setDistrict("");
+      setComment("");
       setYoutubeUrl("");
       onClose();
     } catch (error) {
@@ -92,6 +93,20 @@ export const ReviewFormModal = ({
               />
             </div>
 
+            {/* Comment */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">
+                Comment
+              </label>
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Write your review"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+                rows={4}
+              />
+            </div>
+
             {/* YouTube Link */}
             <div>
               <label className="block text-sm font-semibold text-black mb-2">
@@ -133,3 +148,5 @@ export const ReviewFormModal = ({
     </>
   );
 };
+
+export default ReviewFormModal;

@@ -61,6 +61,7 @@ const defaultValues = {
   backViewImage: [],
   sizeChartImage: [],
   inventories: [{ quantity: "", mrpPrice: "" }], // initial entry
+  featured: false,
 };
 
 export const discountTypes = [
@@ -194,9 +195,10 @@ export const CreateProductForm: React.FC = () => {
   // console.log(fileList, "fileList................................");
 
   const onSubmit = async (values: z.infer<typeof productFormSchema>) => {
+    
     setLoading(true);
     const formData = makeFormData(values);
-    // console.log(values, "values from form++++++++++++++++++++++++++");
+    console.log(values, "values from form++++++++++++++++++++++++++");
     try {
       await createFormAction(formData);
       form.reset();
@@ -629,6 +631,27 @@ export const CreateProductForm: React.FC = () => {
                 </Button>
               )}
 
+            <FormField
+              control={form.control}
+              name="featured"
+              render={({ field }) => (
+                <FormItem className="flex items-center gap-2 mt-2">
+                  {/* Label */}
+                  <FormLabel className="mb-0">Featured Product</FormLabel>
+                  {/* Checkbox */}
+                  <FormControl className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="w-5 h-5 accent-red-600 cursor-pointer"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+
             <Button type="submit" loading={loading} className="my-6">
               Create
             </Button>
@@ -831,6 +854,8 @@ export const CreateProductForm: React.FC = () => {
                 {form.formState.errors.sizeChartImage?.message}
               </div>
             </div> */}
+
+
           </div>
         </form>
       </Form>

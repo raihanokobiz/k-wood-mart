@@ -23,7 +23,7 @@ export const productFormSchema = z.object({
       color: z.string().optional(),
       colorName: z.string().optional(),
       size: z.string().optional(),
-      quantity: z.string().nonempty("Quantity is required"),
+      // quantity: z.string().nonempty("Quantity is required"),
       mrpPrice: z.string().nonempty("Price is required"),
     })
   ),
@@ -73,6 +73,7 @@ export const productFormSchema = z.object({
     // })
     .optional()
     .default([]),
+  featured: z.boolean().optional(),
 });
 
 export const dropZoneConfig = {

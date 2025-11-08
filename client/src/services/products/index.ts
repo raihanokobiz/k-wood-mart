@@ -124,6 +124,7 @@ export const getAllBestSellProduct = async () => {
 
   return res.json();
 };
+
 export const getAllDiscountProduct = async () => {
   const res = await fetch(`${apiBaseUrl}/product/discounted-product`);
   if (!res.ok) {

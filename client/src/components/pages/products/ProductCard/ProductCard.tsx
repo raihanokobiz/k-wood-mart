@@ -1,14 +1,17 @@
 "use client";
+import { apiBaseUrl } from "@/config/config";
 import Image from "next/image";
 
-export default function ProductCard({ name, image, price }) {
+export default function ProductCard({ name, thumbnailImage, price }) {
+
+
     return (
         <div
             className="bg-white  text-center mb-8"
         >
             <div className=" relative h-[400px] mb-4">
                 <Image
-                    src={image}
+                    src={`${apiBaseUrl}${thumbnailImage}`}
                     alt={name}
                     fill
                     className="mx-auto mb-4"

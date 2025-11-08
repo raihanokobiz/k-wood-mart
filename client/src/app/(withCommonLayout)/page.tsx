@@ -37,6 +37,7 @@ import FurnitureDemo from "@/components/pages/landing_pages/FurnitureDemo/Furnit
 import FurnitureCurtainGallery from "@/components/pages/landing_pages/FurnitureCurtainGallery/FurnitureCurtainGallery";
 import ReviewSection from "@/components/pages/landing_pages/ReviewSection/ReviewSection";
 import EMI from "@/components/pages/landing_pages/EMI/EMI";
+import CategorySection from "@/components/pages/landing_pages/CategorySection/CategorySection";
 
 
 export const metadata: Metadata = {
@@ -71,11 +72,12 @@ const page = async () => {
         {/* <Banner banners={[]} /> */}
         <Banner2 />
         <SignatureCollections />
-        <BeforeAfterSection />
+        {/* <Category /> */}
+        <CategorySection/>
+        {/* <BeforeAfterSection /> */}
         <NewArrivals />
         <FurnitureCurtainGallery />
         <FeaturedProducts />
-        {/* <Category /> */}
         <FurnitureDemo />
         <WhyChooseUs />
         <ReviewSection/>

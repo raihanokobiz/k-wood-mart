@@ -14,10 +14,11 @@ ProductRoute.route("/")
 
 ProductRoute.get("/search", controller.getSearchProduct);
 ProductRoute.get("/best-sell", controller.getAllBestSellProduct);
+ProductRoute.get("/new-arrivals", controller.getNewArrivalsProduct);
 ProductRoute.get("/discounted-product", controller.getAllDiscountedProduct);
 ProductRoute.get("/brand-or-gender", controller.getAllProductByBrandOrGender);
 ProductRoute.get("/related-product/:id", controller.getRelatedProduct);
-ProductRoute.get("/view-type", controller.getAllProductForHomePage);
+ProductRoute.get("/for-home-page", controller.getAllProductForHomePage);
 ProductRoute.get("/pagination", controller.getProductWithPagination);
 ProductRoute.get(
   "/pagination/admin",

@@ -82,7 +82,7 @@ const Productschema = new Schema(
       type: Number,
       // required: true,
     },
-  
+
     inventoryType: {
       type: String,
       enum: [
@@ -113,6 +113,10 @@ const Productschema = new Schema(
     subChildCategoryRef: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "subChildCategory",
+    },
+    featured: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

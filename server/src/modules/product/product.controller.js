@@ -34,6 +34,7 @@ class ProductController {
         : [],
       slug: req.body.slug,
       barcode: req.body.barcode,
+      featured: req.body.featured === "true",
     };
     // console.log("$#%$#%#$ payload from controller:", payload);
     const productResult = await ProductService.createProduct(
@@ -55,6 +56,15 @@ class ProductController {
     };
     const productResult = await ProductService.getAllProduct(payload);
     const resDoc = responseHandler(200, "Get All Products", productResult);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  getNewArrivalsProduct = catchError(async (req, res) => {
+    const productResult = await ProductService.getNewArrivalsProduct();
+    const data = {
+      result: productResult?.product,
+    };
+    const resDoc = responseHandler(200, "Get New Arrivals Products", data);
     res.status(resDoc.statusCode).json(resDoc);
   });
 
@@ -140,7 +150,7 @@ class ProductController {
       page: req.query.page,
       limit: req.query.limit,
       order: req.query.order,
-      sortBy: req.query.sortBy, 
+      sortBy: req.query.sortBy,
       minPrice: req.query.minPrice,
       maxPrice: req.query.maxPrice,
       categoryId: req.query.categoryId,
@@ -224,6 +234,7 @@ class ProductController {
         discount: ensureNullIfUndefined(req.body.discount),
         videoUrl: req.body.videoUrl,
         freeShipping: req.body.freeShipping,
+        featured: req.body.featured === "true" || req.body.featured === true,
         brandRef: ensureNullIfUndefined(req.body.brandRef),
         categoryRef: ensureNullIfUndefined(req.body.categoryRef),
         subCategoryRef: ensureNullIfUndefined(req.body.subCategoryRef),

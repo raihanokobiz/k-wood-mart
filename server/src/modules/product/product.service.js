@@ -65,7 +65,7 @@ class ProductService extends BaseService {
     payload.inventoryType = inventoryType;
     // activeTabName == 'colorInventory' || activeTabName == "levelInventory" || activeTabName == "colorLevelInventory")
 
-    if ((discountType && discount)) {
+    if (discountType && discount) {
       payload.isDiscounted = true;
       payload.discountType = discountType;
       payload.discount = discount;
@@ -119,7 +119,8 @@ class ProductService extends BaseService {
         } else {
           newInventory.price = mrpPrice;
         }
-        maxPrice = newInventory?.price &&  Math.min(maxPrice, newInventory?.price );
+        maxPrice =
+          newInventory?.price && Math.min(maxPrice, newInventory?.price);
         const createNewInventory = await this.#inventoryRepository.create(
           newInventory,
           session
@@ -132,7 +133,7 @@ class ProductService extends BaseService {
       for (const item of inventoryArray) {
         const level = item.level || "Unknown";
         const quantity = Number(item.quantity) || 0;
-        const mrpPrice = Number(item.mrpPrice)
+        const mrpPrice = Number(item.mrpPrice);
         inventoryTotal += quantity;
         const title = "INV-";
         if (newInventoryId === "") {
@@ -168,7 +169,8 @@ class ProductService extends BaseService {
         } else {
           newInventory.price = mrpPrice;
         }
-        maxPrice = newInventory?.price && Math.min(maxPrice, newInventory?.price);
+        maxPrice =
+          newInventory?.price && Math.min(maxPrice, newInventory?.price);
         const createNewInventory = await this.#inventoryRepository.create(
           newInventory,
           session
@@ -180,7 +182,7 @@ class ProductService extends BaseService {
       console.log("inventory color level====", inventoryArray[0].colorLevel);
 
       for (const item of inventoryArray) {
-        console.log('inventory color level', item)
+        console.log("inventory color level", item);
         // ll
         const level = item.level || "Unknown";
         const variants = item.colorLevel;
@@ -220,7 +222,8 @@ class ProductService extends BaseService {
           } else {
             newInventory.price = item.mrpPrice;
           }
-          maxPrice = newInventory?.price &&  Math.min(maxPrice, newInventory?.price);
+          maxPrice =
+            newInventory?.price && Math.min(maxPrice, newInventory?.price);
           const createNewInventory = await this.#inventoryRepository.create(
             newInventory,
             session
@@ -267,6 +270,8 @@ class ProductService extends BaseService {
 
     payload.mainInventory = totalInventoryCount;
     payload.inventoryRef = inventoryIds;
+
+    payload.featured = payload.featured || false;
 
     if (!files?.length) {
       throw new Error("Thumbnail Image is required");
@@ -320,6 +325,25 @@ class ProductService extends BaseService {
     ]);
   }
 
+  async getNewArrivalsProduct(payload) {
+    // Fetch all products based on payload (filters, etc.)
+    const allProducts = await this.#repository.find(payload);
+
+    // Filter by category
+    const furnitureProducts = allProducts
+      .filter((p) => p.category.toLowerCase() === "furniture")
+      .slice(0, 4); // take only 4
+
+    const curtainsProducts = allProducts
+      .filter((p) => p.category.toLowerCase() === "curtains")
+      .slice(0, 4); // take only 4
+
+    // Combine into one array
+    const newArrivals = [...furnitureProducts, ...curtainsProducts];
+
+    return { product: newArrivals };
+  }
+
   async getAllBestSellProduct(payload) {
     const product = await this.#repository.getAllBestSellProduct(payload);
     return { product };
@@ -338,7 +362,7 @@ class ProductService extends BaseService {
     if (brandRef) {
       filter.brandRef = brandRef;
     }
-    
+
     const products = await this.#repository.findAll(filter);
     console.log(products, "products from brand gender service");
 
@@ -406,6 +430,7 @@ class ProductService extends BaseService {
         inventoryType,
         inventory,
         inventoryArray,
+        featured,
       } = payload;
 
       const existingProduct = await this.#repository.findById(id);
@@ -414,9 +439,12 @@ class ProductService extends BaseService {
       let inventoryIds = [];
       let totalInventoryCount = 0;
       let maxPrice = 10000;
-      payload.inventoryType = inventoryType
+      payload.inventoryType = inventoryType;
       payload.isDiscounted = false;
-      if ((discountType && discount)) {
+      if (featured !== undefined) {
+      payload.featured = featured;
+    }
+      if (discountType && discount) {
         payload.isDiscounted = true;
         payload.discountType = discountType;
         payload.discount = discount;
@@ -426,8 +454,10 @@ class ProductService extends BaseService {
         let inventoryTotal = 0;
         let newInventoryId = "";
         for (const item of inventoryArray) {
-          const inventoryExits = item.id ? await this.#inventoryRepository.findById(item.id) : null;
-          console.log("inventoryExits =====================", inventoryExits)
+          const inventoryExits = item.id
+            ? await this.#inventoryRepository.findById(item.id)
+            : null;
+          console.log("inventoryExits =====================", inventoryExits);
           if (inventoryExits) {
             const color = item.colorCode || "#000000";
             const name = item.color || "Unknown";
@@ -468,7 +498,9 @@ class ProductService extends BaseService {
             } else {
               updatedInventory.price = mrpPrice;
             }
-            maxPrice = updatedInventory?.price &&  Math.min(maxPrice, updatedInventory?.price );
+            maxPrice =
+              updatedInventory?.price &&
+              Math.min(maxPrice, updatedInventory?.price);
             await this.#inventoryRepository.updateById(
               item.id,
               updatedInventory,
@@ -515,7 +547,8 @@ class ProductService extends BaseService {
             } else {
               newInventory.price = mrpPrice;
             }
-            maxPrice = newInventory?.price && Math.min(maxPrice, newInventory?.price);
+            maxPrice =
+              newInventory?.price && Math.min(maxPrice, newInventory?.price);
             const createNewInventory = await this.#inventoryRepository.create(
               newInventory,
               session
@@ -527,12 +560,14 @@ class ProductService extends BaseService {
         let inventoryTotal = 0;
         let newInventoryId = "";
         for (const item of inventoryArray) {
-          const inventoryExits = item.id ? await this.#inventoryRepository.findById(item.id) : null;
-          console.log("inventoryExits =====================", inventoryExits)
+          const inventoryExits = item.id
+            ? await this.#inventoryRepository.findById(item.id)
+            : null;
+          console.log("inventoryExits =====================", inventoryExits);
           if (inventoryExits) {
             const level = item.level || "Unknown";
             const quantity = Number(item.quantity) || 0;
-            const mrpPrice = Number(item.mrpPrice)
+            const mrpPrice = Number(item.mrpPrice);
             inventoryTotal += quantity;
             const title = "INV-";
             if (newInventoryId === "") {
@@ -552,8 +587,8 @@ class ProductService extends BaseService {
               quantity: quantity,
               availableQuantity: quantity,
               inventoryType: inventoryType,
-              color: '',
-              name: '',
+              color: "",
+              name: "",
               // quantity: inventoryTotal,
               inventoryID: newInventoryId,
               mrpPrice: mrpPrice,
@@ -570,8 +605,10 @@ class ProductService extends BaseService {
             } else {
               updatedInventory.price = mrpPrice;
             }
-            maxPrice = updatedInventory?.price && Math.min(maxPrice, updatedInventory?.price);
-             await this.#inventoryRepository.updateById(
+            maxPrice =
+              updatedInventory?.price &&
+              Math.min(maxPrice, updatedInventory?.price);
+            await this.#inventoryRepository.updateById(
               item.id,
               updatedInventory,
               session
@@ -580,7 +617,7 @@ class ProductService extends BaseService {
           } else {
             const level = item.level || "Unknown";
             const quantity = Number(item.quantity) || 0;
-            const mrpPrice = Number(item.mrpPrice)
+            const mrpPrice = Number(item.mrpPrice);
             inventoryTotal += quantity;
             const title = "INV-";
             if (newInventoryId === "") {
@@ -616,7 +653,8 @@ class ProductService extends BaseService {
             } else {
               newInventory.price = mrpPrice;
             }
-            maxPrice = newInventory?.price && Math.min(maxPrice, newInventory?.price);
+            maxPrice =
+              newInventory?.price && Math.min(maxPrice, newInventory?.price);
             const createNewInventory = await this.#inventoryRepository.create(
               newInventory,
               session
@@ -634,98 +672,103 @@ class ProductService extends BaseService {
           const level = item.level || "Unknown";
           const variants = item.colorLevel;
           const title = "INV-";
-          
+
           for (const item of variants) {
-            const inventoryExits = item.id ? await this.#inventoryRepository.findById(item.id) : null;
-            console.log("inventoryExits =====================", inventoryExits)
+            const inventoryExits = item.id
+              ? await this.#inventoryRepository.findById(item.id)
+              : null;
+            console.log("inventoryExits =====================", inventoryExits);
             if (inventoryExits) {
-            if (newInventoryID === "") {
-              newInventoryID = await idGenerate(
-                title,
-                "inventoryID",
-                this.#inventoryRepository
+              if (newInventoryID === "") {
+                newInventoryID = await idGenerate(
+                  title,
+                  "inventoryID",
+                  this.#inventoryRepository
+                );
+              } else {
+                let id = Number(newInventoryID.slice(title.length + 6)) + 1;
+                let prefix = newInventoryID.slice(0, title.length + 6);
+                newInventoryID = prefix + id;
+              }
+              const updatedInventory = {
+                quantity: item.quantity,
+                availableQuantity: item.quantity,
+                color: item.colorCode || "#000000",
+                name: item.color || "Unknown",
+                level: level,
+                barcode: item.barcode || generateEAN13Barcode(),
+                inventoryID: newInventoryID,
+                mrpPrice: item.mrpPrice,
+                inventoryType: inventoryType,
+              };
+              if ((discountType, discount)) {
+                const { price, discountAmount } = calculateDiscountAmount(
+                  Number(item.mrpPrice),
+                  discountType,
+                  discount
+                );
+                updatedInventory.price = price;
+                updatedInventory.discountAmount = discountAmount;
+                updatedInventory.discountType = discountType;
+              } else {
+                updatedInventory.price = Number(item.mrpPrice);
+              }
+              maxPrice =
+                updatedInventory?.price &&
+                Math.min(maxPrice, updatedInventory?.price);
+              await this.#inventoryRepository.updateById(
+                item.id,
+                updatedInventory,
+                session
               );
+              inventoryIds.push(item.id);
             } else {
-              let id = Number(newInventoryID.slice(title.length + 6)) + 1;
-              let prefix = newInventoryID.slice(0, title.length + 6);
-              newInventoryID = prefix + id;
-            }
-            const updatedInventory = {
-              quantity: item.quantity,
-              availableQuantity: item.quantity,
-              color: item.colorCode || "#000000",
-              name: item.color || "Unknown",
-              level: level,
-              barcode: item.barcode || generateEAN13Barcode(),
-              inventoryID: newInventoryID,
-              mrpPrice: item.mrpPrice,
-              inventoryType: inventoryType,
-            };
-            if ((discountType, discount)) {
-              const { price, discountAmount } = calculateDiscountAmount(
-                Number(item.mrpPrice),
-                discountType,
-                discount
+              if (newInventoryID === "") {
+                newInventoryID = await idGenerate(
+                  title,
+                  "inventoryID",
+                  this.#inventoryRepository
+                );
+              } else {
+                let id = Number(newInventoryID.slice(title.length + 6)) + 1;
+                let prefix = newInventoryID.slice(0, title.length + 6);
+                newInventoryID = prefix + id;
+              }
+              const newInventory = {
+                quantity: item.quantity,
+                availableQuantity: item.quantity,
+                color: item.colorCode || "#000000",
+                name: item.color || "Unknown",
+                level: level,
+                barcode: item.barcode || generateEAN13Barcode(),
+                inventoryID: newInventoryID,
+                mrpPrice: item.mrpPrice,
+                inventoryType: inventoryType,
+              };
+              if ((discountType, discount)) {
+                const { price, discountAmount } = calculateDiscountAmount(
+                  Number(item.mrpPrice),
+                  discountType,
+                  discount
+                );
+                newInventory.price = price;
+                newInventory.discountAmount = discountAmount;
+                newInventory.discountType = discountType;
+              } else {
+                newInventory.price = Number(item.mrpPrice);
+              }
+              maxPrice =
+                newInventory?.price && Math.min(maxPrice, newInventory?.price);
+              const createNewInventory = await this.#inventoryRepository.create(
+                newInventory,
+                session
               );
-              updatedInventory.price = price;
-              updatedInventory.discountAmount = discountAmount;
-              updatedInventory.discountType = discountType;
-            } else {
-              updatedInventory.price = Number(item.mrpPrice);
+              inventoryIds.push(createNewInventory[0]._id);
             }
-            maxPrice = updatedInventory?.price &&  Math.min(maxPrice, updatedInventory?.price);
-            await this.#inventoryRepository.updateById(
-              item.id,
-              updatedInventory,
-              session
-            );
-            inventoryIds.push(item.id);
-          }else {
-            if (newInventoryID === "") {
-              newInventoryID = await idGenerate(
-                title,
-                "inventoryID",
-                this.#inventoryRepository
-              );
-            } else {
-              let id = Number(newInventoryID.slice(title.length + 6)) + 1;
-              let prefix = newInventoryID.slice(0, title.length + 6);
-              newInventoryID = prefix + id;
-            }
-            const newInventory = {
-              quantity: item.quantity,
-              availableQuantity: item.quantity,
-              color: item.colorCode || "#000000",
-              name: item.color || "Unknown",
-              level: level,
-              barcode: item.barcode || generateEAN13Barcode(),
-              inventoryID: newInventoryID,
-              mrpPrice: item.mrpPrice,
-              inventoryType: inventoryType,
-            };
-            if ((discountType, discount)) {
-              const { price, discountAmount } = calculateDiscountAmount(
-                Number(item.mrpPrice),
-                discountType,
-                discount
-              );
-              newInventory.price = price;
-              newInventory.discountAmount = discountAmount;
-              newInventory.discountType = discountType;
-            } else {
-              newInventory.price = Number(item.mrpPrice);
-            }
-            maxPrice = newInventory?.price &&  Math.min(maxPrice, newInventory?.price);
-            const createNewInventory = await this.#inventoryRepository.create(
-              newInventory,
-              session
-            );
-            inventoryIds.push(createNewInventory[0]._id);
-          }
           }
         }
       } else {
-        const inventoryRef = inventoryArray[0].id
+        const inventoryRef = inventoryArray[0].id;
         payload.inventoryType = "inventory";
         const newInventoryID = await idGenerate(
           "INV-",
@@ -760,8 +803,6 @@ class ProductService extends BaseService {
         );
         inventoryIds.push(inventoryRef);
       }
-
-
 
       // Set inventory refs
       console.log("inventoryIds", inventoryIds);
