@@ -11,8 +11,8 @@ const inventoryRepository = require("../inventory/inventory.repository.js");
 class OrderRepository extends BaseRepository {
   #model;
   #inventoryRepository = inventoryRepository;
-  constructor( inventoryRepository, model) {
-    super( model);
+  constructor(inventoryRepository, model) {
+    super(model);
     this.#model = model;
     this.#inventoryRepository = inventoryRepository;
   }
@@ -35,6 +35,11 @@ class OrderRepository extends BaseRepository {
       customerAltPhone,
       paymentMethod,
       note,
+      // EMI fields (may be present)
+      isEMI,
+      emiMonths,
+      emiMonthlyPayment,
+      emiTotalAmount,
     } = payload;
 
     const isObjectId = /^[a-f\d]{24}$/i.test(userRef);
@@ -164,6 +169,11 @@ class OrderRepository extends BaseRepository {
           customerRoad,
           customerThana,
           customerAltPhone,
+          // Save EMI fields if provided
+          isEMI: isEMI || false,
+          emiMonths: emiMonths || null,
+          emiMonthlyPayment: emiMonthlyPayment || null,
+          emiTotalAmount: emiTotalAmount || null,
           paymentMethod,
           note,
           products: products,
@@ -172,12 +182,12 @@ class OrderRepository extends BaseRepository {
       { session }
     );
     await CartSchema.deleteMany(query, { session });
-    console.log("cart items from order repo++++++++++++++++", newOrder );
-    console.log("cart items from order repo++++++++++++++++", products );
+    console.log("cart items from order repo++++++++++++++++", newOrder);
+    console.log("cart items from order repo++++++++++++++++", products);
 
     // Clear the cart after order is placed
     // await CartSchema.deleteMany(query, { session });
-        // orderData?.products loop than call this.#inventoryRepository.updateInventoryOnOrderPlace .
+    // orderData?.products loop than call this.#inventoryRepository.updateInventoryOnOrderPlace .
     for (const product of products) {
       await this.#inventoryRepository.updateInventoryOnOrderPlace(
         product?.inventoryRef?._id,

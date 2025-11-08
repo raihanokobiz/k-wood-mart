@@ -34,6 +34,7 @@ export default async function page() {
           </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     return (
         <div>
@@ -97,6 +98,16 @@ export default async function page() {
                 Interest Rates
               </h3>
             </div>
+=======
+          {/* Interest Rates Card */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-white/20 overflow-hidden shadow-2xl">
+            {/* Table Header */}
+            <div className="bg-white/5 border-b border-white/20 py-4 px-6">
+              <h3 className="text-xl font-semibold text-white text-center">
+                Interest Rates
+              </h3>
+            </div>
+>>>>>>> 1609d47f05288ec72dd972d77052d3967aef5c70
 
             {/* Rates Grid */}
             <div className="grid grid-cols-4 divide-x divide-white/20">
@@ -125,6 +136,9 @@ export default async function page() {
               Shop Now
             </Link>
           </div>
+<<<<<<< HEAD
+>>>>>>> 1609d47f05288ec72dd972d77052d3967aef5c70
+=======
 >>>>>>> 1609d47f05288ec72dd972d77052d3967aef5c70
         </div>
       </div>

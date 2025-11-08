@@ -1,8 +1,10 @@
 const { NotFoundError } = require("../../utils/errors.js");
 const BaseService = require("../base/base.service.js");
-
 const subCategoryRepository = require("./sub.category.repository.js");
+<<<<<<< HEAD
 const categoryRepository = require("../category/category.repository.js");
+=======
+>>>>>>> 1609d47f05288ec72dd972d77052d3967aef5c70
 
 const {
   removeUploadFile,
@@ -20,13 +22,17 @@ class SubCategoryService extends BaseService {
 
   async createSubCategory(payloadFiles, payload, session) {
     const { files } = payloadFiles;
-    const { name, status, slug } = payload;
-    if (files?.length) {
-      const images = await ImgUploader(files);
-      for (const key in images) {
-        payload[key] = images[key];
-      }
+    if (files?.image?.length) {
+      const uploadedImage = await ImgUploader(files.image);
+      payload.image = uploadedImage.image;
     }
+
+    if (files?.bannerImage?.length) {
+      const uploadedBanner = await ImgUploader(files.bannerImage);
+      payload.bannerImage = uploadedBanner.bannerImage;
+    }
+
+    console.log("payload", payload);
 
     const subCategoryData = await this.#repository.createSubCategory(
       payload,
