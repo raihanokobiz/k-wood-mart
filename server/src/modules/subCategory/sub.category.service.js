@@ -2,6 +2,8 @@ const { NotFoundError } = require("../../utils/errors.js");
 const BaseService = require("../base/base.service.js");
 
 const subCategoryRepository = require("./sub.category.repository.js");
+const categoryRepository = require("../category/category.repository.js");
+
 const {
   removeUploadFile,
 } = require("../../middleware/upload/removeUploadFile.js");
@@ -9,9 +11,11 @@ const ImgUploader = require("../../middleware/upload/ImgUploder.js");
 
 class SubCategoryService extends BaseService {
   #repository;
+  #categoryRepository;
   constructor(repository, serviceName) {
     super(repository, serviceName);
     this.#repository = repository;
+    this.#categoryRepository = categoryRepository;
   }
 
   async createSubCategory(payloadFiles, payload, session) {
@@ -32,7 +36,25 @@ class SubCategoryService extends BaseService {
   }
 
   async getAllSubCategory() {
-    return await this.#repository.findAll({}, ["categoryRef"]);
+    const furnitureCategory = await this.#categoryRepository.findOne({
+      name: { $regex: "^furnitures?$", $options: "i" },
+    });
+
+    const furnitureCategoryId = furnitureCategory?._id?.toString();
+
+    // Step 2: Get all subcategories
+    const data = await this.#repository.findAll({}, ["categoryRef"]);
+
+    // Step 3: Sort — Furniture first
+    if (furnitureCategoryId) {
+      data.sort((a, b) => {
+        if (a.categoryRef?._id?.toString() === furnitureCategoryId) return -1;
+        if (b.categoryRef?._id?.toString() === furnitureCategoryId) return 1;
+        return 0;
+      });
+    }
+
+    return data;
   }
 
   async getSubCategoryWithPagination(payload) {

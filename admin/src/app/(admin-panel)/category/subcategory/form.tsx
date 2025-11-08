@@ -219,10 +219,10 @@ export const CreateSubCategoryForm: React.FC = () => {
           </div>
 
           {/* remove image Image */}
-          {/* <div className="col-span-1 grid grid-cols-2">
+          <div className="col-span-1 grid grid-cols-2">
             <div className="">
               <Label>
-                Category Image <b className="text-red-500">*</b>
+                 Image <b className="text-red-500">*</b>
               </Label>
               <FormField
                 control={form.control}
@@ -271,7 +271,7 @@ export const CreateSubCategoryForm: React.FC = () => {
               </div>
             </div>
 
-            <div className="">
+            {/* <div className="">
               <Label>
                 Banner Image <b className="text-red-500">*</b>
               </Label>
@@ -320,8 +320,8 @@ export const CreateSubCategoryForm: React.FC = () => {
               <div className="text-red-400 text-xs min-h-4">
                 {form.formState.errors.bannerImage?.message}
               </div>
-            </div>
-          </div> */}
+            </div> */}
+          </div>
         </form>
       </Form>
     </Card>

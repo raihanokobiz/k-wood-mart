@@ -26,7 +26,6 @@ export default async function page() {
             {/* <div className="bg-[#1D4092] mt-20 w-full py-6 lg:flex hidden"></div> */}
             <div className="w-full bg-slate-600 py-16 lg:py-20 mt-24">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-
                     {/* Header */}
                     <div className="text-center mb-10">
                         <h2 className="text-3xl lg:text-4xl font-bold text-white mb-3">
@@ -36,7 +35,6 @@ export default async function page() {
                             Get 0% EMI through card payments
                         </p>
                     </div>
-
                     {/* Interest Rates Card */}
                     <div className="bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-white/20 overflow-hidden shadow-2xl">
 
@@ -72,6 +70,8 @@ export default async function page() {
                         </Link>
                     </div>
                 </div>
+            </div>
+            <div>
             </div>
         </div>
     )
