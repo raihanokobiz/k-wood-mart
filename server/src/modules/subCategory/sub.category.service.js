@@ -1,10 +1,7 @@
 const { NotFoundError } = require("../../utils/errors.js");
 const BaseService = require("../base/base.service.js");
 const subCategoryRepository = require("./sub.category.repository.js");
-<<<<<<< HEAD
-const categoryRepository = require("../category/category.repository.js");
-=======
->>>>>>> 1609d47f05288ec72dd972d77052d3967aef5c70
+const categoryRepository = require("../category/category.repository.js")
 
 const {
   removeUploadFile,

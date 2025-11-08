@@ -2,10 +2,12 @@
 import Image from "next/image";
 import N1 from "../../../../assets/kwoodmart/N1.jpg"
 import ProductCard from "../../products/ProductCard/ProductCard";
+import { getFeaturedProducts } from "@/services/products";
+import { apiBaseUrl } from "@/config/config";
 
 export default async function FeaturedProducts() {
 
-const products =  await getFeaturedProducts
+  const products = await getFeaturedProducts()
 
 
   return (
@@ -19,12 +21,27 @@ const products =  await getFeaturedProducts
       <div className="rounded">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  2xl:grid-cols-4 gap-4">
           {products?.data?.result?.map((product, idx) => (
-            <ProductCard
-              key={idx}
-              name={product.name}
-              image={product.image}
-              price={product.price}
-            />
+            <div
+            key={idx}
+              className="bg-white  text-center mb-8"
+            >
+              <div className=" relative h-[400px] mb-4">
+                <Image
+                  src={`${apiBaseUrl}${product?.thumbnailImage}`}
+                  alt={product?.name}
+                  fill
+                  className="mx-auto mb-4"
+                />
+              </div>
+              <div className="flex items-center justify-between text-xl font-medium text-secondary text-secondaryt p-4 ">
+                <h3 className="">
+                  {product?.name}
+                </h3>
+                <p className="" style={{ fontVariantNumeric: 'lining-nums' }}>
+                  ৳ {product?.price}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
         {/* {products.map((product, idx) => (
