@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { FilterDrawer } from "./FilterDrawer";
 import { SortDropdown } from "./SortDropdown";
-import { getFurnitureSubCategory } from "@/services/shopSidebar";
+import { getCurtainsSubCategory } from "@/services/shopSidebar";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { apiBaseUrl } from "@/config/config";
@@ -90,10 +90,26 @@ export default function HatilFilterSystem({ products }) {
     router.push(newUrl, { scroll: false });
   };
 
+  const handleSortChange = (sortValue: string) => {
+    const sortMapping = {
+      default: { sortBy: "createdAt", order: "DESC" },
+      "price-asc": { sortBy: "price", order: "ASC" },
+      "price-desc": { sortBy: "price", order: "DESC" },
+    };
+
+    const mapped = sortMapping[sortValue] || sortMapping.default;
+
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set("sortBy", mapped.sortBy);
+    newParams.set("order", mapped.order);
+
+    router.push(`?${newParams.toString()}`, { scroll: false });
+  };
+
   useEffect(() => {
     const fetchSidebarData = async () => {
       try {
-        const { data: furniture } = await getFurnitureSubCategory();
+        const { data: furniture } = await getCurtainsSubCategory();
         setFurnitureSubCategory(furniture);
       } catch (error) {
         console.error("Error fetching sidebar data:", error);
@@ -116,7 +132,7 @@ export default function HatilFilterSystem({ products }) {
             Filters
           </button>
           <SortDropdown
-            onSortChange={setCurrentSort}
+            onSortChange={handleSortChange}
             currentSort={currentSort}
           />
         </div>

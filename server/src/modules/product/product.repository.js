@@ -37,7 +37,7 @@ class ProductRepository extends BaseRepository {
   async getProductWithPaginationForFurniture(payload) {
     try {
       const {
-        sortBy = "createdAt",
+        sortBy,
         minPrice,
         maxPrice,
         categoryId,
@@ -227,7 +227,10 @@ class ProductRepository extends BaseRepository {
       }
 
       // Sorting logic based on filters
-      let sortCriteria = { [sortBy]: -1 };
+      // let sortCriteria = { [sortBy]: -1 };
+      const sortOrder = payload.order?.toUpperCase() === "ASC" ? 1 : -1;
+
+      let sortCriteria = { [sortBy]: sortOrder };
 
       // Best-Selling Products (Sort by total orders)
       if (bestSell) {
@@ -286,7 +289,7 @@ class ProductRepository extends BaseRepository {
               { path: "brandRef" },
               { path: "inventoryRef" },
             ]);
-          const totalProducts = await this.#model.countDocuments();
+          const totalProducts = await this.#model.countDocuments(filter);
           return { doc: product, totalDoc: totalProducts };
         }
       );
@@ -351,7 +354,7 @@ class ProductRepository extends BaseRepository {
   async getProductWithPaginationForCurtains(payload) {
     try {
       const {
-        sortBy = "createdAt",
+        sortBy,
         minPrice,
         maxPrice,
         categoryId,
@@ -542,7 +545,11 @@ class ProductRepository extends BaseRepository {
       }
 
       // Sorting logic based on filters
-      let sortCriteria = { [sortBy]: -1 };
+      // let sortCriteria = { [sortBy]: -1 };
+      // let sortCriteria = { [sortBy]: -1 };
+      const sortOrder = payload.order?.toUpperCase() === "ASC" ? 1 : -1;
+
+      let sortCriteria = { [sortBy]: sortOrder };
 
       // Best-Selling Products (Sort by total orders)
       if (bestSell) {
@@ -584,6 +591,7 @@ class ProductRepository extends BaseRepository {
         filter._id = { $in: productIds };
         sortCriteria = { orderCount: -1, discountPercentage: -1 }; // Sort by highest orders + discount
       }
+      
 
       const productsWithPagination = await pagination(
         payload,

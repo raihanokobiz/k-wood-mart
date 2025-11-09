@@ -3,7 +3,6 @@ import { apiBaseUrl } from "@/config/config";
 import Image from "next/image";
 
 export default function ProductCard({ name, thumbnailImage, price }) {
-   
     return (
         <div
             className="bg-white  text-center mb-8"

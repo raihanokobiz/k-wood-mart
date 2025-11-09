@@ -21,7 +21,12 @@ export default async function ProductsPage({ searchParams }: Props) {
     ? searchParams.limit[0]
     : searchParams.limit || "10";
 
-  const { data } = await getProductWithPagination(page, limit);
+  // Filter parameters
+  const categorySlug = Array.isArray(searchParams.categorySlug)
+    ? searchParams.categorySlug[0]
+    : searchParams.categorySlug || "";
+
+  const { data } = await getProductWithPagination(page, limit, categorySlug);
 
   return (
     <ContentLayout title="Product">

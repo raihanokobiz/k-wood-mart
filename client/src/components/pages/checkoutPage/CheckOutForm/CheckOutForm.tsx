@@ -471,7 +471,7 @@ const CheckOutForm: React.FC<Props> = ({
         </div>
 
         {/*Coupon Code */}
-        <h2 className="font-bold pt-5">Got any Coupon Code?</h2>
+        {/* <h2 className="font-bold pt-5">Got any Coupon Code?</h2>
         <div className="flex lg:flex-row flex-col pb-5  gap-4 w-full mt-2">
           <div className="xl:w-[40%] lg:w-[60%]">
             <input
@@ -487,7 +487,7 @@ const CheckOutForm: React.FC<Props> = ({
           >
             Add Coupon
           </div>
-        </div>
+        </div> */}
 
         {/* agree trams and condition */}
         <div className="flex gap-2">

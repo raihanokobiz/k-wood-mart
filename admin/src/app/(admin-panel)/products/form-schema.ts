@@ -74,6 +74,7 @@ export const productFormSchema = z.object({
     .optional()
     .default([]),
   featured: z.boolean().optional(),
+  videoUrl: z.string().url("Enter a valid URL").optional(),
 });
 
 export const dropZoneConfig = {

@@ -256,14 +256,14 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                       ) {
                         selectedItem = Array.isArray(inventoryRef)
                           ? inventoryRef.find(
-                              (item) => item._id === selectedLevel
-                            )
+                            (item) => item._id === selectedLevel
+                          )
                           : undefined;
                       } else if (inventoryType === "colorInventory") {
                         selectedItem = Array.isArray(inventoryRef)
                           ? inventoryRef.find(
-                              (item) => item._id === selectedColor
-                            )
+                            (item) => item._id === selectedColor
+                          )
                           : undefined;
                       }
                       const fallbackItem = Array.isArray(inventoryRef)
@@ -343,85 +343,83 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
             {/* Size Selection */}
             {(inventoryType === "levelInventory" ||
               inventoryType === "colorLevelInventory") && (
-              <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                <h3
-                  className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
-                >
-                  Select Size
-                </h3>
-                <div className="flex flex-wrap items-center gap-3">
-                  {Array.isArray(inventoryRef) &&
-                    inventoryRef.map((size) => (
-                      <button
-                        key={size._id}
-                        onClick={() => {
-                          setLevel(size.level);
-                          setSelectedLevel(size._id);
-                          setSelectedColor(null);
-                          setLevelError(false);
-                        }}
-                        className={`min-w-[60px] px-4 py-3 border-2 font-bold text-sm uppercase rounded-lg transition-all duration-300 ${
-                          level === size.level
+                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                  <h3
+                    className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
+                  >
+                    Select Size
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {Array.isArray(inventoryRef) &&
+                      inventoryRef.map((size) => (
+                        <button
+                          key={size._id}
+                          onClick={() => {
+                            setLevel(size.level);
+                            setSelectedLevel(size._id);
+                            setSelectedColor(null);
+                            setLevelError(false);
+                          }}
+                          className={`min-w-[60px] px-4 py-3 border-2 font-bold text-sm uppercase rounded-lg transition-all duration-300 ${level === size.level
                             ? "bg-[#D4A373] border-[#D4A373] text-white shadow-lg scale-105"
                             : "bg-white border-gray-300 text-[#262626] hover:border-[#D4A373] hover:text-[#D4A373]"
-                        }`}
-                      >
-                        {size.level}
-                      </button>
-                    ))}
+                            }`}
+                        >
+                          {size.level}
+                        </button>
+                      ))}
+                  </div>
+                  {levelError && (
+                    <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
+                      <span>⚠️</span>
+                      <span>Please select a size to continue</span>
+                    </p>
+                  )}
                 </div>
-                {levelError && (
-                  <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
-                    <span>⚠️</span>
-                    <span>Please select a size to continue</span>
-                  </p>
-                )}
-              </div>
-            )}
+              )}
 
             {/* Color Selection */}
             {((inventoryType === "colorLevelInventory" && selectedLevel) ||
               inventoryType === "colorInventory") && (
-              <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                <h3
-                  className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
-                >
-                  Select Color
-                </h3>
-                <div className="flex flex-wrap items-center gap-3">
-                  {Array.isArray(inventoryRef) &&
-                    inventoryRef.map(
-                      (colorItem: { _id: string; color: string }) => (
-                        <button
-                          key={colorItem._id}
-                          onClick={() => {
-                            setSelectedColor(colorItem._id);
-                            setColorError(false);
-                          }}
-                          className={`relative w-12 h-12 rounded-full transition-all duration-300 ${
-                            selectedColor === colorItem._id
+                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                  <h3
+                    className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
+                  >
+                    Select Color
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {Array.isArray(inventoryRef) &&
+                      inventoryRef.map(
+                        (colorItem: { _id: string; color: string }) => (
+                          <button
+                            key={colorItem._id}
+                            onClick={() => {
+                              setSelectedColor(colorItem._id);
+                              setColorError(false);
+                            }}
+                            className={`relative w-12 h-12 rounded-full transition-all duration-300 ${selectedColor === colorItem._id
                               ? "ring-4 ring-[#D4A373] ring-offset-2 scale-110"
                               : "ring-2 ring-gray-300 hover:ring-[#D4A373]/50"
-                          }`}
-                          style={{ backgroundColor: colorItem.color }}
-                        >
-                          {selectedColor === colorItem._id && (
-                            <span className="absolute inset-0 flex items-center justify-center text-white text-xl">
-                              ✓
-                            </span>
-                          )}
-                        </button>
-                      )
-                    )}
+                              }`}
+                            style={{ backgroundColor: colorItem.color }}
+                          >
+                            {selectedColor === colorItem._id && (
+                              <span className="absolute inset-0 flex items-center justify-center text-white text-xl">
+                                ✓
+                              </span>
+                            )}
+                          </button>
+                        )
+                      )}
+                  </div>
+                  {colorError && (
+                    <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
+                      <span>⚠️</span>
+                      <span>Please select a color to continue</span>
+                    </p>
+                  )}
                 </div>
-                {colorError && (
-                  <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
-                    <span>⚠️</span>
-                    <span>Please select a color to continue</span>
-                  </p>
-                )}
-              </div>
-            )}
+              )}
 
             {/* EMI Plan */}
             <div className="bg-gradient-to-br from-[#D4A373]/10 via-[#D4A373]/5 to-transparent rounded-xl p-6 border-2 border-[#D4A373]/30">
@@ -520,7 +518,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
 
             {/* Quantity & Actions */}
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                {/* Quantity Counter */}
                 <div className="flex items-center bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
                   <button
                     onClick={handleDecrement}
@@ -539,24 +538,28 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                   </button>
                 </div>
 
-                <button
-                  onClick={handleAddToCart}
-                  disabled={loading}
-                  className="flex-1 bg-[#D4A373] hover:bg-[#CCD5AE] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                >
-                  <FiPlus className="text-xl" />
-                  <span>{loading ? "Adding..." : "Add To Cart"}</span>
-                </button>
-              </div>
+                {/* Action Buttons */}
+                <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={loading}
+                    className="cursor-pointer flex-1 bg-[#D4A373] hover:bg-[#CCD5AE] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    <FiPlus className="text-xl" />
+                    <span>{loading ? "Adding..." : "Add To Cart"}</span>
+                  </button>
 
-              <button
-                onClick={handleBuyNow}
-                disabled={loading}
-                className="w-full bg-[#262626] hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                {loading ? "Processing..." : "Buy Now"}
-              </button>
+                  <button
+                    onClick={handleBuyNow}
+                    disabled={loading}
+                    className="cursor-pointer flex-1 bg-[#262626] hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    {loading ? "Processing..." : "Buy Now"}
+                  </button>
+                </div>
+              </div>
             </div>
+
 
             {/* Description */}
             <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">

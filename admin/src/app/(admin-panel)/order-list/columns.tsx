@@ -72,6 +72,33 @@ export const columns: ColumnDef<TOrder>[] = [
       );
     },
   },
+  {
+    header: "EMI Info",
+    headerClassName: "bg-[#5e828a] text-white text-center py-2 rounded-md",
+    cell: ({ row }) => {
+      const { isEMI, emiMonths, emiMonthlyPayment, emiTotalAmount } = row.original;
+
+      if (!isEMI) {
+        return <p className="text-gray-500 italic min-w-[200px]">N/A</p>;
+      }
+
+      return (
+        <div className="text-sm space-y-1">
+          <p>
+            <span className="font-semibold">Months:</span> {emiMonths}
+          </p>
+          <p>
+            <span className="font-semibold">Monthly Payment:</span>{" "}
+            {emiMonthlyPayment ? `${makeBDPrice(emiMonthlyPayment)}` : "N/A"}
+          </p>
+          <p>
+            <span className="font-semibold">Total Amount:</span>{" "}
+            {emiTotalAmount ? `${makeBDPrice(emiTotalAmount)}` : "N/A"}
+          </p>
+        </div>
+      );
+    },
+  },
   // {
   //   header: "Subtotal Price",
   //   accessorKey: "subTotalPrice",
@@ -84,16 +111,16 @@ export const columns: ColumnDef<TOrder>[] = [
   //     );
   //   },
   // },
-  {
-    header: "Coupon Code",
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.couponRef ? row.original.couponRef.code : <p>N/A</p>}
-        </div>
-      );
-    },
-  },
+  // {
+  //   header: "Coupon Code",
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div>
+  //         {row.original.couponRef ? row.original.couponRef.code : <p>N/A</p>}
+  //       </div>
+  //     );
+  //   },
+  // },
   // {
   //   header: "Coupon Discount",
   //   accessorKey: "couponDiscount",
@@ -300,7 +327,7 @@ export const columns: ColumnDef<TOrder>[] = [
       const { toast } = useToast();
       const router = useRouter();
       console.log(" row.original", row.original);
-            const { couponDiscount = 0, shippingCost = 0, totalPrice = 0 } = row.original;
+      const { couponDiscount = 0, shippingCost = 0, totalPrice = 0 } = row.original;
       const grandTotal = totalPrice + shippingCost - couponDiscount;
 
       const courierData: SteadfastOrderPayload = {
@@ -315,25 +342,25 @@ export const columns: ColumnDef<TOrder>[] = [
         setLoading(true);
         try {
           let response;
-                     if (row.original._id) {
-                           response = await createSteadfastOrder(courierData);
-                     }
+          if (row.original._id) {
+            response = await createSteadfastOrder(courierData);
+          }
           console.log("response from steadfast order creation", response);
           console.log("response from steadfast order creation", response?.status);
 
           if (response?.status == 200) {
-           if (row.original._id) {
-             await updateOrderCourierSend(row.original._id);
-             router.refresh();
+            if (row.original._id) {
+              await updateOrderCourierSend(row.original._id);
+              router.refresh();
 
-           } else {
-             throw new Error("Order ID is undefined");
-           }
+            } else {
+              throw new Error("Order ID is undefined");
+            }
             toast({
               title: "Success",
               description: response?.message,
             });
-          }else {
+          } else {
             console.log(response?.errors);
             toast({
               title: "Error",
@@ -355,10 +382,10 @@ export const columns: ColumnDef<TOrder>[] = [
 
       return (
         <div>
-          <Button 
-          className={row.original.isCourierSend ? 'bg-gray-300 cursor-not-allowed' : ''} 
-          loading={loading} onClick={handleClick}  
-          disabled={row.original.isCourierSend}>
+          <Button
+            className={row.original.isCourierSend ? 'bg-gray-300 cursor-not-allowed' : ''}
+            loading={loading} onClick={handleClick}
+            disabled={row.original.isCourierSend}>
             Steadfast
           </Button>
         </div>

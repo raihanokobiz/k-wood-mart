@@ -7,7 +7,7 @@ const pagination = async (query, callback) => {
 
   try {
     // Execute the callback function to fetch data with pagination
-    const { doc, totalDoc } = await callback(perPageLimit, offset, sortOrder);
+    const { doc, totalDoc } = await callback(perPageLimit, offset, sortOrder)
 
     // Calculate pagination details
     const pagination = {

@@ -78,6 +78,7 @@ class ProductController {
   });
 
   getProductWithPaginationForFurniture = catchError(async (req, res) => {
+    
     let payload = {
       page: req.query.page,
       limit: req.query.limit,
@@ -180,6 +181,7 @@ class ProductController {
       bestSell: req.query.bestSell,
       featured: req.query.featured,
     };
+    
 
     // Fetch products and filter options
     const product = await ProductService.getProductWithPagination(payload);

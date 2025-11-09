@@ -31,6 +31,7 @@ export const getAllProductsForFurniture = async ({
   minPrice,
   maxPrice,
   sortBy,
+  order,
   level,
   color,
 }: {
@@ -43,6 +44,7 @@ export const getAllProductsForFurniture = async ({
   minPrice?: number;
   maxPrice?: number;
   sortBy?: string;
+  order?: "ASC" | "DESC";
   level?: string;
   color?: string;
 }) => {
@@ -90,9 +92,6 @@ export const getAllProductsForFurniture = async ({
   if (maxPrice !== undefined) {
     searchParams.append("maxPrice", maxPrice.toString());
   }
-  if (sortBy) {
-    searchParams.append("sortBy", sortBy);
-  }
 
   if (level) {
     searchParams.append("level", level);
@@ -100,6 +99,15 @@ export const getAllProductsForFurniture = async ({
 
   if (color) {
     searchParams.append("color", color);
+  }
+
+  if (sortBy) {
+    searchParams.append("sortBy", sortBy);
+  }
+
+  if (order) {
+    // 🔥 append order
+    searchParams.append("order", order);
   }
 
   const url = `${apiBaseUrl}/product/furniture/pagination?${searchParams.toString()}`;
@@ -124,6 +132,7 @@ export const getAllProductsForCurtains = async ({
   minPrice,
   maxPrice,
   sortBy,
+  order,
   level,
   color,
 }: {
@@ -136,6 +145,7 @@ export const getAllProductsForCurtains = async ({
   minPrice?: number;
   maxPrice?: number;
   sortBy?: string;
+  order?: "ASC" | "DESC";
   level?: string;
   color?: string;
 }) => {
@@ -183,16 +193,21 @@ export const getAllProductsForCurtains = async ({
   if (maxPrice !== undefined) {
     searchParams.append("maxPrice", maxPrice.toString());
   }
-  if (sortBy) {
-    searchParams.append("sortBy", sortBy);
-  }
-
+ 
   if (level) {
     searchParams.append("level", level);
   }
 
   if (color) {
     searchParams.append("color", color);
+  }
+
+  if (sortBy) {
+    searchParams.append("sortBy", sortBy);
+  }
+
+  if (order) {
+    searchParams.append("order", order);
   }
 
   const url = `${apiBaseUrl}/product/curtains/pagination?${searchParams.toString()}`;

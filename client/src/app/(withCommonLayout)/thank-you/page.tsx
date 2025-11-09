@@ -45,7 +45,7 @@ const ThankYou = () => {
             Your submission has been received successfully.
           </p>
           <Link
-            href="/shop"
+            href="/"
             className="inline-block bg-[#D4A373] hover:bg-[#CCD5AE]  text-white font-semibold px-6 py-2 rounded hover:bg-primary transition duration-300"
           >
             Back to Shop

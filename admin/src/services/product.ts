@@ -34,14 +34,19 @@ export async function getAllProduct(): Promise<AllProductResponse> {
 
 export async function getProductWithPagination(
   page?: string,
-  limit?: string
+  limit?: string,
+  category?: string
 ): Promise<AllProductWithPaginationResponse> {
   const queryParams = new URLSearchParams();
   if (page) queryParams.set("page", page);
   if (limit) queryParams.set("limit", limit);
 
+  if (category) {
+    queryParams.append("categorySlug", category);
+  }
+
   const response = await fetch(
-    `${BASE_URL}/product/pagination?${queryParams.toString()}`,
+    `${BASE_URL}/product/pagination?${queryParams.toString()}`
     // { cache: "no-store" }
   );
 

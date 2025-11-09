@@ -50,13 +50,17 @@ export default async function FurniturePage({
     minPrice,
     maxPrice,
     page,
-    limit: 6,
+    limit: 9,
+    sortBy: params.sortBy || "createdAt",
+    order: params.order || "DESC",
   });
 
   const user = await getUser();
   const userId = user?.id;
   const coupon = "";
   const cartProducts = await getCartProducts(userId, coupon);
+
+
 
   return (
     <>
@@ -87,12 +91,11 @@ export default async function FurniturePage({
           </div>
         </div>
 
-        {/* ✅ নতুন Filter System */}
+        {/* নতুন Filter System */}
         <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
           <FilterSystem
             shopSideBar={shopSideBar}
             products={products}
-            pagination={products?.pagination}
             ShopProducts={ShopProducts}
             ShopProductsCategories={ShopProductsCategories}
             categorySlug={categorySlug}

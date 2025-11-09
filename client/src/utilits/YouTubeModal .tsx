@@ -51,7 +51,7 @@ export const YouTubeModal = ({ url }: Props) => {
                     >
                         <button
                             onClick={() => setOpen(false)}
-                            className="absolute top-2 right-3 text-red-500 hover:text-red-700 p-2 rounded-full bg-white shadow-md hover:shadow-lg transition"
+                            className="absolute cursor-pointer top-2 right-3 text-red-500 hover:text-red-700 p-2 rounded-full bg-white shadow-md hover:shadow-lg transition"
                         >
                             <CloseOutlined style={{ fontSize: "24px", fontWeight: 700 }} /> 
                         </button>

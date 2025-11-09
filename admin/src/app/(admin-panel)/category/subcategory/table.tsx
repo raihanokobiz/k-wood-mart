@@ -115,7 +115,6 @@ export const SubCategoryTable: React.FC<Props> = ({ data, pagination }) => {
           )}
         </TableBody>
       </Table>
-
       <DataTablePagination table={table} />
     </Card>
   );

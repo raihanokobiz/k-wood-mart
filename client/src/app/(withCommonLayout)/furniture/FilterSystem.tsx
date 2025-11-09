@@ -11,8 +11,59 @@ import { apiBaseUrl } from "@/config/config";
 import ProductDialog from "@/components/pages/products/ProductDialog/ProductDialog";
 import ProductCardForFurniture from "@/components/pages/products/ProductCardForFurniture/ProductCardForFurniture";
 
+interface Product {
+  _id: string;
+  name: string;
+  thumbnailImage: string;
+  backViewImage?: string;
+  price: number;
+  mrpPrice: number;
+  slug: string;
+  inventoryRef?: any;
+  inventoryType?: string;
+}
+
+interface FilterResponse {
+  data: {
+    result: Product[];
+    pagination: {
+      currentPage: number;
+      totalPage: number;
+      total: number;
+    };
+    filterOptions: {
+      brands: string[];
+      categories: string[];
+      subCategories: string[];
+      childCategories: string[];
+    };
+  };
+  message: string;
+  statusCode: number;
+}
+
+interface SelectedFilters {
+  categories: string[];
+  subCategories: string[];
+  childCategories: string[];
+  brands: string[];
+}
+
 interface FilterSystemProps {
-  products: any;
+  products: {
+    result: Product[];
+    pagination?: {
+      currentPage: number;
+      totalPage: number;
+      total: number;
+    };
+    filterOptions?: {
+      brands: string[];
+      categories: string[];
+      subCategories: string[];
+      childCategories: string[];
+    };
+  };
   shopSideBar?: any;
   ShopProducts?: any;
   ShopProductsCategories?: any;
@@ -25,7 +76,6 @@ interface FilterSystemProps {
 // Main Component
 export default function FilterSystem({
   products,
-  pagination,
   shopSideBar,
   ShopProducts,
   ShopProductsCategories,
@@ -36,7 +86,12 @@ export default function FilterSystem({
 }: FilterSystemProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [currentSort, setCurrentSort] = useState("default");
-  const [selectedFilters, setSelectedFilters] = useState({
+  const [selectedFilters, setSelectedFilters] = useState<{
+    categories: string[];
+    subCategories: string[];
+    childCategories: string[];
+    brands: string[];
+  }>({
     categories: [],
     subCategories: [],
     childCategories: [],
@@ -54,7 +109,7 @@ export default function FilterSystem({
 
   useEffect(() => {
     setAllProducts(products?.result || []);
-    setCurrentPage(1);
+    setCurrentPage(products?.pagination?.currentPage || 1);
   }, [products]);
 
   //  useEffect
@@ -75,7 +130,7 @@ export default function FilterSystem({
   }, [searchParams]);
 
   // Mock data - replace with your actual data
-  const brands = products.filterOptions.brands;
+  const brands = products.filterOptions?.brands || [];
 
   const handleFilterChange = (type: string, value: string) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -122,18 +177,25 @@ export default function FilterSystem({
   const handleLoadMore = async () => {
     setIsLoadingMore(true);
     const nextPage = currentPage + 1;
+
+    // Preserve all existing query parameters
     const params = new URLSearchParams(searchParams.toString());
+
+    // Add pagination parameters
     params.set("page", nextPage.toString());
-    params.set("limit", "6");
+    params.set("limit", "9");
+
+    // Log the full URL being called
+    const url = `${apiBaseUrl}/product/furniture/pagination?${params.toString()}`;
+    console.log("Fetching more products from:", url);
 
     try {
-      const response = await fetch(
-        `${apiBaseUrl}/product/furniture/pagination?${params.toString()}`
-      );
+      const response = await fetch(url);
       const data = await response.json();
+      console.log("Received data:", data);
 
-      if (data.result && data.result.length > 0) {
-        setAllProducts((prev) => [...prev, ...data.result]);
+      if (data?.data?.result && data?.data?.result?.length > 0) {
+        setAllProducts((prev) => [...prev, ...data.data.result]);
         setCurrentPage(nextPage);
       }
     } catch (error) {
@@ -142,6 +204,23 @@ export default function FilterSystem({
       setIsLoadingMore(false);
     }
   };
+
+  const handleSortChange = (sortValue: string) => {
+    const sortMapping = {
+      default: { sortBy: "createdAt", order: "DESC" },
+      "price-asc": { sortBy: "price", order: "ASC" },
+      "price-desc": { sortBy: "price", order: "DESC" },
+    };
+
+    const mapped = sortMapping[sortValue] || sortMapping.default;
+
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set("sortBy", mapped.sortBy);
+    newParams.set("order", mapped.order);
+
+    router.push(`?${newParams.toString()}`, { scroll: false });
+  };
+
 
   // 🔥 এটাও যোগ করুন
   const hasMore = currentPage < (products?.pagination?.totalPage || 1);
@@ -172,7 +251,7 @@ export default function FilterSystem({
             Filters
           </button>
           <SortDropdown
-            onSortChange={setCurrentSort}
+            onSortChange={handleSortChange}
             currentSort={currentSort}
           />
         </div>
@@ -214,7 +293,7 @@ export default function FilterSystem({
                 <button
                   onClick={handleLoadMore}
                   disabled={isLoadingMore}
-                  className="px-8 py-3 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-8 py-3 cursor-pointer bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoadingMore ? (
                     <span className="flex items-center justify-center gap-2">
@@ -243,7 +322,7 @@ export default function FilterSystem({
 
                 <p className="text-center text-gray-600 text-sm">
                   Showing {allProducts.length} of{" "}
-                  {products?.pagination?.totalProducts || 0} products
+                  {products?.pagination?.total || 0} products
                 </p>
               </div>
             )}

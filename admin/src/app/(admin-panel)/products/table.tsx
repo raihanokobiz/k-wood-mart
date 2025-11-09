@@ -19,6 +19,14 @@ import { Card } from "@/components/ui/card";
 import { TProduct } from "@/types/shared";
 import { columns } from "./columns";
 import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Props {
   data: TProduct[];
@@ -30,6 +38,21 @@ interface Props {
 }
 
 export const ProductTable: React.FC<Props> = ({ data, pagination }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentCategory = searchParams.get("categorySlug") || "";
+
+  const handleCategoryChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value && value !== "all") {
+      params.set("categorySlug", value);
+    } else {
+      params.delete("categorySlug");
+    }
+    params.set("page", "1"); // Reset to first page
+    router.push(`?${params.toString()}`);
+  };
+
   const table = useReactTable({
     data,
     columns,
@@ -49,8 +72,17 @@ export const ProductTable: React.FC<Props> = ({ data, pagination }) => {
     <Card className="m-6 p-4 rounded-lg">
       <div className="flex justify-between items-center">
         <Label className="text-xl font-semibold mb-4">Product List</Label>
+        <Select value={currentCategory || "all"} onValueChange={handleCategoryChange}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Select Category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="furniture">Furniture</SelectItem>
+            <SelectItem value="curtains">Curtains</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-
       <Table className="rounded-lg overflow-hidden">
         <TableHeader className="bg-primary">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -65,16 +97,16 @@ export const ProductTable: React.FC<Props> = ({ data, pagination }) => {
                     className={
                       (header.column.columnDef.meta as any)?.align
                         ? "h-8 text-white text-" +
-                          (header.column.columnDef.meta as any)?.align
+                        (header.column.columnDef.meta as any)?.align
                         : "h-8 text-white"
                     }
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 );
               })}
@@ -97,7 +129,7 @@ export const ProductTable: React.FC<Props> = ({ data, pagination }) => {
                     className={
                       (cell.column.columnDef.meta as any)?.align
                         ? "py-1 text-" +
-                          (cell.column.columnDef.meta as any)?.align
+                        (cell.column.columnDef.meta as any)?.align
                         : "py-1"
                     }
                   >

@@ -36,6 +36,7 @@ export default async function ShopPage({
     : params.brand || "";
   const minPrice = params.minPrice ? Number(params.minPrice) : undefined;
   const maxPrice = params.maxPrice ? Number(params.maxPrice) : undefined;
+    const page = params.page ? Number(params.page) : 1;
   // 🧩 End
 
   const { data: products } = await getAllProductsForCurtains({
@@ -45,6 +46,10 @@ export default async function ShopPage({
     brand,
     minPrice,
     maxPrice,
+    page,
+    limit: 9,
+    sortBy: params.sortBy || "createdAt",
+    order: params.order || "DESC",
   });
 
   const user = await getUser();

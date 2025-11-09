@@ -62,6 +62,7 @@ const defaultValues = {
   sizeChartImage: [],
   inventories: [{ quantity: "", mrpPrice: "" }], // initial entry
   featured: false,
+  videoUrl: "",
 };
 
 export const discountTypes = [
@@ -195,7 +196,7 @@ export const CreateProductForm: React.FC = () => {
   // console.log(fileList, "fileList................................");
 
   const onSubmit = async (values: z.infer<typeof productFormSchema>) => {
-    
+
     setLoading(true);
     const formData = makeFormData(values);
     console.log(values, "values from form++++++++++++++++++++++++++");
@@ -630,6 +631,21 @@ export const CreateProductForm: React.FC = () => {
                   Add Item
                 </Button>
               )}
+            <FormField
+              control={form.control}
+              name="videoUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Video URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter video URL" {...field} />
+                  </FormControl>
+                  <FormDescription className="text-red-400 text-xs min-h-4">
+                    {form.formState.errors.videoUrl?.message}
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -650,7 +666,6 @@ export const CreateProductForm: React.FC = () => {
                 </FormItem>
               )}
             />
-
 
             <Button type="submit" loading={loading} className="my-6">
               Create
