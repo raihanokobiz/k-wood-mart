@@ -390,6 +390,20 @@ class ProductService extends BaseService {
     return product;
   }
 
+  async getProductWithPaginationForFurniture(payload) {
+    const product = await this.#repository.getProductWithPaginationForFurniture(
+      payload
+    );
+    return product;
+  }
+
+  async getProductWithPaginationForCurtains(payload) {
+    const product = await this.#repository.getProductWithPaginationForCurtains(
+      payload
+    );
+    return product;
+  }
+
   async getProductWithPagination(payload) {
     const product = await this.#repository.getProductWithPagination(payload);
     return product;

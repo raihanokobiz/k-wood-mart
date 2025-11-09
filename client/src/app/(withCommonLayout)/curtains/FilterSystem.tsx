@@ -80,6 +80,14 @@ export default function HatilFilterSystem({ products }) {
 
   const handlePriceChange = (min: number, max: number) => {
     setPriceRange([min, max]);
+
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set("minPrice", min.toString());
+    newParams.set("maxPrice", max.toString());
+
+    const newUrl = `?${newParams.toString()}`;
+
+    router.push(newUrl, { scroll: false });
   };
 
   useEffect(() => {
@@ -156,7 +164,9 @@ export default function HatilFilterSystem({ products }) {
         categories={furnitureSubCategory}
         brands={brands}
         priceRange={priceRange}
+        setPriceRange={setPriceRange}
         selectedFilters={selectedFilters}
+        setSelectedFilters={setSelectedFilters}
         onFilterChange={handleFilterChange}
         onPriceChange={handlePriceChange}
       />

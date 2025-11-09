@@ -21,35 +21,31 @@ export const getFeaturedProducts = async () => {
   return res.json();
 };
 
-
-  export const getAllProductsForShop = async (
-    {
-      categorySlug,
-      subCategorySlug,
-      childCategorySlug,
-      brand,
-      page,
-      limit,
-      minPrice,
-      maxPrice,
-      sortBy,
-      level,
-      color,
-    }: {
-      categorySlug?: string;
-      subCategorySlug?: string;
-      childCategorySlug?: string;
-      brand?: string;
-      page?: number;
-      limit?: number;
-      minPrice?: number;
-      maxPrice?: number;
-      sortBy?: string;
-      level?: string;
-      color?: string;
-    }
-  ) => {
-
+export const getAllProductsForFurniture = async ({
+  categorySlug,
+  subCategorySlug,
+  childCategorySlug,
+  brand,
+  page,
+  limit,
+  minPrice,
+  maxPrice,
+  sortBy,
+  level,
+  color,
+}: {
+  categorySlug?: string;
+  subCategorySlug?: string;
+  childCategorySlug?: string;
+  brand?: string;
+  page?: number;
+  limit?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: string;
+  level?: string;
+  color?: string;
+}) => {
   const searchParams = new URLSearchParams();
 
   if (categorySlug) {
@@ -72,7 +68,6 @@ export const getFeaturedProducts = async () => {
       searchParams.append("childCategorySlug", child);
     });
   }
-
 
   if (brand) {
     const brands = brand.split(",");
@@ -99,7 +94,191 @@ export const getFeaturedProducts = async () => {
     searchParams.append("sortBy", sortBy);
   }
 
-  
+  if (level) {
+    searchParams.append("level", level);
+  }
+
+  if (color) {
+    searchParams.append("color", color);
+  }
+
+  const url = `${apiBaseUrl}/product/furniture/pagination?${searchParams.toString()}`;
+
+  console.log("This is the url >>>", url);
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error("Failed to fetch products");
+  }
+
+  return res.json();
+};
+
+export const getAllProductsForCurtains = async ({
+  categorySlug,
+  subCategorySlug,
+  childCategorySlug,
+  brand,
+  page,
+  limit,
+  minPrice,
+  maxPrice,
+  sortBy,
+  level,
+  color,
+}: {
+  categorySlug?: string;
+  subCategorySlug?: string;
+  childCategorySlug?: string;
+  brand?: string;
+  page?: number;
+  limit?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: string;
+  level?: string;
+  color?: string;
+}) => {
+  const searchParams = new URLSearchParams();
+
+  if (categorySlug) {
+    const categories = categorySlug.split(",");
+    categories.forEach((cat) => {
+      searchParams.append("categorySlug", cat);
+    });
+  }
+
+  if (subCategorySlug) {
+    const subCategories = subCategorySlug.split(",");
+    subCategories.forEach((sub) => {
+      searchParams.append("subCategorySlug", sub);
+    });
+  }
+
+  if (childCategorySlug) {
+    const childCategories = childCategorySlug.split(",");
+    childCategories.forEach((child) => {
+      searchParams.append("childCategorySlug", child);
+    });
+  }
+
+  if (brand) {
+    const brands = brand.split(",");
+    brands.forEach((brn) => {
+      searchParams.append("brandSlug", brn);
+    });
+  }
+
+  if (page) {
+    searchParams.append("page", page.toString());
+  }
+
+  if (limit) {
+    searchParams.append("limit", limit.toString());
+  }
+  if (minPrice !== undefined) {
+    searchParams.append("minPrice", minPrice.toString());
+  }
+
+  if (maxPrice !== undefined) {
+    searchParams.append("maxPrice", maxPrice.toString());
+  }
+  if (sortBy) {
+    searchParams.append("sortBy", sortBy);
+  }
+
+  if (level) {
+    searchParams.append("level", level);
+  }
+
+  if (color) {
+    searchParams.append("color", color);
+  }
+
+  const url = `${apiBaseUrl}/product/curtains/pagination?${searchParams.toString()}`;
+
+  console.log("This is the url >>>", url);
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error("Failed to fetch products");
+  }
+
+  return res.json();
+};
+
+export const getAllProductsForShop = async ({
+  categorySlug,
+  subCategorySlug,
+  childCategorySlug,
+  brand,
+  page,
+  limit,
+  minPrice,
+  maxPrice,
+  sortBy,
+  level,
+  color,
+}: {
+  categorySlug?: string;
+  subCategorySlug?: string;
+  childCategorySlug?: string;
+  brand?: string;
+  page?: number;
+  limit?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: string;
+  level?: string;
+  color?: string;
+}) => {
+  const searchParams = new URLSearchParams();
+
+  if (categorySlug) {
+    const categories = categorySlug.split(",");
+    categories.forEach((cat) => {
+      searchParams.append("categorySlug", cat);
+    });
+  }
+
+  if (subCategorySlug) {
+    const subCategories = subCategorySlug.split(",");
+    subCategories.forEach((sub) => {
+      searchParams.append("subCategorySlug", sub);
+    });
+  }
+
+  if (childCategorySlug) {
+    const childCategories = childCategorySlug.split(",");
+    childCategories.forEach((child) => {
+      searchParams.append("childCategorySlug", child);
+    });
+  }
+
+  if (brand) {
+    const brands = brand.split(",");
+    brands.forEach((brn) => {
+      searchParams.append("brandSlug", brn);
+    });
+  }
+
+  if (page) {
+    searchParams.append("page", page.toString());
+  }
+
+  if (limit) {
+    searchParams.append("limit", limit.toString());
+  }
+  if (minPrice !== undefined) {
+    searchParams.append("minPrice", minPrice.toString());
+  }
+
+  if (maxPrice !== undefined) {
+    searchParams.append("maxPrice", maxPrice.toString());
+  }
+  if (sortBy) {
+    searchParams.append("sortBy", sortBy);
+  }
 
   if (level) {
     searchParams.append("level", level);

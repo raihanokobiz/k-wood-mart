@@ -23,8 +23,9 @@ interface FilterSystemProps {
 }
 
 // Main Component
-export default function HatilFilterSystem({
+export default function FilterSystem({
   products,
+  pagination,
   shopSideBar,
   ShopProducts,
   ShopProductsCategories,
@@ -44,9 +45,17 @@ export default function HatilFilterSystem({
 
   const [priceRange, setPriceRange] = useState([0, 10000]);
   const [furnitureSubCategory, setFurnitureSubCategory] = useState(null);
+  const [allProducts, setAllProducts] = useState(products?.result || []);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setAllProducts(products?.result || []);
+    setCurrentPage(1);
+  }, [products]);
 
   //  useEffect
   useEffect(() => {
@@ -99,7 +108,43 @@ export default function HatilFilterSystem({
 
   const handlePriceChange = (min: number, max: number) => {
     setPriceRange([min, max]);
+
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set("minPrice", min.toString());
+    newParams.set("maxPrice", max.toString());
+
+    const newUrl = `?${newParams.toString()}`;
+
+    router.push(newUrl, { scroll: false });
   };
+
+  // 🔥 এই পুরো function যোগ করুন
+  const handleLoadMore = async () => {
+    setIsLoadingMore(true);
+    const nextPage = currentPage + 1;
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", nextPage.toString());
+    params.set("limit", "6");
+
+    try {
+      const response = await fetch(
+        `${apiBaseUrl}/product/furniture/pagination?${params.toString()}`
+      );
+      const data = await response.json();
+
+      if (data.result && data.result.length > 0) {
+        setAllProducts((prev) => [...prev, ...data.result]);
+        setCurrentPage(nextPage);
+      }
+    } catch (error) {
+      console.error("Error loading more products:", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
+  // 🔥 এটাও যোগ করুন
+  const hasMore = currentPage < (products?.pagination?.totalPage || 1);
 
   useEffect(() => {
     const fetchSidebarData = async () => {
@@ -160,10 +205,48 @@ export default function HatilFilterSystem({
           <div className="flex-1">
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Your product cards here */}
-              {products?.result?.map((product) => (
+              {allProducts?.map((product) => (
                 <ProductCardForFurniture key={product._id} product={product} />
               ))}
             </div>
+            {hasMore && (
+              <div className="flex flex-col items-center mt-8 gap-4">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={isLoadingMore}
+                  className="px-8 py-3 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoadingMore ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          fill="none"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Loading...
+                    </span>
+                  ) : (
+                    "Load More"
+                  )}
+                </button>
+
+                <p className="text-center text-gray-600 text-sm">
+                  Showing {allProducts.length} of{" "}
+                  {products?.pagination?.totalProducts || 0} products
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -175,9 +258,11 @@ export default function HatilFilterSystem({
         categories={furnitureSubCategory}
         brands={brands}
         priceRange={priceRange}
+        setPriceRange={setPriceRange}
         selectedFilters={selectedFilters}
         onFilterChange={handleFilterChange}
         onPriceChange={handlePriceChange}
+        setSelectedFilters={setSelectedFilters}
       />
     </div>
   );

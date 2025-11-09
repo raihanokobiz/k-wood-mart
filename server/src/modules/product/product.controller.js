@@ -68,49 +68,6 @@ class ProductController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  getAllBestSellProduct = catchError(async (req, res) => {
-    const payload = {
-      limit: req.query.limit,
-    };
-    const productResult = await ProductService.getAllBestSellProduct(payload);
-    const data = {
-      result: productResult?.product,
-    };
-    const resDoc = responseHandler(200, "Get All Best Selling Products", data);
-    res.status(resDoc.statusCode).json(resDoc);
-  });
-
-  getAllDiscountedProduct = catchError(async (req, res) => {
-    const payload = {
-      limit: req.query.limit,
-    };
-    const productResult = await ProductService.getAllDiscountedProduct(payload);
-    const data = {
-      result: productResult?.product,
-    };
-    const resDoc = responseHandler(200, "Get All Discounted Products", data);
-    res.status(resDoc.statusCode).json(resDoc);
-  });
-
-  getAllProductByBrandOrGender = catchError(async (req, res) => {
-    const payload = {
-      limit: req?.query?.limit,
-      brandRef: req?.query?.brandRef,
-    };
-    const productResult = await ProductService.getAllProductByBrandOrGender(
-      payload
-    );
-    const data = {
-      result: productResult?.product,
-    };
-    const resDoc = responseHandler(
-      200,
-      "Get All Products By Brand Or gender",
-      data
-    );
-    res.status(resDoc.statusCode).json(resDoc);
-  });
-
   getAllProductForHomePage = catchError(async (req, res) => {
     const productResult = await ProductService.getAllProductForHomePage();
     const data = {
@@ -120,21 +77,81 @@ class ProductController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  getRelatedProduct = catchError(async (req, res) => {
-    const payload = {
-      id: req.params.id,
+  getProductWithPaginationForFurniture = catchError(async (req, res) => {
+    let payload = {
+      page: req.query.page,
+      limit: req.query.limit,
+      order: req.query.order,
+      sortBy: req.query.sortBy,
+      minPrice: req.query.minPrice,
+      maxPrice: req.query.maxPrice,
+      categoryId: req.query.categoryId,
+      categorySlug: req.query.categorySlug,
+      subCategoryId: req.query.subCategoryId,
+      subCategorySlug: req.query.subCategorySlug,
+      childCategoryId: req.query.childCategoryId,
+      childCategorySlug: req.query.childCategorySlug,
+      subChildCategoryId: req.query.subChildCategoryId,
+      subChildCategorySlug: req.query.subChildCategorySlug,
+      brandId: req.query.brandId,
+      brandSlug: req.query.brandSlug,
+      isNewArrival: req.query.isNewArrival,
+      color: req.query.color,
+      level: req.query.level,
+      popular: req.query.popular,
+      bestSell: req.query.bestSell,
+      featured: req.query.featured,
     };
-    const productResult = await ProductService.getRelatedProduct(payload);
-    const resDoc = responseHandler(200, "Get All Products", productResult);
+
+    // Fetch products and filter options
+    const product = await ProductService.getProductWithPaginationForFurniture(
+      payload
+    );
+
+    // Prepare the response
+    const resDoc = responseHandler(200, "Products retrieved successfully", {
+      ...product,
+    });
+
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  getSearchProduct = catchError(async (req, res) => {
-    const payload = {
-      search: req.query.search,
+  getProductWithPaginationForCurtains = catchError(async (req, res) => {
+    let payload = {
+      page: req.query.page,
+      limit: req.query.limit,
+      order: req.query.order,
+      sortBy: req.query.sortBy,
+      minPrice: req.query.minPrice,
+      maxPrice: req.query.maxPrice,
+      categoryId: req.query.categoryId,
+      categorySlug: req.query.categorySlug,
+      subCategoryId: req.query.subCategoryId,
+      subCategorySlug: req.query.subCategorySlug,
+      childCategoryId: req.query.childCategoryId,
+      childCategorySlug: req.query.childCategorySlug,
+      subChildCategoryId: req.query.subChildCategoryId,
+      subChildCategorySlug: req.query.subChildCategorySlug,
+      brandId: req.query.brandId,
+      brandSlug: req.query.brandSlug,
+      isNewArrival: req.query.isNewArrival,
+      color: req.query.color,
+      level: req.query.level,
+      popular: req.query.popular,
+      bestSell: req.query.bestSell,
+      featured: req.query.featured,
     };
-    const productResult = await ProductService.getSearchProduct(payload);
-    const resDoc = responseHandler(200, "Get All Products", productResult);
+
+    // Fetch products and filter options
+    const product = await ProductService.getProductWithPaginationForCurtains(
+      payload
+    );
+
+    // Prepare the response
+    const resDoc = responseHandler(200, "Products retrieved successfully", {
+      ...product,
+    });
+
     res.status(resDoc.statusCode).json(resDoc);
   });
 
@@ -193,6 +210,67 @@ class ProductController {
       ...product,
     });
 
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  getRelatedProduct = catchError(async (req, res) => {
+    const payload = {
+      id: req.params.id,
+    };
+    const productResult = await ProductService.getRelatedProduct(payload);
+    const resDoc = responseHandler(200, "Get All Products", productResult);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  getSearchProduct = catchError(async (req, res) => {
+    const payload = {
+      search: req.query.search,
+    };
+    const productResult = await ProductService.getSearchProduct(payload);
+    const resDoc = responseHandler(200, "Get All Products", productResult);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  getAllBestSellProduct = catchError(async (req, res) => {
+    const payload = {
+      limit: req.query.limit,
+    };
+    const productResult = await ProductService.getAllBestSellProduct(payload);
+    const data = {
+      result: productResult?.product,
+    };
+    const resDoc = responseHandler(200, "Get All Best Selling Products", data);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  getAllDiscountedProduct = catchError(async (req, res) => {
+    const payload = {
+      limit: req.query.limit,
+    };
+    const productResult = await ProductService.getAllDiscountedProduct(payload);
+    const data = {
+      result: productResult?.product,
+    };
+    const resDoc = responseHandler(200, "Get All Discounted Products", data);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  getAllProductByBrandOrGender = catchError(async (req, res) => {
+    const payload = {
+      limit: req?.query?.limit,
+      brandRef: req?.query?.brandRef,
+    };
+    const productResult = await ProductService.getAllProductByBrandOrGender(
+      payload
+    );
+    const data = {
+      result: productResult?.product,
+    };
+    const resDoc = responseHandler(
+      200,
+      "Get All Products By Brand Or gender",
+      data
+    );
     res.status(resDoc.statusCode).json(resDoc);
   });
 

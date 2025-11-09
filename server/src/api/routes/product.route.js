@@ -11,15 +11,23 @@ const ProductRoute = Router();
 ProductRoute.route("/")
   .post(upload.any(), controller.createProduct)
   .get(controller.getAllProduct);
-
-ProductRoute.get("/search", controller.getSearchProduct);
-ProductRoute.get("/best-sell", controller.getAllBestSellProduct);
 ProductRoute.get("/new-arrivals", controller.getNewArrivalsProduct);
+ProductRoute.get("/for-home-page", controller.getAllProductForHomePage);
+ProductRoute.get(
+  "/furniture/pagination",
+  controller.getProductWithPaginationForFurniture
+);
+ProductRoute.get(
+  "/curtains/pagination",
+  controller.getProductWithPaginationForCurtains
+);
+ProductRoute.get("/pagination", controller.getProductWithPagination);
+ProductRoute.get("/related-product/:id", controller.getRelatedProduct);
+ProductRoute.get("/shop/pagination", controller.getProductWithPagination);
 ProductRoute.get("/discounted-product", controller.getAllDiscountedProduct);
 ProductRoute.get("/brand-or-gender", controller.getAllProductByBrandOrGender);
-ProductRoute.get("/related-product/:id", controller.getRelatedProduct);
-ProductRoute.get("/for-home-page", controller.getAllProductForHomePage);
-ProductRoute.get("/pagination", controller.getProductWithPagination);
+ProductRoute.get("/search", controller.getSearchProduct);
+ProductRoute.get("/best-sell", controller.getAllBestSellProduct);
 ProductRoute.get(
   "/pagination/admin",
   controller.getProductWithPaginationForAdmin

@@ -1,14 +1,14 @@
 import ShopProducts from "@/components/pages/products/ShopProducts/ShopProducts";
 import ShopProductsCategories from "@/components/pages/products/ShopProductsCategories/ShopProductsCategories";
 import { getShopSidebar } from "@/services/shopSidebar";
-import { getAllProductsForShop } from "@/services/products";
+import { getAllProductsForFurniture } from "@/services/products";
 import { getUser } from "@/services/auth";
 import { getCartProducts } from "@/services/cart";
 import CartSideBar from "@/components/pages/cartSideBar/CartSideBar";
 import React from "react";
 import { Metadata } from "next";
 import NavBar from "@/components/pages/header/NavBar/NavBar";
-import HatilFilterSystem from "./FilterSystem";
+import FilterSystem from "./FilterSystem";
 
 // ... metadata এবং revalidate same থাকবে
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description: "Best E-commerce platform in BD",
 };
 
-export default async function ShopPage({
+export default async function FurniturePage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -39,15 +39,18 @@ export default async function ShopPage({
     : params.brand || "";
   const minPrice = params.minPrice ? Number(params.minPrice) : undefined;
   const maxPrice = params.maxPrice ? Number(params.maxPrice) : undefined;
+  const page = params.page ? Number(params.page) : 1;
   // 🧩 End
 
-  const { data: products } = await getAllProductsForShop({
+  const { data: products } = await getAllProductsForFurniture({
     categorySlug,
     subCategorySlug,
     childCategorySlug,
     brand,
     minPrice,
     maxPrice,
+    page,
+    limit: 6,
   });
 
   const user = await getUser();
@@ -86,9 +89,10 @@ export default async function ShopPage({
 
         {/* ✅ নতুন Filter System */}
         <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
-          <HatilFilterSystem
+          <FilterSystem
             shopSideBar={shopSideBar}
             products={products}
+            pagination={products?.pagination}
             ShopProducts={ShopProducts}
             ShopProductsCategories={ShopProductsCategories}
             categorySlug={categorySlug}

@@ -34,6 +34,635 @@ class ProductRepository extends BaseRepository {
     return updatedProduct;
   }
 
+  async getProductWithPaginationForFurniture(payload) {
+    try {
+      const {
+        sortBy = "createdAt",
+        minPrice,
+        maxPrice,
+        categoryId,
+        categorySlug,
+        subCategoryId,
+        subCategorySlug,
+        childCategoryId,
+        childCategorySlug,
+        subChildCategoryId,
+        subChildCategorySlug,
+        brandId,
+        brandSlug,
+        isNewArrival,
+        color,
+        size,
+        popular,
+        bestSell,
+        featured,
+      } = payload;
+      console.log("Payload MIN AND MAX PRODUCT=========", {
+        minPrice,
+        maxPrice,
+      });
+
+      const filter = {};
+
+      // 🔥 FURNITURE FILTER - এইটা যোগ করুন একদম শুরুতে
+      const furnitureCategory = await CategorySchema.findOne({
+        slug: "furniture", // অথবা name: 'Furniture' - আপনার DB অনুযায়ী
+      });
+
+      if (!furnitureCategory) {
+        return { result: [], pagination: {}, filterOptions: {} };
+      }
+
+      // Furniture category দিয়ে filter করুন
+      filter.categoryRef = furnitureCategory._id;
+
+      if (minPrice && maxPrice) {
+        filter.price = {};
+        filter.price.$gte = parseFloat(minPrice);
+        filter.price.$lte = parseFloat(maxPrice);
+      }
+      console.log("filter log", filter);
+      const orCategoryIds = [];
+
+      if (categoryId) {
+        const categoryArray = Array.isArray(categoryId)
+          ? categoryId
+          : [categoryId];
+        orCategoryIds.push({
+          categoryRef: {
+            $in: categoryArray.map((id) => new mongoose.Types.ObjectId(id)),
+          },
+        });
+      }
+
+      if (subCategoryId) {
+        const subCategoryArray = Array.isArray(subCategoryId)
+          ? subCategoryId
+          : [subCategoryId];
+        orCategoryIds.push({
+          subCategoryRef: {
+            $in: subCategoryArray.map((id) => new mongoose.Types.ObjectId(id)),
+          },
+        });
+      }
+
+      if (childCategoryId) {
+        const childCategoryArray = Array.isArray(childCategoryId)
+          ? childCategoryId
+          : [childCategoryId];
+        orCategoryIds.push({
+          childCategoryRef: {
+            $in: childCategoryArray.map(
+              (id) => new mongoose.Types.ObjectId(id)
+            ),
+          },
+        });
+      }
+
+      if (subChildCategoryId) {
+        const subChildCategoryArray = Array.isArray(subChildCategoryId)
+          ? subChildCategoryId
+          : [subChildCategoryId];
+        orCategoryIds.push({
+          subChildCategoryRef: {
+            $in: subChildCategoryArray.map(
+              (id) => new mongoose.Types.ObjectId(id)
+            ),
+          },
+        });
+      }
+
+      if (orCategoryIds.length > 0) {
+        filter.$or = [...(filter.$or || []), ...orCategoryIds];
+      }
+
+      const orCategoryFilters = [];
+
+      if (categorySlug) {
+        const slugs = Array.isArray(categorySlug)
+          ? categorySlug
+          : [categorySlug];
+        const categories = await CategorySchema.find({ slug: { $in: slugs } });
+        const ids = categories.map((c) => c._id);
+        if (ids.length) {
+          orCategoryFilters.push({ categoryRef: { $in: ids } });
+        }
+      }
+
+      if (subCategorySlug) {
+        const slugs = Array.isArray(subCategorySlug)
+          ? subCategorySlug
+          : [subCategorySlug];
+        const subCategories = await SubCategorySchema.find({
+          slug: { $in: slugs },
+        });
+        const ids = subCategories.map((s) => s._id);
+        if (ids.length) {
+          orCategoryFilters.push({ subCategoryRef: { $in: ids } });
+        }
+      }
+
+      if (childCategorySlug) {
+        const slugs = Array.isArray(childCategorySlug)
+          ? childCategorySlug
+          : [childCategorySlug];
+        const childCategories = await ChildCategorySchema.find({
+          slug: { $in: slugs },
+        });
+        const ids = childCategories.map((c) => c._id);
+        if (ids.length) {
+          orCategoryFilters.push({ childCategoryRef: { $in: ids } });
+        }
+      }
+
+      if (subChildCategorySlug) {
+        const slugs = Array.isArray(subChildCategorySlug)
+          ? subChildCategorySlug
+          : [subChildCategorySlug];
+        const subChildCategories = await SubChildCategorySchema.find({
+          slug: { $in: slugs },
+        });
+        const ids = subChildCategories.map((s) => s._id);
+        if (ids.length) {
+          orCategoryFilters.push({ subChildCategoryRef: { $in: ids } });
+        }
+      }
+
+      if (orCategoryFilters.length > 0) {
+        filter.$or = orCategoryFilters;
+      }
+
+      if (brandId) {
+        filter.brandRef = new mongoose.Types.ObjectId(String(brandId));
+      }
+
+      if (brandSlug) {
+        const brand = await BrandSchema.findOne({ slug: brandSlug });
+        if (brand) {
+          filter.brandRef = brand._id;
+        } else {
+          return { result: [], pagination: {}, filterOptions: {} };
+        }
+      }
+
+      if (isNewArrival) {
+        const daysAgo = 30; // Define how many days ago counts as "new"
+        const newArrivalDate = new Date();
+        newArrivalDate.setDate(newArrivalDate.getDate() - daysAgo);
+        filter.createdAt = { $gte: newArrivalDate };
+      }
+
+      // Color filter
+      if (color) {
+        filter["inventoryRef.variants"] = {
+          $elemMatch: { color: color }, // Matches any variant with the given color
+        };
+      }
+
+      // Size filter
+      if (size) {
+        filter["inventoryRef.variants.sizeOptions"] = {
+          $elemMatch: { size: size }, // Matches any variant with the given size
+        };
+      }
+
+      // Sorting logic based on filters
+      let sortCriteria = { [sortBy]: -1 };
+
+      // Best-Selling Products (Sort by total orders)
+      if (bestSell) {
+        const bestSellingProducts = await OrderSchema.aggregate([
+          { $unwind: "$products" },
+          {
+            $group: {
+              _id: "$products.productRef",
+              orderCount: { $sum: "$products.quantity" }, // Sum total quantity ordered
+            },
+          },
+          { $sort: { orderCount: -1 } }, // Sort by highest orders
+        ]);
+
+        const productIds = bestSellingProducts.map((p) => p._id);
+        filter._id = { $in: productIds }; // Filter product that are best sellers
+        sortCriteria = { orderCount: -1 };
+      }
+
+      // Featured Products (Sort by highest discount)
+      if (featured) {
+        sortCriteria = { discountPercentage: -1 };
+      }
+
+      // Popular Products (Sort by highest orders + highest discount)
+      if (popular) {
+        const popularProducts = await OrderSchema.aggregate([
+          { $unwind: "$products" },
+          {
+            $group: {
+              _id: "$products.productRef",
+              orderCount: { $sum: "$products.quantity" }, // Total sales count
+            },
+          },
+          { $sort: { orderCount: -1 } },
+        ]);
+
+        const productIds = popularProducts.map((p) => p._id);
+        filter._id = { $in: productIds };
+        sortCriteria = { orderCount: -1, discountPercentage: -1 }; // Sort by highest orders + discount
+      }
+
+      const productsWithPagination = await pagination(
+        payload,
+        async (limit, offset) => {
+          const product = await this.#model
+            .find(filter)
+            .sort(sortCriteria)
+            .skip(offset)
+            .limit(limit)
+            .populate([
+              { path: "categoryRef" },
+              { path: "subCategoryRef" },
+              { path: "childCategoryRef" },
+              { path: "subChildCategoryRef" },
+              { path: "brandRef" },
+              { path: "inventoryRef" },
+            ]);
+          const totalProducts = await this.#model.countDocuments();
+          return { doc: product, totalDoc: totalProducts };
+        }
+      );
+
+      // Aggregation for filter options
+      const filterAggregation = await this.#model.aggregate([
+        { $match: filter },
+        {
+          $group: {
+            _id: null,
+            minPrice: { $min: "$price" },
+            maxPrice: { $max: "$price" },
+            sizes: { $push: "$inventoryRef.variants.sizeOptions" },
+          },
+        },
+        { $project: { _id: 0, minPrice: 1, maxPrice: 1 } },
+      ]);
+      console.log("filter aggrigation", filterAggregation);
+      const filterOptions = filterAggregation[0] || {
+        colors: [],
+        sizes: [],
+        minPrice: 0,
+        maxPrice: 0,
+      };
+      console.log("filter option", filterOptions);
+
+      // Flatten and get unique sizes
+      const flattenedSizes = Array.isArray(filterOptions.sizes)
+        ? filterOptions.sizes.flat()
+        : [];
+
+      const uniqueSizes = [...new Set(flattenedSizes)]; // Remove duplicates
+
+      // Fetch categories with subcategories
+      const categories = await this.getCategoriesWithSubcategoriesAndCounts();
+      const brands = await this.#brandModel.find().sort({ name: -1 });
+      console.log("calculated products min and max price ==================", {
+        minPrice: filterOptions.minPrice,
+        maxPrice: filterOptions.maxPrice,
+      });
+      return {
+        result: productsWithPagination.result,
+        pagination: productsWithPagination.pagination,
+        filterOptions: {
+          categories,
+          brands,
+          colors: filterOptions.colors,
+          sizes: uniqueSizes,
+          priceRange: {
+            // minPrice: filterOptions.minPrice,
+            minPrice: 0,
+            maxPrice: filterOptions.maxPrice,
+          },
+        },
+      };
+    } catch (error) {
+      console.error("Error getting product with pagination:", error);
+      throw error;
+    }
+  }
+
+  async getProductWithPaginationForCurtains(payload) {
+    try {
+      const {
+        sortBy = "createdAt",
+        minPrice,
+        maxPrice,
+        categoryId,
+        categorySlug,
+        subCategoryId,
+        subCategorySlug,
+        childCategoryId,
+        childCategorySlug,
+        subChildCategoryId,
+        subChildCategorySlug,
+        brandId,
+        brandSlug,
+        isNewArrival,
+        color,
+        size,
+        popular,
+        bestSell,
+        featured,
+      } = payload;
+      console.log("Payload MIN AND MAX PRODUCT=========", {
+        minPrice,
+        maxPrice,
+      });
+
+      const filter = {};
+
+      // 🔥 CURTAINS FILTER - এইটা যোগ করুন একদম শুরুতে
+      const curtainsCategory = await CategorySchema.findOne({
+        slug: "curtains", // অথবা 'curtain' - আপনার DB এ যেভাবে আছে
+      });
+
+      if (!curtainsCategory) {
+        // যদি curtains category না পাওয়া যায়, empty result return করুন
+        return { result: [], pagination: {}, filterOptions: {} };
+      }
+
+      // শুধুমাত্র Curtains category দিয়ে filter করুন
+      filter.categoryRef = curtainsCategory._id;
+
+      if (minPrice && maxPrice) {
+        filter.price = {};
+        filter.price.$gte = parseFloat(minPrice);
+        filter.price.$lte = parseFloat(maxPrice);
+      }
+      console.log("filter log", filter);
+      const orCategoryIds = [];
+
+      if (categoryId) {
+        const categoryArray = Array.isArray(categoryId)
+          ? categoryId
+          : [categoryId];
+        orCategoryIds.push({
+          categoryRef: {
+            $in: categoryArray.map((id) => new mongoose.Types.ObjectId(id)),
+          },
+        });
+      }
+
+      if (subCategoryId) {
+        const subCategoryArray = Array.isArray(subCategoryId)
+          ? subCategoryId
+          : [subCategoryId];
+        orCategoryIds.push({
+          subCategoryRef: {
+            $in: subCategoryArray.map((id) => new mongoose.Types.ObjectId(id)),
+          },
+        });
+      }
+
+      if (childCategoryId) {
+        const childCategoryArray = Array.isArray(childCategoryId)
+          ? childCategoryId
+          : [childCategoryId];
+        orCategoryIds.push({
+          childCategoryRef: {
+            $in: childCategoryArray.map(
+              (id) => new mongoose.Types.ObjectId(id)
+            ),
+          },
+        });
+      }
+
+      if (subChildCategoryId) {
+        const subChildCategoryArray = Array.isArray(subChildCategoryId)
+          ? subChildCategoryId
+          : [subChildCategoryId];
+        orCategoryIds.push({
+          subChildCategoryRef: {
+            $in: subChildCategoryArray.map(
+              (id) => new mongoose.Types.ObjectId(id)
+            ),
+          },
+        });
+      }
+
+      if (orCategoryIds.length > 0) {
+        filter.$or = [...(filter.$or || []), ...orCategoryIds];
+      }
+
+      const orCategoryFilters = [];
+
+      if (categorySlug) {
+        const slugs = Array.isArray(categorySlug)
+          ? categorySlug
+          : [categorySlug];
+        const categories = await CategorySchema.find({ slug: { $in: slugs } });
+        const ids = categories.map((c) => c._id);
+        if (ids.length) {
+          orCategoryFilters.push({ categoryRef: { $in: ids } });
+        }
+      }
+
+      if (subCategorySlug) {
+        const slugs = Array.isArray(subCategorySlug)
+          ? subCategorySlug
+          : [subCategorySlug];
+        const subCategories = await SubCategorySchema.find({
+          slug: { $in: slugs },
+        });
+        const ids = subCategories.map((s) => s._id);
+        if (ids.length) {
+          orCategoryFilters.push({ subCategoryRef: { $in: ids } });
+        }
+      }
+
+      if (childCategorySlug) {
+        const slugs = Array.isArray(childCategorySlug)
+          ? childCategorySlug
+          : [childCategorySlug];
+        const childCategories = await ChildCategorySchema.find({
+          slug: { $in: slugs },
+        });
+        const ids = childCategories.map((c) => c._id);
+        if (ids.length) {
+          orCategoryFilters.push({ childCategoryRef: { $in: ids } });
+        }
+      }
+
+      if (subChildCategorySlug) {
+        const slugs = Array.isArray(subChildCategorySlug)
+          ? subChildCategorySlug
+          : [subChildCategorySlug];
+        const subChildCategories = await SubChildCategorySchema.find({
+          slug: { $in: slugs },
+        });
+        const ids = subChildCategories.map((s) => s._id);
+        if (ids.length) {
+          orCategoryFilters.push({ subChildCategoryRef: { $in: ids } });
+        }
+      }
+
+      if (orCategoryFilters.length > 0) {
+        filter.$or = orCategoryFilters;
+      }
+
+      if (brandId) {
+        filter.brandRef = new mongoose.Types.ObjectId(String(brandId));
+      }
+
+      if (brandSlug) {
+        const brand = await BrandSchema.findOne({ slug: brandSlug });
+        if (brand) {
+          filter.brandRef = brand._id;
+        } else {
+          return { result: [], pagination: {}, filterOptions: {} };
+        }
+      }
+
+      if (isNewArrival) {
+        const daysAgo = 30; // Define how many days ago counts as "new"
+        const newArrivalDate = new Date();
+        newArrivalDate.setDate(newArrivalDate.getDate() - daysAgo);
+        filter.createdAt = { $gte: newArrivalDate };
+      }
+
+      // Color filter
+      if (color) {
+        filter["inventoryRef.variants"] = {
+          $elemMatch: { color: color }, // Matches any variant with the given color
+        };
+      }
+
+      // Size filter
+      if (size) {
+        filter["inventoryRef.variants.sizeOptions"] = {
+          $elemMatch: { size: size }, // Matches any variant with the given size
+        };
+      }
+
+      // Sorting logic based on filters
+      let sortCriteria = { [sortBy]: -1 };
+
+      // Best-Selling Products (Sort by total orders)
+      if (bestSell) {
+        const bestSellingProducts = await OrderSchema.aggregate([
+          { $unwind: "$products" },
+          {
+            $group: {
+              _id: "$products.productRef",
+              orderCount: { $sum: "$products.quantity" }, // Sum total quantity ordered
+            },
+          },
+          { $sort: { orderCount: -1 } }, // Sort by highest orders
+        ]);
+
+        const productIds = bestSellingProducts.map((p) => p._id);
+        filter._id = { $in: productIds }; // Filter product that are best sellers
+        sortCriteria = { orderCount: -1 };
+      }
+
+      // Featured Products (Sort by highest discount)
+      if (featured) {
+        sortCriteria = { discountPercentage: -1 };
+      }
+
+      // Popular Products (Sort by highest orders + highest discount)
+      if (popular) {
+        const popularProducts = await OrderSchema.aggregate([
+          { $unwind: "$products" },
+          {
+            $group: {
+              _id: "$products.productRef",
+              orderCount: { $sum: "$products.quantity" }, // Total sales count
+            },
+          },
+          { $sort: { orderCount: -1 } },
+        ]);
+
+        const productIds = popularProducts.map((p) => p._id);
+        filter._id = { $in: productIds };
+        sortCriteria = { orderCount: -1, discountPercentage: -1 }; // Sort by highest orders + discount
+      }
+
+      const productsWithPagination = await pagination(
+        payload,
+        async (limit, offset) => {
+          const product = await this.#model
+            .find(filter)
+            .sort(sortCriteria)
+            .skip(offset)
+            .limit(limit)
+            .populate([
+              { path: "categoryRef" },
+              { path: "subCategoryRef" },
+              { path: "childCategoryRef" },
+              { path: "subChildCategoryRef" },
+              { path: "brandRef" },
+              { path: "inventoryRef" },
+            ]);
+          const totalProducts = await this.#model.countDocuments();
+          return { doc: product, totalDoc: totalProducts };
+        }
+      );
+
+      // Aggregation for filter options
+      const filterAggregation = await this.#model.aggregate([
+        { $match: filter },
+        {
+          $group: {
+            _id: null,
+            minPrice: { $min: "$price" },
+            maxPrice: { $max: "$price" },
+            sizes: { $push: "$inventoryRef.variants.sizeOptions" },
+          },
+        },
+        { $project: { _id: 0, minPrice: 1, maxPrice: 1 } },
+      ]);
+      console.log("filter aggrigation", filterAggregation);
+      const filterOptions = filterAggregation[0] || {
+        colors: [],
+        sizes: [],
+        minPrice: 0,
+        maxPrice: 0,
+      };
+      console.log("filter option", filterOptions);
+
+      // Flatten and get unique sizes
+      const flattenedSizes = Array.isArray(filterOptions.sizes)
+        ? filterOptions.sizes.flat()
+        : [];
+
+      const uniqueSizes = [...new Set(flattenedSizes)]; // Remove duplicates
+
+      // Fetch categories with subcategories
+      const categories = await this.getCategoriesWithSubcategoriesAndCounts();
+      const brands = await this.#brandModel.find().sort({ name: -1 });
+      console.log("calculated products min and max price ==================", {
+        minPrice: filterOptions.minPrice,
+        maxPrice: filterOptions.maxPrice,
+      });
+      return {
+        result: productsWithPagination.result,
+        pagination: productsWithPagination.pagination,
+        filterOptions: {
+          categories,
+          brands,
+          colors: filterOptions.colors,
+          sizes: uniqueSizes,
+          priceRange: {
+            // minPrice: filterOptions.minPrice,
+            minPrice: 0,
+            maxPrice: filterOptions.maxPrice,
+          },
+        },
+      };
+    } catch (error) {
+      console.error("Error getting product with pagination:", error);
+      throw error;
+    }
+  }
+
   async getProductWithPagination(payload) {
     try {
       const {
