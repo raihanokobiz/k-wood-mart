@@ -40,7 +40,6 @@ import EMI from "@/components/pages/landing_pages/EMI/EMI";
 import CategorySection from "@/components/pages/landing_pages/CategorySection/CategorySection";
 import { getTwoSubCategorys } from "@/services/subCategorys";
 
-
 export const metadata: Metadata = {
   title: "K Wood Mart",
   description:
@@ -66,7 +65,7 @@ const page = async () => {
   const productWithDiscount = await getAllDiscountProduct();
   const brands = await getAllBrands();
 
-    const twoData = await getTwoSubCategorys();
+  const twoData = await getTwoSubCategorys();
 
   return (
     <>
@@ -76,15 +75,15 @@ const page = async () => {
         <Banner2 />
         <SignatureCollections />
         {/* <Category /> */}
-        <CategorySection/>
+        <CategorySection />
         {/* <BeforeAfterSection /> */}
         <NewArrivals />
-        <FurnitureCurtainGallery />
+        {/* <FurnitureCurtainGallery /> */}
         <FeaturedProducts />
         <FurnitureDemo twoData={twoData} />
         <WhyChooseUs />
-        <ReviewSection/>
-        <EMI/>
+        <ReviewSection />
+        <EMI />
         {/* <NewsUpdates /> */}
         {/* <BestSelling products={bestSelling} /> */}
         {/* <Newest products={allproducts} /> */}
