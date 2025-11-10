@@ -214,7 +214,7 @@ export const FilterDrawer = ({
                                 onPriceChange(localPriceRange[0], localPriceRange[1]);
                                 onClose();
                             }}
-                            className="w-full bg-red-500 cursor-pointer text-white py-3 rounded-lg font-semibold hover:bg-brown-700 transition"
+                            className="w-full bg-[#D4A373] cursor-pointer text-white py-3 rounded-lg font-semibold hover:bg-brown-700 transition"
 
                         >
                             Apply Filters
@@ -231,7 +231,7 @@ export const FilterDrawer = ({
                                 router.push('/furniture');
                                 onClose();
                             }}
-                            className="bg-red-500 text-white cursor-pointer w-full border border-brown-600 text-brown-600 py-3 rounded-lg font-semibold hover:bg-brown-50 transition"
+                            className="bg-[#D4A373] text-white cursor-pointer w-full border border-brown-600 text-brown-600 py-3 rounded-lg font-semibold hover:bg-brown-50 transition"
 
                         >
                             Clear All

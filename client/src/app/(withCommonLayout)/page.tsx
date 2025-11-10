@@ -38,6 +38,7 @@ import FurnitureCurtainGallery from "@/components/pages/landing_pages/FurnitureC
 import ReviewSection from "@/components/pages/landing_pages/ReviewSection/ReviewSection";
 import EMI from "@/components/pages/landing_pages/EMI/EMI";
 import CategorySection from "@/components/pages/landing_pages/CategorySection/CategorySection";
+import { getTwoSubCategorys } from "@/services/subCategorys";
 
 
 export const metadata: Metadata = {
@@ -65,6 +66,8 @@ const page = async () => {
   const productWithDiscount = await getAllDiscountProduct();
   const brands = await getAllBrands();
 
+    const twoData = await getTwoSubCategorys();
+
   return (
     <>
       <NavBar userCartProducts={products?.data} />
@@ -78,7 +81,7 @@ const page = async () => {
         <NewArrivals />
         <FurnitureCurtainGallery />
         <FeaturedProducts />
-        <FurnitureDemo />
+        <FurnitureDemo twoData={twoData} />
         <WhyChooseUs />
         <ReviewSection/>
         <EMI/>

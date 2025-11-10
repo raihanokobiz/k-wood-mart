@@ -53,7 +53,7 @@ export default async function EMI() {
                             Interest Rates
                         </h4>
 
-                        <div className="grid grid-cols-4 gap-3">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             {interestRates.map((rate, idx) => (
                                 <div
                                     key={idx}
@@ -74,7 +74,7 @@ export default async function EMI() {
                     <div className="flex justify-center items-center">
                         <Link
                             href="/emi"
-                            className="w-fit bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors shadow-md"
+                            className="w-fit bg-[#D4A373] hover:bg-[#c49761] text-white font-semibold py-4 px-6 rounded-lg transition-colors shadow-md"
                         >
                             Know More
                         </Link>

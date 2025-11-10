@@ -1,12 +1,13 @@
 const { NotFoundError } = require("../../utils/errors.js");
 const BaseService = require("../base/base.service.js");
 const subCategoryRepository = require("./sub.category.repository.js");
-const categoryRepository = require("../category/category.repository.js")
+const categoryRepository = require("../category/category.repository.js");
 
 const {
   removeUploadFile,
 } = require("../../middleware/upload/removeUploadFile.js");
 const ImgUploader = require("../../middleware/upload/ImgUploder.js");
+const { CategorySchema } = require("../../models/index.js");
 
 class SubCategoryService extends BaseService {
   #repository;
@@ -58,6 +59,32 @@ class SubCategoryService extends BaseService {
     }
 
     return data;
+  }
+
+  // three
+  async getThreeForFurniture() {
+    const furnitureCategory = await CategorySchema.findOne({
+      name: /furniture/i,
+    });
+
+    if (!furnitureCategory) return [];
+
+    return this.#repository.findAll({
+      categoryRef: furnitureCategory._id,
+    });
+  }
+
+  // two
+  async getTwoForCurtain() {
+    const curtainsCategory = await CategorySchema.findOne({
+      name: /curtains/i,
+    });
+
+    if (!curtainsCategory) return [];
+
+    return this.#repository.findAll({
+      categoryRef: curtainsCategory._id,
+    });
   }
 
   async getSubCategoryWithPagination(payload) {

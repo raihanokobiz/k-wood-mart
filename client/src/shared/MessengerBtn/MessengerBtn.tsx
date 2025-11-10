@@ -16,11 +16,11 @@ const MessengerBtn = () => {
   };
 
   return (
-    <div className="bottom-15 right-5 fixed z-[99]">
+    <div className="bottom-15  right-5 fixed z-[99]">
       {/* Main Messenger Button */}
       <button
         onClick={toggleOptions}
-        className={`btnzoom text-white p-3 rounded-full shadow-md hover:scale-115 cursor-pointer transition-all duration-300 ${
+        className={`btnzoom text-white  p-3 rounded-full shadow-md hover:scale-115 cursor-pointer transition-all duration-300 ${
           zoom ? "scale-115" : "scale-100"
         }`}
         style={{
@@ -28,7 +28,7 @@ const MessengerBtn = () => {
         }}
       >
         {/* <FaFacebookMessenger className="text-3xl" /> */}
-        <RiMessage2Fill className="text-xl" />
+        <RiMessage2Fill className="text-xl " />
       </button>
 
       {/* Popup Buttons */}

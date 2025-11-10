@@ -79,6 +79,7 @@ class CategoryService extends BaseService {
     return navbarData;
   }
 
+
   // Or get all at once
   async getAllNavBar() {
     const navbarData = await this.#repository.getNavBar();

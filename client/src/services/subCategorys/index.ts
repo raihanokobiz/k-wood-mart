@@ -7,6 +7,18 @@ export const getAllSubCategorys = async () => {
   return res.json();
 };
 
+export const getThreeSubCategorys = async () => {
+  const res = await fetch(`${apiBaseUrl}/sub-category/threeForFurniture`);
+
+  return res.json();
+};
+
+export const getTwoSubCategorys = async () => {
+  const res = await fetch(`${apiBaseUrl}/sub-category/twoForCurtains`);
+
+  return res.json();
+};
+
 // export const getSingleSubCategoryBySlug = async (slug: string) => {
 //   const res = await fetch(`${apiBaseUrl}/category/${slug}`);
 

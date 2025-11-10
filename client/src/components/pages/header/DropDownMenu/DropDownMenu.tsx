@@ -105,7 +105,7 @@ const DropDownMenu: React.FC<DropDownMenuProps> = ({ menu }) => {
                           <Link
                             key={child._id}
                             href={`/${menu.slug}?subCategory=${activeSubCat.slug}&childCategory=${child.slug}`}
-                            className="block py-2 px-3 text-gray-600 hover:text-[#1E3E96] hover:bg-gray-50 rounded transition-colors"
+                            className="block py-2 px-3 text-[#1E3E96] hover:text-[#1E3E96] hover:bg-gray-50 rounded transition-colors"
                           >
                             {child.name}
                           </Link>

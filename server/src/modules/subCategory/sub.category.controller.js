@@ -7,37 +7,37 @@ const { ensureNullIfUndefined } = require("../../utils/helpers.js");
 class SubCategoryController {
   createSubCategory = withTransaction(async (req, res, next, session) => {
     try {
-    console.log("REQ BODY:", req.body);
-    console.log("REQ FILES:", req.files);
-    const payloadFiles = {
-      files: req.files,
-    };
-    const payload = {
-      name: req.body.name,
-      status: req.body.status,
-      slug: req.body.slug,
-      categoryRef: req.body.categoryRef,
-      viewType: ensureNullIfUndefined(req.body.viewType),
-    };
-    const subCategoryResult = await SubCategoryService.createSubCategory(
-      payloadFiles,
-      payload,
-      session
-    );
-    const resDoc = responseHandler(
-      201,
-      "SubCategory Created successfully",
-      subCategoryResult
-    );
-    res.status(resDoc.statusCode).json(resDoc);
-      } catch (error) {
-    console.error("❌ SubCategory create error:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "Internal server error",
-    });
-  }
-  })
+      console.log("REQ BODY:", req.body);
+      console.log("REQ FILES:", req.files);
+      const payloadFiles = {
+        files: req.files,
+      };
+      const payload = {
+        name: req.body.name,
+        status: req.body.status,
+        slug: req.body.slug,
+        categoryRef: req.body.categoryRef,
+        viewType: ensureNullIfUndefined(req.body.viewType),
+      };
+      const subCategoryResult = await SubCategoryService.createSubCategory(
+        payloadFiles,
+        payload,
+        session
+      );
+      const resDoc = responseHandler(
+        201,
+        "SubCategory Created successfully",
+        subCategoryResult
+      );
+      res.status(resDoc.statusCode).json(resDoc);
+    } catch (error) {
+      console.error("❌ SubCategory create error:", error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Internal server error",
+      });
+    }
+  });
 
   getAllSubCategory = catchError(async (req, res, next) => {
     const subCategoryResult = await SubCategoryService.getAllSubCategory();
@@ -46,6 +46,23 @@ class SubCategoryController {
       "Get All SubCategorys",
       subCategoryResult
     );
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  // Three for furniture
+  getThreeForFurniture = catchError(async (req, res, next) => {
+    const data = await SubCategoryService.getThreeForFurniture();
+    // Get last 3 items from the array
+    const lastThree = data.slice(0, 3);
+    const resDoc = responseHandler(200, "Get Three for furniture", lastThree);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  // Two For Curtains
+  getTwoForCurtain = catchError(async (req, res, next) => {
+    const data = await SubCategoryService.getTwoForCurtain();
+    const lastTwo = data.slice(0, 2);
+    const resDoc = responseHandler(200, "Get  Two For Curtains", lastTwo);
     res.status(resDoc.statusCode).json(resDoc);
   });
 

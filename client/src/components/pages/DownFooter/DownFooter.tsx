@@ -66,60 +66,34 @@ const DownFooter: React.FC<FooterProps> = ({ userCartProducts }) => {
   return (
     // <div className="fixed bottom-0 md:py-12 py-2 w-full bg-[#fff] shadow-2xl z-[999]">
     <div
-      className={`fixed  bottom-0 md:py-12 py-4 w-full bg-[#fff] shadow-2xl border-t border-[#1D4095] z-[999]  transition-transform duration-300 ${
-        isVisible ? "translate-y-0 " : "translate-y-full"
-      } md:hidden`}
+      className={`fixed  bottom-0 md:py-12 py-4 w-full bg-[#fff] shadow-2xl border-t border-[#1D4095] z-[999]  transition-transform duration-300 ${isVisible ? "translate-y-0 " : "translate-y-full"
+        } md:hidden`}
     >
-      <div className="px-12 flex items-center justify-between">
-        {/* <Link href="/contact">
-          <div className="flex flex-col items-center justify-between capitalize text-sm font-semibold">
-            <p>
-              <LuContact className="text-lg text-[#1D4095]" />
-            </p>
-            <p className="text-[#1D4095]"> Contact</p>
-          </div>
-        </Link> */}
-
-        <Link href="/">
-          <div className="flex flex-col items-center justify-between capitalize text-sm font-semibold">
-            <p>
-              <LiaHomeSolid className="text-lg text-[#262626]" />
-            </p>
-            <p className="text-[#D4A373]">Home</p>
-          </div>
+      <div className="px-6 flex items-center justify-between divide-x divide-gray-300/60">
+        <Link href="/" className="flex-1 flex flex-col items-center text-sm font-semibold px-4">
+          <LiaHomeSolid className="text-lg text-[#262626]" />
+          <p className="text-[#D4A373]">Home</p>
         </Link>
 
-        <Link href="/shop">
-          <div className="flex flex-col items-center justify-between capitalize text-sm font-semibold">
-            <p>
-              <AiOutlineShopping className="text-lg text-[#262626]" />
-            </p>
-            <p className="text-[#D4A373]"> Shop</p>
-          </div>
+        <Link href="/shop" className="flex-1 flex flex-col items-center text-sm font-semibold px-4">
+          <AiOutlineShopping className="text-lg text-[#262626]" />
+          <p className="text-[#D4A373]">Shop</p>
         </Link>
 
-        <Link href="/cart">
-          <div className="flex flex-col items-center justify-between capitalize text-sm font-semibold">
-            <p className="relative">
-              <BsCart2 className="text-lg text-[#262626]" />
-              <span className="top-[-12px] right-[-14px] absolute w-[20px] h-[20px] text-sm text-[#fff] text-center rounded-full bg-[#D4A373]">
-                {userCartProducts?.cartDetails?.length || 0}
-              </span>
-            </p>
-            <p className="text-[#D4A373]">Cart</p>
-          </div>
+        <Link href="/cart" className="flex-1 flex flex-col items-center text-sm font-semibold px-4 relative">
+          <BsCart2 className="text-lg text-[#262626]" />
+          <span className="top-[-12px] right-[14px] absolute w-[20px] h-[20px] text-sm text-[#fff] text-center rounded-full bg-[#D4A373]">
+            {userCartProducts?.cartDetails?.length || 0}
+          </span>
+          <p className="text-[#D4A373]">Cart</p>
         </Link>
 
-        <div
-          onClick={handleAccountClick}
-          className="flex flex-col items-center justify-between capitalize text-sm font-semibold cursor-pointer"
-        >
-          <p>
-            <FaRegUser className="text-lg text-[#262626]" />
-          </p>
-          <p className="text-[#D4A373]">My Account</p>
+        <div onClick={handleAccountClick} className="flex-1 flex flex-col items-center text-sm font-semibold px-4 cursor-pointer">
+          <FaRegUser className="text-lg text-[#262626]" />
+          <p className="text-[#D4A373] text-center">My Account</p>
         </div>
       </div>
+
     </div>
   );
 };

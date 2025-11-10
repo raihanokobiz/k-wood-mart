@@ -119,6 +119,7 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     "/shop",
     "/emi",
     "/cart",
+    "/checkout",
     "/login",
     "/register",
   ];

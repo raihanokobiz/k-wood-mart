@@ -50,7 +50,7 @@ export default async function CategorySection() {
                                 />
                             </div>
                             {/* Animated Background Pattern */}
-                            <div className="absolute inset-0 bg-black/10">
+                            <div className="absolute inset-0 bg-black/30">
                                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] group-hover:scale-150 transition-transform duration-1000" />
                             </div>
                             {/* Content */}
@@ -74,7 +74,6 @@ export default async function CategorySection() {
                                         </svg>
                                     </div>
                                 </div>
-
                                 {/* Main Content */}
                                 <div className="space-y-4 transform group-hover:translate-y-[-10px] transition-transform duration-500">
                                     <h3 className="text-3xl md:text-4xl font-bold text-white leading-tight">
@@ -93,7 +92,7 @@ export default async function CategorySection() {
                                         )}
                                     </h3>
 
-                                    <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-md opacity-90">
+                                    <p className="text-white text-base md:text-lg leading-relaxed max-w-md opacity-90">
                                         {item.description}
                                     </p>
 
@@ -114,7 +113,6 @@ export default async function CategorySection() {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                         </svg>
                                     </span>
-
                                 </div>
 
                                 {/* Bottom Decorative Line */}

@@ -282,7 +282,7 @@ export default function FilterSystem({
 
           {/* Products Grid */}
           <div className="flex-1">
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6 lg:gap-10">
               {/* Your product cards here */}
               {allProducts?.map((product) => (
                 <ProductCardForFurniture key={product._id} product={product} />

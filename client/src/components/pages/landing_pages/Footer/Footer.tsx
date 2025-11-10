@@ -59,7 +59,7 @@ const Footer: React.FC<FooterProps> = ({ userCartProducts }) => {
 
   return (
     <div className="relative bg-gray-100">
-      <div className="py-4 md:px-6 lg:px-8">
+      <div className="py-4 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between space-y-5">
           <div>
             <div className="text-black font-semibold mb-[20px] text-xl">

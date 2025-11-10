@@ -17,9 +17,10 @@ SubCategoryRoute.route("/")
     controller.createSubCategory
   )
   .get(controller.getAllSubCategory);
+SubCategoryRoute.get("/threeForFurniture", controller.getThreeForFurniture);
+SubCategoryRoute.get("/twoForCurtains", controller.getTwoForCurtain);
 
 SubCategoryRoute.get("/pagination", controller.getSubCategoryWithPagination);
-
 SubCategoryRoute.route("/:slug").get(controller.getSingleSubCategoryWithSlug);
 
 SubCategoryRoute.route("/:id")

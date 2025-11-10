@@ -29,7 +29,7 @@ export default function WhyChooseSection() {
   ];
 
   return (
-    <div className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+    <div className="my-6 md:my-8 2xl:my-12 relative min-h-[60vh] flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"

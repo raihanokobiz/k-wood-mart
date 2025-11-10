@@ -8,6 +8,8 @@ export default function ProductCardForFurniture({ product }) {
     thumbnailImage,
     price,
     backViewImage,
+    discountType,
+    discount,
     inventoryRef,
     inventoryType,
     slug,
@@ -16,27 +18,43 @@ export default function ProductCardForFurniture({ product }) {
   } = product;
 
   return (
-    <Link href={`product/${slug}`}>
-      <div
-        key={product._id}
-        className="border border-gray-200 rounded hover:shadow-lg transition"
-      >
-        <div className="relative h-40 md:h-60 lg:h-96 2xl:h-[500px] mb-3">
+    <Link
+      href={`product/${slug}`}
+      className="group relative bg-white border border-gray-100 rounded-md text-center mb-8 shadow-md shadow-gray-200 overflow-hidden"
+    >
+      <div className="relative h-[300px]">
+        {/* Thumbnail Image */}
+        <Image
+          src={`${apiBaseUrl}${thumbnailImage}`}
+          alt={name}
+          fill
+          className="rounded-md object-cover transition-opacity duration-500 group-hover:opacity-0"
+        />
+
+        {/* Back View Image */}
+        {backViewImage && (
           <Image
-            src={apiBaseUrl + thumbnailImage}
+            src={`${apiBaseUrl}${backViewImage}`}
+            alt={`${name} Back`}
             fill
-            alt={name}
-            className="object-cover object-center rounded-t"
+            className="rounded-md object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
           />
-        </div>
-        <div className="p-4 flex justify-between items-center">
-          <h3 className=" text-lg lg:text-2xl font-medium text-black">
-            {name}
-          </h3>
-          <p className="text-red-600 text-lg lg:text-2xl font-medium">
-            ৳ {price}
-          </p>
-        </div>
+        )}
+
+        {/* Discount Circle */}
+        {discountType && discount && (
+          <div className="absolute bottom-3 right-3 w-14 h-14 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg z-10">
+            {discountType === "percent" ? `${discount}%` : `৳ ${discount}`}
+          </div>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="text-xl font-medium text-secondaryt px-4 py-4">
+        <h3 className="text-left text-gray-800">{name}</h3>
+        <p className="text-left mt-4" style={{ fontVariantNumeric: "lining-nums" }}>
+          ৳ {price}
+        </p>
       </div>
     </Link>
   );

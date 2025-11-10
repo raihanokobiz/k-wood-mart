@@ -1,75 +1,107 @@
 "use server";
+
 import React from "react";
-import aboutImage from "@/assets/logo/KWoodMart.jpeg";
 import Image from "next/image";
 import NavBar from "@/components/pages/header/NavBar/NavBar";
+import aboutImage from "@/assets/logo/Logo.png";
 import { getCartProducts } from "@/services/cart";
 import { getUser } from "@/services/auth";
+import AboutBanner from "@/assets/about/A1.jpg";
 
-const page = async () => {
+const AboutPage = async () => {
   const user = await getUser();
   const userRef = user?.id;
   const coupon = "";
   const userCartProducts = await getCartProducts(userRef, coupon);
+
+  const aboutCards = [
+    {
+      icon: "🏠",
+      title: "About Us",
+      text: "K WOOD MART is a modern furniture and curtain brand combining craftsmanship, comfort, and elegant design for homes and offices.",
+    },
+    {
+      icon: "📖",
+      title: "Our Story",
+      text: "Founded with a passion for quality and sustainability, every piece we create is designed to make your home stylish and comfortable.",
+    },
+    {
+      icon: "✨",
+      title: "What We Do",
+      text: "We design, craft, and deliver premium furniture and curtains — including custom pieces tailored to your lifestyle and space.",
+    },
+    {
+      icon: "🏆",
+      title: "Quality & Craftsmanship",
+      text: "Each product is made from durable, high-quality materials to ensure both beauty and long-lasting comfort.",
+    },
+    {
+      icon: "🌱",
+      title: "Sustainability",
+      text: "We focus on eco-friendly production and responsibly sourced materials — because style should care for nature too.",
+    },
+    {
+      icon: "💝",
+      title: "Customer Care",
+      text: "Our team ensures smooth ordering, customization, and support — every step built around your satisfaction.",
+    },
+  ];
+
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-b from-white to-amber-50/30">
       <NavBar userCartProducts={userCartProducts?.data} />
-      {/* <div className="bg-[#1D4092] mt-20 w-full py-6 lg:flex hidden"></div> */}
-      <div className="pt-24 md:pt-28 lg:pt-24">
-        <div className="Container lg:py-6 lg:mt-0 mt-30 mb-40">
-          <div className="border border-[#D4A373]/20 rounded md:p-2 p-4 inline-flex mt-2">
-            <Image
-              src={aboutImage}
-              alt=""
-              width={120}
-              height={120}
-              className="rounded"
-            />
-          </div>
-          <div className="flex flex-col gap-2 lg:gap-4">
-            <div className="md:text-xl text-lg  font-semibold text-[#262626] mt-8 ">
-              Welcome to <span className="uppercase text-[#D4A373]">K Wood Mart</span>{" "}
-              – a name born from the union of Noha and Hasan, and a brand built on
-              trust, elegance, and authenticity.
-            </div>
-
-            <div>
-              <p className="policy-page-text ">
-                At <span className="uppercase text-[#D4A373]">K Wood Mart</span>, we
-                are passionate about the art of fragrance. Our mission is to bring
-                you 100% authentic perfumes sourced from globally renowned brands
-                and trusted suppliers. Each scent in our collection is carefully
-                curated to ensure quality, originality, and a lasting impression.
-              </p>
-            </div>
-
-            <div>
-              <p className="policy-page-text ">
-                What began as a shared vision between husband and wife has grown
-                into a commitment to provide our customers with a premium
-                fragrance experience. We believe that a great perfume does more
-                than smell good – it speaks of identity, mood, and memory.
-              </p>
-            </div>
-
-            <div>
-              <p className="policy-page-text ">
-                We invite you to explore our selection and find your signature
-                scent with confidence and ease.
-              </p>
-            </div>
-
-            <div>
-              <p className="policy-page-text ">
-                <span className="uppercase text-[#D4A373]">K Wood Mart</span> –
-                Authentic Scents. Honest Commitment.
-              </p>
+      {/* Banner Section */}
+      <section className="relative h-[60vh] flex flex-col justify-center items-center text-center overflow-hidden pt-20">
+        <Image
+          src={AboutBanner}
+          alt="About Banner"
+          fill
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/40 z-10"></div>
+        <div className="relative z-20 px-4">
+          <div className="flex justify-center mb-6">
+            <div className="bg-white/90 w-28 h-28 backdrop-blur-sm p-3 rounded-xl shadow-2xl">
+              <Image
+                src={aboutImage}
+                alt="K Wood Mart Logo"
+                fill
+                className="rounded-lg"
+              />
             </div>
           </div>
+          <h1 className="text-xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-2xl mb-3">
+            Welcome to{" "}
+            <span className="text-[#D4A373]">K WOOD MART</span>
+          </h1>
+          <p className="text-gray-100 text-lg md:text-xl font-medium drop-shadow-lg">
+            Crafting Comfort. Designing Dreams.
+          </p>
         </div>
-      </div>
+      </section>
+
+      {/* Info Cards Section */}
+      <section className="md:max-w-7xl mx-auto py-16 md:py-20 px-4 md:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {aboutCards.map((card, index) => (
+            <div
+              key={index}
+              className="bg-white/90 backdrop-blur-sm border border-[#D4A373]/20 rounded-xl p-6 shadow-md hover:shadow-md hover:scale-101 transition-all duration-300"
+            >
+              <div className="text-4xl mb-4">{card.icon}</div>
+              <h3 className="text-xl font-bold text-[#262626] mb-3">
+                {card.title}
+              </h3>
+              <p className="text-gray-600 leading-relaxed text-sm md:text-base">
+                {card.text}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };
 
-export default page;
+export default AboutPage;
