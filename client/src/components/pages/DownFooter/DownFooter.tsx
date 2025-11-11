@@ -66,7 +66,7 @@ const DownFooter: React.FC<FooterProps> = ({ userCartProducts }) => {
   return (
     // <div className="fixed bottom-0 md:py-12 py-2 w-full bg-[#fff] shadow-2xl z-[999]">
     <div
-      className={`fixed  bottom-0 md:py-12 py-4 w-full bg-[#fff] shadow-2xl border-t border-[#1D4095] z-[999]  transition-transform duration-300 ${isVisible ? "translate-y-0 " : "translate-y-full"
+      className={`fixed  bottom-0 md:py-12 py-1 w-full bg-[#fff] shadow-2xl border-t border-[#1D4095] z-[999]  transition-transform duration-300 ${isVisible ? "translate-y-0 " : "translate-y-full"
         } md:hidden`}
     >
       <div className="px-6 flex items-center justify-between divide-x divide-gray-300/60">

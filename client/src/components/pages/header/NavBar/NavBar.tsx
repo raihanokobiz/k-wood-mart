@@ -167,7 +167,7 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                   >
                     <Link href={menu.link}>
                       <li
-                        className={`list-none py-4 text-xl hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${
+                        className={`list-none py-0 text-lg hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${
                           index === menuList.length - 1 ? "" : ""
                         }`}
                       >
@@ -181,7 +181,7 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                         exit={{ opacity: 0, y: 10 }}
                         transition={{ duration: 0.3 }}
                         className={`absolute left-0 top-full ${
-                          menu.title === "Curtains" ? "w-[420px]" : "w-[570px]"
+                          menu.title === "Curtains" ? "w-[350px]" : "w-[470px]"
                         }`}
                       >
                         {getSidebarData(menu.title) && (

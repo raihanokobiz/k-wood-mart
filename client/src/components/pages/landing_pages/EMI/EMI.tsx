@@ -18,7 +18,7 @@ export default async function EMI() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 items-center overflow-hidden">
 
                 {/* Left - Image */}
-                <div className="relative h-[400px] lg:h-[503px]">
+                <div className="relative h-[200px] md:h-[400px] lg:h-[503px]">
                     <Image
                         src={E1}
                         alt="Furniture"
@@ -35,10 +35,10 @@ export default async function EMI() {
                 </div>
 
                 {/* Right - EMI Details */}
-                <div className="p-8 lg:p-14 bg-[#5e828a] rounded">
+                <div className=" p-4 md:p-8 lg:p-14 bg-[#5e828a] rounded">
 
                     {/* Title */}
-                    <div className="mb-8">
+                    <div className=" mb-2 md:mb-8">
                         <h3 className="text-2xl font-bold text-white mb-2 text-center">
                             Flexible Payment Plans
                         </h3>
@@ -48,7 +48,7 @@ export default async function EMI() {
                     </div>
 
                     {/* EMI Table */}
-                    <div className=" rounded-xl p-6 mb-6">
+                    <div className=" rounded-xl md:p-6 mb-6">
                         <h4 className="text-lg font-semibold text-white mb-4 text-center">
                             Interest Rates
                         </h4>

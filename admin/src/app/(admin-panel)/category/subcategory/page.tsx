@@ -29,8 +29,6 @@ export default async function SubCategorysPage({ searchParams }: Props) {
       <SubCategoryTable
         data={data.result.map((item) => ({
           ...item,
-          image: fileUrlGenerator(String(item.image)),
-          bannerImage: fileUrlGenerator(String(item.bannerImage)),
         }))}
         pagination={{
           page: parseInt(page),

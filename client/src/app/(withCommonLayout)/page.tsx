@@ -78,7 +78,7 @@ const page = async () => {
         <CategorySection />
         {/* <BeforeAfterSection /> */}
         <NewArrivals />
-        {/* <FurnitureCurtainGallery /> */}
+        <FurnitureCurtainGallery />
         <FeaturedProducts />
         <FurnitureDemo twoData={twoData} />
         <WhyChooseUs />

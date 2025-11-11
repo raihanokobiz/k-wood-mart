@@ -20,9 +20,9 @@ export default function ProductCardForFurniture({ product }) {
   return (
     <Link
       href={`product/${slug}`}
-      className="group relative bg-white border border-gray-100 rounded-md text-center mb-8 shadow-md shadow-gray-200 overflow-hidden"
+      className="group relative bg-white border border-gray-100 rounded-md text-center shadow-md shadow-gray-200 overflow-hidden"
     >
-      <div className="relative h-[300px]">
+      <div className="relative h-[200px] md:h-[300px]">
         {/* Thumbnail Image */}
         <Image
           src={`${apiBaseUrl}${thumbnailImage}`}

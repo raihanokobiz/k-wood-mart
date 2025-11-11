@@ -12,7 +12,7 @@ import ProductDialog from "@/components/pages/products/ProductDialog/ProductDial
 import ProductCardForFurniture from "@/components/pages/products/ProductCardForFurniture/ProductCardForFurniture";
 
 // Main Component
-export default function HatilFilterSystem({ products }) {
+export default function FilterSystem({ products }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [currentSort, setCurrentSort] = useState("default");
   const [selectedFilters, setSelectedFilters] = useState({
@@ -163,7 +163,7 @@ export default function HatilFilterSystem({ products }) {
 
           {/* Products Grid */}
           <div className="flex-1">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               {/* Your product cards here */}
               {products?.result?.map((product) => (
                 <ProductCardForFurniture key={product._id} product={product} />

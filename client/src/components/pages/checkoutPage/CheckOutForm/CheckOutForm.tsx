@@ -490,7 +490,7 @@ const CheckOutForm: React.FC<Props> = ({
         </div> */}
 
         {/* agree trams and condition */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 mt-2">
           <input
             type="checkbox"
             {...register("terms", { required: "select terms & conditions" })}

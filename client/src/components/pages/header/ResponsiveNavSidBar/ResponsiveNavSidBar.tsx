@@ -38,12 +38,11 @@ type Props = {
   curtainsSubCategory?: CategoryNav | null;
 };
 
-
 const ResponsiveNavSidBar: React.FC<Props> = ({
   onClose,
   menuList,
   furnitureSubCategory,
-  curtainsSubCategory
+  curtainsSubCategory,
 }) => {
   const pathname = usePathname();
   const [shopSideBar, setShopSideBar] = useState<TShopSideBar[]>([]);
@@ -52,12 +51,12 @@ const ResponsiveNavSidBar: React.FC<Props> = ({
   const [openSub, setOpenSub] = useState<string | null>(null);
 
   const getSidebarData = (menuTitle: string): CategoryNav | null => {
-    if (menuTitle.toLowerCase() === "furniture") return furnitureSubCategory || null;
-    if (menuTitle.toLowerCase() === "curtains") return curtainsSubCategory || null;
+    if (menuTitle.toLowerCase() === "furniture")
+      return furnitureSubCategory || null;
+    if (menuTitle.toLowerCase() === "curtains")
+      return curtainsSubCategory || null;
     return null;
   };
-
-
 
   const toggleMenu = (title: string) => {
     if (openMenu === title) {
@@ -121,7 +120,7 @@ const ResponsiveNavSidBar: React.FC<Props> = ({
         animate={{ x: 0 }}
         exit={{ x: "-100%" }}
         transition={{ type: "tween", ease: "easeInOut", duration: 0.28 }}
-        className="fixed top-0 left-0 z-40 w-[75%] sm:w-[60%] md:w-[45%] h-screen bg-white p-4 overflow-y-auto"
+        className="fixed top-8 left-0 z-40 w-[75%] sm:w-[60%] md:w-[45%] h-screen bg-white p-4 overflow-y-auto"
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold">Menu</h3>
@@ -160,7 +159,11 @@ const ResponsiveNavSidBar: React.FC<Props> = ({
                         )}
                       </button>
                     ) : (
-                      <Link href={menu.link} onClick={onClose} className="block py-2">
+                      <Link
+                        href={menu.link}
+                        onClick={onClose}
+                        className="block py-2"
+                      >
                         {menu.title}
                       </Link>
                     )}
@@ -169,7 +172,8 @@ const ResponsiveNavSidBar: React.FC<Props> = ({
 
                 {/* SubCategories */}
                 <AnimatePresence>
-                  {openMenu === menu.title && categoryData?.subCategories?.length ? (
+                  {openMenu === menu.title &&
+                  categoryData?.subCategories?.length ? (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
@@ -198,7 +202,8 @@ const ResponsiveNavSidBar: React.FC<Props> = ({
 
                             {/* ChildCategories */}
                             <AnimatePresence>
-                              {openSub === sub._id && sub.childCategories?.length ? (
+                              {openSub === sub._id &&
+                              sub.childCategories?.length ? (
                                 <motion.ul
                                   initial={{ height: 0, opacity: 0 }}
                                   animate={{ height: "auto", opacity: 1 }}
@@ -208,7 +213,11 @@ const ResponsiveNavSidBar: React.FC<Props> = ({
                                 >
                                   {sub.childCategories.map((child) => (
                                     <li key={child._id}>
-                                      <Link href={`/${categoryData.slug}/${sub.slug}/${child.slug}`} onClick={onClose} className="block py-1">
+                                      <Link
+                                        href={`/${categoryData.slug}/${sub.slug}/${child.slug}`}
+                                        onClick={onClose}
+                                        className="block py-1"
+                                      >
                                         {child.name}
                                       </Link>
                                     </li>

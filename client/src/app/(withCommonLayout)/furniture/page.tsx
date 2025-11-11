@@ -65,7 +65,7 @@ export default async function FurniturePage({
   return (
     <>
       <NavBar userCartProducts={cartProducts?.data} />
-      <div className="min-h-screen pb-8 md:pb-12 lg:pb-16 ">
+      <div className="min-h-screen">
         {/* Furniture Sub Banner - same */}
         <div className="mb-6 md:mb-8 relative overflow-hidden h-64 md:h-80 lg:h-[450px]">
           <div className="relative w-full h-[450px] overflow-hidden">

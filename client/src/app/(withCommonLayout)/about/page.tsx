@@ -62,7 +62,7 @@ const AboutPage = async () => {
         <div className="absolute inset-0 bg-black/40 z-10"></div>
         <div className="relative z-20 px-4">
           <div className="flex justify-center mb-6">
-            <div className="bg-white/90 w-28 h-28 backdrop-blur-sm p-3 rounded-xl shadow-2xl">
+            <div className="bg-white/90 w-28 h-28 md:w-20 md:h-20  backdrop-blur-sm p-3 rounded-xl shadow-2xl">
               <Image
                 src={aboutImage}
                 alt="K Wood Mart Logo"
@@ -71,7 +71,7 @@ const AboutPage = async () => {
               />
             </div>
           </div>
-          <h1 className="text-xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-2xl mb-3">
+          <h1 className="text-xl md:text-3xl lg:text-5xl font-bold text-white drop-shadow-2xl mb-3">
             Welcome to{" "}
             <span className="text-[#D4A373]">K WOOD MART</span>
           </h1>
@@ -82,7 +82,7 @@ const AboutPage = async () => {
       </section>
 
       {/* Info Cards Section */}
-      <section className="md:max-w-7xl mx-auto py-16 md:py-20 px-4 md:px-6">
+      <section className="md:max-w-7xl mx-auto py-16 md:py-20 px-4 md:px-6 lg:px-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {aboutCards.map((card, index) => (
             <div

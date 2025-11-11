@@ -7,9 +7,9 @@ export default function ProductCard({ slug, name, thumbnailImage, backViewImage,
   return (
     <Link
       href={`product/${slug}`}
-      className="group relative bg-white border border-gray-100 rounded-md text-center mb-8 shadow-md shadow-gray-200 overflow-hidden"
+      className="group relative bg-white border border-gray-100 rounded-md text-center shadow-md shadow-gray-200 overflow-hidden"
     >
-      <div className="relative h-[300px]">
+      <div className="relative h-[150px] md:h-[200px] 2xl:h-[250px]">
         {/* Thumbnail Image */}
         <Image
           src={`${apiBaseUrl}${thumbnailImage}`}
@@ -38,7 +38,7 @@ export default function ProductCard({ slug, name, thumbnailImage, backViewImage,
 
       {/* Product Info */}
       <div className="text-xl font-medium text-secondaryt px-4 py-4">
-        <h3 className="text-left text-gray-800">{name}</h3>
+        <h3 className="text-left text-md text-gray-800">{name}</h3>
         <p className="text-left mt-4" style={{ fontVariantNumeric: "lining-nums" }}>
           ৳ {price}
         </p>

@@ -21,27 +21,16 @@ const ReletiveProducts: React.FC<Products> = async ({ relativeProducts }) => {
 
       <div className="grid xl:grid-cols-4 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-2 mt-8">
         {relativeProducts?.slice(0, 12).map((product) => (
-          <div
-          key={product?._id}
-            className="bg-white  text-center mb-8"
-          >
-            <div className=" relative h-[400px] mb-4">
-              <Image
-                src={`${apiBaseUrl}${product?.thumbnailImage}`}
-                alt={product?.name}
-                fill
-                className="mx-auto mb-4"
-              />
-            </div>
-            <div className="flex items-center justify-between text-xl font-medium text-secondary text-secondaryt p-4 ">
-              <h3 className="">
-                {product?.name}
-              </h3>
-              <p className="" style={{ fontVariantNumeric: 'lining-nums' }}>
-                ৳ {product?.price}
-              </p>
-            </div>
-          </div>
+          <ProductCard
+            key={product?._id}
+            slug={product?.slug}
+            thumbnailImage={product?.thumbnailImage}
+            backViewImage={product?.backViewImage}
+            name={product?.name}
+            price={product?.price}
+            discountType={product?.discountType}
+            discount={product?.discount}
+          />
         ))}
       </div>
     </div>

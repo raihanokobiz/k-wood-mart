@@ -16,7 +16,7 @@ export default async function NewArrivals() {
         New Arrivals
       </h2>
       <div className="rounded">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-10">
           {products?.data?.result?.map((product, idx) => (
             <ProductCard key={product?._id} slug={product?.slug} thumbnailImage={product?.thumbnailImage} backViewImage={product?.backViewImage} name={product?.name} price={product?.price} discountType={product?.discountType} discount={product?.discount} />
           ))}

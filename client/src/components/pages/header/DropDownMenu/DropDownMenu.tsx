@@ -40,8 +40,8 @@ const DropDownMenu: React.FC<DropDownMenuProps> = ({ menu }) => {
 
   return (
     <div
-      className={`-ml-52 z-[999] bg-white shadow-lg rounded-lg border mt-2 p-6 min-h-[200px]
-    ${menu.name === "Curtains" ? "-ml-[380px]" : "-ml-48"}
+      className={`-ml-52 z-[999] bg-white shadow-lg rounded-lg border mt-2 p-6 overflow-auto max-h-[300px]
+    ${menu.name === "Curtains" ? "-ml-[310px]" : "-ml-48"}
     `}
     >
       <div className="grid grid-cols-3 gap-6">
