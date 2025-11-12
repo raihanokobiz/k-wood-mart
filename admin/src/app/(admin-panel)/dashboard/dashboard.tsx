@@ -71,7 +71,7 @@ export default function AdminDashboard({ counts }: SalesDashboardProps) {
           </div>
         </Card>
         </div>
-        <div className="flex items-center justify-between w-full gap-3">
+        {/* <div className="flex items-center justify-between w-full gap-3">
         <Card className="flex i justify-between w-full h-36">
           <div className="flex items-center justify-start pl-6 ">
             <div className="bg-[#FFF3DBEE] rounded-sm h-8 w-8 flex justify-center items-center">
@@ -93,7 +93,7 @@ export default function AdminDashboard({ counts }: SalesDashboardProps) {
             <CardTitle>{makeBDPrice(counts.totalStockValue)}</CardTitle>
           </CardHeader>
         </Card>
-        </div>
+        </div> */}
         </div>
         {/* <div>
           <div className="flex items-center justify-between">

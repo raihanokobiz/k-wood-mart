@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import React from "react";
-import loader from "@/assets/logo/KWoodMart.jpeg";
+import loader from "@/assets/logo/Logo.png";
 
 const Loading = () => {
   return (

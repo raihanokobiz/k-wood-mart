@@ -41,6 +41,11 @@ export default async function FurniturePage({
   const maxPrice = params.maxPrice ? Number(params.maxPrice) : undefined;
   const page = params.page ? Number(params.page) : 1;
   // 🧩 End
+  // Validate that it's either "ASC" or "DESC", otherwise fallback
+  const orderParam = Array.isArray(params.order) ? params.order[0] : params.order;
+  const order: "ASC" | "DESC" = orderParam === "ASC" || orderParam === "DESC" ? orderParam : "DESC";
+  const sortBy = Array.isArray(params.sortBy) ? params.sortBy[0] : params.sortBy ?? "createdAt";
+
 
   const { data: products } = await getAllProductsForFurniture({
     categorySlug,
@@ -51,8 +56,9 @@ export default async function FurniturePage({
     maxPrice,
     page,
     limit: 9,
-    sortBy: params.sortBy || "createdAt",
-    order: params.order || "DESC",
+    sortBy: sortBy,
+    order: order,
+
   });
 
   const user = await getUser();
@@ -67,8 +73,8 @@ export default async function FurniturePage({
       <NavBar userCartProducts={cartProducts?.data} />
       <div className="min-h-screen">
         {/* Furniture Sub Banner - same */}
-        <div className="mb-6 md:mb-8 relative overflow-hidden h-64 md:h-80 lg:h-[450px]">
-          <div className="relative w-full h-[450px] overflow-hidden">
+        <div className="mb-6 md:mb-8 relative overflow-hidden h-80 md:h-[450px] lg:h-[500px]">
+          <div className="relative w-full h-full overflow-hidden">
             <video
               src="/F1.mp4"
               autoPlay

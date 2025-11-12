@@ -11,7 +11,7 @@ const SearchCancel = () => {
   const subCategorySlugs = searchParams.getAll("subCategory");
   const childCategorySlugs = searchParams.getAll("childCategory");
   const brandSlugs = searchParams.getAll("brand");
-  const genderSlugs = searchParams.getAll("gender");
+
 
   // Split categories by commas
   const allCategories = categorySlugs.flatMap((cat) => cat.split(","));
@@ -20,7 +20,7 @@ const SearchCancel = () => {
     sub.split(",")
   );
   const allbrands = brandSlugs.flatMap((brn) => brn.split(","));
-  const allgenders = genderSlugs.flatMap((gen) => gen.split(","));
+
 
   const handleClear = (
     type: "category" | "subCategory" | "childCategory" | "brand",

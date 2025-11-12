@@ -42,7 +42,6 @@ const CheckOutForm: React.FC<Props> = ({
   products,
   shipping,
   setShipping,
-  setCoupon,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [startCar, setStartCar] = useState(false);
@@ -53,7 +52,6 @@ const CheckOutForm: React.FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-    getValues,
   } = useForm<FormData>();
   const router = useRouter();
 
@@ -172,10 +170,10 @@ const CheckOutForm: React.FC<Props> = ({
     }
   };
 
-  const handleAddCoupon = () => {
-    const coupon = getValues("coupon");
-    setCoupon(coupon ?? null);
-  };
+  // const handleAddCoupon = () => {
+  //   const coupon = getValues("coupon");
+  //   setCoupon(coupon ?? null);
+  // };
 
   return (
     <div className="mt-16 lg:mt-auto">

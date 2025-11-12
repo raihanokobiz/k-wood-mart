@@ -3,8 +3,6 @@ import { rajdhani } from "@/app/font";
 import ProductCard from "../ProductCard/ProductCard";
 import { TProduct } from "@/types";
 import React from "react";
-import Image from "next/image";
-import { apiBaseUrl } from "@/config/config";
 
 interface Products {
   relativeProducts: TProduct[];
@@ -19,17 +17,11 @@ const ReletiveProducts: React.FC<Products> = async ({ relativeProducts }) => {
         Related Products :
       </h2>
 
-      <div className="grid xl:grid-cols-4 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-2 mt-8">
+      <div className="grid 2xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-4 md:gap-10 mt-8">
         {relativeProducts?.slice(0, 12).map((product) => (
           <ProductCard
             key={product?._id}
-            slug={product?.slug}
-            thumbnailImage={product?.thumbnailImage}
-            backViewImage={product?.backViewImage}
-            name={product?.name}
-            price={product?.price}
-            discountType={product?.discountType}
-            discount={product?.discount}
+            product={product}
           />
         ))}
       </div>

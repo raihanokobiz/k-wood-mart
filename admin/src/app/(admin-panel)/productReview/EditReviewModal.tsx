@@ -12,8 +12,8 @@ interface EditReviewModalProps {
   review: {
     _id: string;
     name: string;
-    district: string;
-    youtubeUrl: string;
+    district?: string;
+    youtubeUrl?: string;
   } | null;
 }
 
@@ -32,8 +32,8 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({
   useEffect(() => {
     if (review) {
       setName(review.name);
-      setDistrict(review.district);
-      setYoutubeUrl(review.youtubeUrl);
+      setDistrict(review.district || "");
+      setYoutubeUrl(review.youtubeUrl || "");
     }
   }, [review]);
 

@@ -108,6 +108,7 @@ export type TInventoryRef = {
   __v: number;
   productRef: string;
 };
+
 export type TProduct = {
   brandRef?: TBrands;
   priceRange?: TPrice;
@@ -120,7 +121,8 @@ export type TProduct = {
   productId: string;
   name: string;
   description: string;
-  discountType: "percent" | "flat" | string;
+  // discountType: "percent" | "flat" | string;
+  discountType?: "percent" | "flat";
   discount: number;
   discountAmount: number;
   bannerImage?: string;

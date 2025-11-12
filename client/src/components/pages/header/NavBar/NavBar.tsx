@@ -6,7 +6,7 @@ import logo from "@/assets/logo/KWoodMart.jpeg";
 import { menuList } from "@/utilits/menuList";
 import Link from "next/link";
 import { BsCart2 } from "react-icons/bs";
-import { FiMenu, FiUser, FiX } from "react-icons/fi";
+import { FiUser } from "react-icons/fi";
 import DropDownMenu from "../DropDownMenu/DropDownMenu";
 import { AnimatePresence, motion } from "framer-motion";
 import ResponsiveSearchForm from "../ResponsiveSearchForm/ResponsiveSearchForm";
@@ -24,10 +24,36 @@ import { getUser, setCorrelation } from "@/services/auth";
 import UserPopover from "@/shared/UserPopover/UserPopover";
 import { TUser } from "@/types";
 import { usePathname } from "next/navigation";
-import { MdClose, MdMenu } from "react-icons/md";
 import { Menu, X } from "lucide-react";
 
 // import { useCartRefresh } from "@/context/CartRefreshContext";
+
+type ChildCategory = {
+  _id: string;
+  name: string;
+  slug: string;
+  status: boolean;
+  subCategoryRef: string;
+};
+
+
+type SubCategory = {
+  _id: string;
+  name: string;
+  slug: string;
+  status: boolean;
+  categoryRef: string;
+  childCategories: ChildCategory[];
+};
+
+
+type CategoryData = {
+  _id: string;
+  name: string;
+  slug: string;
+  subCategories: SubCategory[];
+};
+
 
 interface NavBarProps {
   userCartProducts: {
@@ -41,8 +67,8 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [showSideMenu, setShowSideMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [furnitureSubCategory, setFurnitureSubCategory] = useState(null);
-  const [curtainsSubCategory, setCurtainsSubCategory] = useState(null);
+  const [furnitureSubCategory, setFurnitureSubCategory] = useState<CategoryData | null>(null);
+  const [curtainsSubCategory, setCurtainsSubCategory] = useState<CategoryData | null>(null);
   // const [productsByUser, setProductsByUser] = useState<{
   //   cartDetails: any[];
   // } | null>(null);
@@ -132,11 +158,10 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     <>
       {/* Desktop Navbar */}
       <div
-        className={`hidden lg:block w-full py-2 z-50 transition-all duration-300 fixed top-0 ${
-          isScrolled || shouldHaveWhiteBg
+        className={`hidden lg:block w-full py-2 z-50 transition-all duration-300 fixed top-0 ${isScrolled || shouldHaveWhiteBg
             ? "shadow bg-white text-black"
             : "bg-transparent text-white"
-        }`}
+          }`}
       >
         <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
           <div className="flex items-center justify-between relative">
@@ -167,9 +192,8 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                   >
                     <Link href={menu.link}>
                       <li
-                        className={`list-none py-0 text-lg hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${
-                          index === menuList.length - 1 ? "" : ""
-                        }`}
+                        className={`list-none py-0 text-lg hover:text-[#1E3E96] tracking-wider duration-300 menuTitle xl:px-6 px-4 ${index === menuList.length - 1 ? "" : ""
+                          }`}
                       >
                         {menu.title}
                       </li>
@@ -180,13 +204,14 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
                         transition={{ duration: 0.3 }}
-                        className={`absolute left-0 top-full ${
-                          menu.title === "Curtains" ? "w-[350px]" : "w-[470px]"
-                        }`}
+                        className={`absolute left-0 top-full ${menu.title === "Curtains" ? "w-[350px]" : "w-[470px]"
+                          }`}
                       >
+                        
                         {getSidebarData(menu.title) && (
-                          <DropDownMenu menu={getSidebarData(menu.title)} />
+                          <DropDownMenu menu={getSidebarData(menu.title)!} />
                         )}
+
                       </motion.div>
                     )}
                   </div>
@@ -267,9 +292,8 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
                 </div>
                 <div
                   onClick={() => setShowSideMenu(!showSideMenu)}
-                  className={`-ml-1.5 border-gray-300 cursor-pointer ${
-                    isShopPage ? "lg:hidden" : "lg:block"
-                  }`}
+                  className={`-ml-1.5 border-gray-300 cursor-pointer ${isShopPage ? "lg:hidden" : "lg:block"
+                    }`}
                 >
                   {showSideMenu ? (
                     <X className="w-12 h-12" />

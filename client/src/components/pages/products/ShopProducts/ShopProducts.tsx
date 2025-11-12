@@ -7,7 +7,6 @@ import { getAllProductsForShop } from "@/services/products";
 import Lottie from "lottie-react";
 import loadingSpinner from "@/assets/animation/shop-page-loading.json";
 import { TProduct } from "@/types";
-import PerfurmCard from "../PerfurmCard/PerfurmCard";
 import ProductCardForFurniture from "../ProductCardForFurniture/ProductCardForFurniture";
 
 interface Pagination {
@@ -137,13 +136,13 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {allProducts.map((product) => (
+          {allProducts.map((product : TProduct) => (
             // <ShopProductCard key={product._id} product={product} />
-            <>
+            // <>
             <ProductCardForFurniture key={product._id} product={product} />
-            <ProductCardForFurniture key={product._id} product={product} />
-            <ProductCardForFurniture key={product._id} product={product} />
-            </>
+            // <ProductCardForFurniture key={product._id} product={product} />
+            // <ProductCardForFurniture key={product._id} product={product} />
+            // </>
           ))}
         </div>
       )}

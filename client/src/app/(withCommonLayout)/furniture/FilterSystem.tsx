@@ -6,9 +6,7 @@ import { FilterDrawer } from "./FilterDrawer";
 import { SortDropdown } from "./SortDropdown";
 import { getFurnitureSubCategory } from "@/services/shopSidebar";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { apiBaseUrl } from "@/config/config";
-import ProductDialog from "@/components/pages/products/ProductDialog/ProductDialog";
 import ProductCardForFurniture from "@/components/pages/products/ProductCardForFurniture/ProductCardForFurniture";
 
 interface Product {
@@ -23,31 +21,26 @@ interface Product {
   inventoryType?: string;
 }
 
-interface FilterResponse {
-  data: {
-    result: Product[];
-    pagination: {
-      currentPage: number;
-      totalPage: number;
-      total: number;
-    };
-    filterOptions: {
-      brands: string[];
-      categories: string[];
-      subCategories: string[];
-      childCategories: string[];
-    };
-  };
-  message: string;
-  statusCode: number;
-}
+// interface FilterResponse {
+//   data: {
+//     result: Product[];
+//     pagination: {
+//       currentPage: number;
+//       totalPage: number;
+//       total: number;
+//     };
+//     filterOptions: {
+//       brands: string[];
+//       categories: string[];
+//       subCategories: string[];
+//       childCategories: string[];
+//     };
+//   };
+//   message: string;
+//   statusCode: number;
+// }
 
-interface SelectedFilters {
-  categories: string[];
-  subCategories: string[];
-  childCategories: string[];
-  brands: string[];
-}
+
 
 interface FilterSystemProps {
   products: {
@@ -76,16 +69,9 @@ interface FilterSystemProps {
 // Main Component
 export default function FilterSystem({
   products,
-  shopSideBar,
-  ShopProducts,
-  ShopProductsCategories,
-  categorySlug,
-  subCategorySlug,
-  childCategorySlug,
-  brand,
 }: FilterSystemProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [currentSort, setCurrentSort] = useState("default");
+  const [currentSort] = useState("default");
   const [selectedFilters, setSelectedFilters] = useState<{
     categories: string[];
     subCategories: string[];
@@ -212,7 +198,7 @@ export default function FilterSystem({
       "price-desc": { sortBy: "price", order: "DESC" },
     };
 
-    const mapped = sortMapping[sortValue] || sortMapping.default;
+    const mapped = sortMapping[sortValue as keyof typeof sortMapping] || sortMapping.default;
 
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("sortBy", mapped.sortBy);

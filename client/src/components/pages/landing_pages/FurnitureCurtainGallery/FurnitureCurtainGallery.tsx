@@ -8,14 +8,23 @@ export default async function FurnitureCurtainGallery() {
 
   const threeData = await getThreeSubCategorys();
 
+  if (!threeData?.data || threeData.data.length < 3) {
+    return (
+      <section className="pb-6 md:pb-8 2xl:pb-12 px-4 md:px-6 lg:px-8 2xl:px-12">
+        <p className="text-center text-gray-500">No subcategories available.</p>
+      </section>
+    );
+  }
+
+
   return (
     <section className="pb-6 md:pb-8 2xl:pb-12 px-4 md:px-6 lg:px-8 2xl:px-12">
       <div className="mx-auto">
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Single Large Image */}
           <Link
-            href={`furniture?subcategory=${threeData?.data[0]?.slug}`}
+            href={`furniture?subCategory=${threeData?.data[0]?.slug}`}
             className="relative group overflow-hidden shadow-xl lg:h-screen block"
           >
             <div className="relative w-full h-full">
@@ -39,7 +48,7 @@ export default async function FurnitureCurtainGallery() {
           <div className="flex flex-col gap-6 lg:h-screen">
             {/* Top Image */}
             <Link
-              href={`furniture?subcategory=${threeData?.data[1]?.slug}`}
+              href={`furniture?subCategory=${threeData?.data[1]?.slug}`}
               className="relative group overflow-hidden shadow-xl flex-1 block"
             >
               <div className="relative w-full h-full">
@@ -60,7 +69,7 @@ export default async function FurnitureCurtainGallery() {
 
             {/* Bottom Image */}
             <Link
-              href={`furniture?subcategory=${threeData?.data[2]?.slug}`}
+              href={`furniture?subCategory=${threeData?.data[2]?.slug}`}
               className="relative group overflow-hidden shadow-xl flex-1 block"
             >
               <div className="relative w-full h-full">

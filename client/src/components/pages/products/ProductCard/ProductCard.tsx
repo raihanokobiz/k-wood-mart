@@ -1,15 +1,23 @@
 "use client";
 import { apiBaseUrl } from "@/config/config";
+import { TProduct } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function ProductCard({ slug, name, thumbnailImage, backViewImage, price ,discountType, discount}) {
+interface ProductCardProps {
+  product: TProduct;
+}
+
+export default function ProductCard({ product }: ProductCardProps) {
+
+    const { slug, name, thumbnailImage, backViewImage, price, discountType, discount } = product;
+
   return (
     <Link
       href={`product/${slug}`}
       className="group relative bg-white border border-gray-100 rounded-md text-center shadow-md shadow-gray-200 overflow-hidden"
     >
-      <div className="relative h-[150px] md:h-[200px] 2xl:h-[250px]">
+      <div className="relative h-[250px] md:h-[200px] 2xl:h-[250px]">
         {/* Thumbnail Image */}
         <Image
           src={`${apiBaseUrl}${thumbnailImage}`}

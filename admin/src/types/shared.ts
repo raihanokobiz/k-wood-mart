@@ -96,6 +96,11 @@ export type TOrder = {
   createdAt?: string;
   updatedAt?: string;
   isCourierSend?: boolean;
+  // EMI related
+  isEMI?: boolean;
+  emiMonths?: number;
+  emiMonthlyPayment?: number;
+  emiTotalAmount?: number;
 };
 
 export type TPagination = {
@@ -379,6 +384,7 @@ export type TProduct = {
   subCategoryRef?: TSubCategory;
   childCategoryRef?: TChildCategory;
   subChildCategoryRef?: TSubChildCategory | null;
+  featured?: boolean;
   createdAt: string;
   updatedAt: string;
   __v: number;

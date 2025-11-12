@@ -27,7 +27,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
   const [levelError, setLevelError] = useState(false);
   const [colorError, setColorError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const controls = useAnimation();
 
@@ -202,7 +202,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
 
       await addToCart(product);
       toast.success("Product added to cart!");
-      setShowModal(true);
+      // setShowModal(true);
       setLevelError(false);
       setColorError(false);
       controls.start({

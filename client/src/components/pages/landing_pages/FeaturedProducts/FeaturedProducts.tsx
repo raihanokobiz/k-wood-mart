@@ -1,9 +1,8 @@
-import Image from "next/image";
-import N1 from "../../../../assets/kwoodmart/N1.jpg";
+
 import ProductCard from "../../products/ProductCard/ProductCard";
 import { getFeaturedProducts } from "@/services/products";
-import { apiBaseUrl } from "@/config/config";
-import Link from "next/link";
+import { TProduct } from "@/types";
+
 
 export default async function FeaturedProducts() {
   const products = await getFeaturedProducts();
@@ -14,17 +13,11 @@ export default async function FeaturedProducts() {
         Featured Products
       </h2>
       <div className="rounded">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-10">
-          {products?.data?.result?.map((product, idx) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-10">
+          {products?.data?.result?.map((product: TProduct) => (
             <ProductCard
               key={product?._id}
-              slug={product?.slug}
-              thumbnailImage={product?.thumbnailImage}
-              backViewImage={product?.backViewImage}
-              name={product?.name}
-              price={product?.price}
-              discountType={product?.discountType}
-              discount={product?.discount}
+              product={product}
             />
           ))}
         </div>

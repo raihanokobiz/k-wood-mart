@@ -6,7 +6,7 @@ export const addOrder = async (order: any) => {
     // helpful debug log to confirm exact payload being sent
     // (check browser console Network tab as well)
     console.log("[addOrder] sending payload:", order);
-  } catch (e) {
+  } catch {
     // ignore
   }
 

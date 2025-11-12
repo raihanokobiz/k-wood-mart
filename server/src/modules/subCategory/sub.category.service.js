@@ -7,7 +7,7 @@ const {
   removeUploadFile,
 } = require("../../middleware/upload/removeUploadFile.js");
 const ImgUploader = require("../../middleware/upload/ImgUploder.js");
-const { CategorySchema } = require("../../models/index.js");
+const { CategorySchema, SubCategorySchema } = require("../../models/index.js");
 
 class SubCategoryService extends BaseService {
   #repository;
@@ -113,6 +113,9 @@ class SubCategoryService extends BaseService {
   async updateSubCategory(id, payloadFiles, payload, session) {
     const { files } = payloadFiles;
     const { name, status, slug } = payload;
+
+    const oldData = await SubCategorySchema.findById(id);
+
     if (files?.length) {
       const images = await ImgUploader(files);
       for (const key in images) {
@@ -127,10 +130,14 @@ class SubCategoryService extends BaseService {
       session
     );
 
-    // Remove old files if they’re being replaced
-    if (files.length && subCategoryData) {
-      console.log("run thoids upload reload", subCategoryData?.image);
-      await removeUploadFile(subCategoryData?.image);
+    // Remove old files if they're being replaced
+    if (files?.length && oldData?.image) {
+      try {
+        await removeUploadFile(oldData.image);
+      } catch (error) {
+        console.warn(`Failed to remove old file: ${oldData.image}`, error);
+        // Don't re-throw - the update was successful, file removal is secondary
+      }
     }
 
     return subCategoryData;

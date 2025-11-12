@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { TShopSideBar, TShopSideBarResponsive } from "@/types";
-import { usePathname } from "next/navigation";
-import { getShopSidebar } from "@/services/shopSidebar";
-import ShopPageSidebar from "./ShopPageSidebar";
-import AllPageSidebar from "./AllPageSidebar";
-import { getAllProductsForShop } from "@/services/products";
+// import { TShopSideBar, TShopSideBarResponsive } from "@/types";
+// import { usePathname } from "next/navigation";
+// import { getShopSidebar } from "@/services/shopSidebar";
+// import { getAllProductsForShop } from "@/services/products";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Link from "next/link";
+import { menuList } from "@/utilits/menuList";
 
 type ChildCategory = {
   _id: string;
@@ -44,9 +43,9 @@ const ResponsiveNavSidBar: React.FC<Props> = ({
   furnitureSubCategory,
   curtainsSubCategory,
 }) => {
-  const pathname = usePathname();
-  const [shopSideBar, setShopSideBar] = useState<TShopSideBar[]>([]);
-  const [products, setProducts] = useState<TShopSideBarResponsive | null>(null);
+  // const pathname = usePathname();
+  // const [shopSideBar, setShopSideBar] = useState<TShopSideBar[]>([]);
+  // const [products, setProducts] = useState<TShopSideBarResponsive | null>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null); // Top menu open
   const [openSub, setOpenSub] = useState<string | null>(null);
 
@@ -73,35 +72,35 @@ const ResponsiveNavSidBar: React.FC<Props> = ({
   };
 
   // console.log("products", products);
-  useEffect(() => {
-    getShopSidebar()
-      .then((res) => {
-        if (res?.data) setShopSideBar(res.data);
-      })
-      .catch((err) => console.error(err));
-  }, []);
+  // useEffect(() => {
+  //   getShopSidebar()
+  //     .then((res) => {
+  //       if (res?.data) setShopSideBar(res.data);
+  //     })
+  //     .catch((err) => console.error(err));
+  // }, []);
 
-  useEffect(() => {
-    getAllProductsForShop({})
-      .then((res) => {
-        if (res?.data) setProducts(res.data?.filterOptions);
-        console.log("products res.data", res?.data?.filterOptions);
-      })
-      .catch((err) => console.error(err));
-    // .then((res) => { const { data: products } =
-    //   console.log("products res.data", res.data);
-    //   if (res?.data) setProducts(res.data);
-    // })
-    // .catch((err) => console.error(err));
-  }, []);
+  // useEffect(() => {
+  //   getAllProductsForShop({})
+  //     .then((res) => {
+  //       if (res?.data) setProducts(res.data?.filterOptions);
+  //       console.log("products res.data", res?.data?.filterOptions);
+  //     })
+  //     .catch((err) => console.error(err));
+  //   // .then((res) => { const { data: products } =
+  //   //   console.log("products res.data", res.data);
+  //   //   if (res?.data) setProducts(res.data);
+  //   // })
+  //   // .catch((err) => console.error(err));
+  // }, []);
 
-  const isShopPage = pathname === "/shop";
-  const defaultProducts: TShopSideBarResponsive = {
-    brands: [],
-    categories: [],
-    priceRange: { minPrice: 0, maxPrice: 0 }, // Set default values for minPrice and maxPrice
-    sizes: [],
-  };
+  // const isShopPage = pathname === "/shop";
+  // const defaultProducts: TShopSideBarResponsive = {
+  //   brands: [],
+  //   categories: [],
+  //   priceRange: { minPrice: 0, maxPrice: 0 }, // Set default values for minPrice and maxPrice
+  //   sizes: [],
+  // };
 
   return (
     <div className=" ">
@@ -139,7 +138,7 @@ const ResponsiveNavSidBar: React.FC<Props> = ({
         <nav className="space-y-2">
           {menuList.map((menu) => {
             const categoryData = getSidebarData(menu.title);
-            const hasSub = !!categoryData?.subCategories?.length;
+            // const hasSub  = !!categoryData?.subCategories?.length;
 
             return (
               <div key={menu.title} className="border-b last:border-b-0 pb-2">

@@ -332,7 +332,7 @@ export const SubCategoryDetailsSheet: React.FC<Props> = ({ subCategory }) => {
                   {form.formState.errors.image?.message}
                 </div>
               </div>
-
+{/* 
               <div className="">
                 <Label>
                   Banner Image <b className="text-red-500">*</b>
@@ -382,7 +382,7 @@ export const SubCategoryDetailsSheet: React.FC<Props> = ({ subCategory }) => {
                 <div className="text-red-400 text-xs min-h-4">
                   {form.formState.errors.bannerImage?.message}
                 </div>
-              </div>
+              </div> */}
             </div>
           </form>
         </Form>

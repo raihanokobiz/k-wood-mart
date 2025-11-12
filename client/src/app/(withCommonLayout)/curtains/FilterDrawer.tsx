@@ -28,6 +28,7 @@ interface TCategory {
   name: string;
   slug: string;
   subCategories?: TSubCategory[];
+  childCategories?: TCategory[];
 }
 
 export const FilterDrawer = ({
@@ -44,19 +45,10 @@ export const FilterDrawer = ({
 }: any) => {
   const [localPriceRange, setLocalPriceRange] = useState(priceRange);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-  const [expandedSubCategories, setExpandedSubCategories] = useState<string[]>(
-    []
-  );
   const router = useRouter();
 
   const toggleCategory = (slug: string) => {
     setExpandedCategories((prev) =>
-      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
-    );
-  };
-
-  const toggleSubCategory = (slug: string) => {
-    setExpandedSubCategories((prev) =>
       prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
     );
   };

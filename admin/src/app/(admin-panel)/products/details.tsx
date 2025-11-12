@@ -63,6 +63,16 @@ interface Props {
   product: TProduct;
 }
 
+type InventoryForm = {
+  id?: string;
+  mrpPrice?: string;
+  color?: string;
+  size?: string;
+  colorName?: string;
+  quantity?: number;
+};
+
+
 export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
   console.log(
     "product from props 1111111111111111111111111111111111111111111",
@@ -153,7 +163,7 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
       thumbnailImage: [],
       backViewImage: [],
       sizeChartImage: [],
-      inventories: [{ quantity: "" }],
+      inventories: [{ quantity: 0 } as InventoryForm],
     },
   });
 
@@ -773,23 +783,23 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
 
                     {selectedInventoryType !== "" && (
                       <>
-                        <FormItem>
+                        {/* <FormItem>
                           <FormLabel>
                             Quantity <b className="text-red-500">*</b>
                           </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter quantity"
-                              {...register(`inventories.${index}.quantity`)}
+                              {...register(`inventories.${index}.quantity` as any)}
                             />
                           </FormControl>
                           <FormDescription className="text-red-400 text-xs min-h-4">
                             {
                               formState.errors?.inventories?.[index]?.quantity
-                                ?.message
+                                ?.message as string}
                             }
                           </FormDescription>
-                        </FormItem>
+                        </FormItem> */}
 
                         <FormItem>
                           <FormLabel>

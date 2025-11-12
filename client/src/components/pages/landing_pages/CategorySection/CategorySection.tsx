@@ -1,6 +1,5 @@
 import { apiBaseUrl } from "@/config/config";
 import { getAllCategorys } from "@/services/categorys";
-import Image from "next/image";
 import Link from "next/link";
 
 export default async function CategorySection() {

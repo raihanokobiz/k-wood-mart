@@ -2,13 +2,16 @@
 
 import { BASE_URL } from "@/config/config";
 
-export const getProductReviewWithPagination = async (
-  page?: string,
-  limit?: string
-) => {
+export const getProductReviewWithPagination = async ({
+  page,
+  limit,
+}: {
+  page?: string | number;
+  limit?: string | number;
+}) => {
   const queryParams = new URLSearchParams();
-  if (page) queryParams.set("page", page);
-  if (limit) queryParams.set("limit", limit);
+  if (page) queryParams.set("page", page.toString());
+  if (limit) queryParams.set("limit", limit.toString());
 
   try {
     const response = await fetch(
@@ -20,7 +23,6 @@ export const getProductReviewWithPagination = async (
     return { result: [], pagination: { total: 0, page, limit } };
   }
 };
-
 
 export const deleteProductReview = async (id: string) => {
   try {

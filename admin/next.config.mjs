@@ -10,7 +10,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "server.K.WOOD MARTcom",
+        hostname: "k-wood-mart-server.vercel.app",
         pathname: "/**",
       },
     ],

@@ -2,24 +2,22 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["localhost"],
     remotePatterns: [
       {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8001",
+        pathname: "/**",
+      },
+      {
         protocol: "https",
-        hostname: "**",
+        hostname: "k-wood-mart-server.vercel.app",
+        pathname: "/**",
       },
     ],
-  },
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.(mp4|webm)$/i,
-      type: "asset/resource",
-      generator: {
-        filename: "static/media/[name][ext]",
-      },
-    });
-    return config;
   },
 };
 
 export default nextConfig;
+
+

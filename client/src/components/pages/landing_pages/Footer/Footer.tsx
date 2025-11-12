@@ -4,11 +4,11 @@ import React from "react";
 import {
   FaFacebookF,
   FaInstagram,
-  FaRegCreditCard,
-  FaTruck,
+  // FaRegCreditCard,
+  // FaTruck,
   FaYoutube,
 } from "react-icons/fa";
-import { FaRegMessage, FaRightLeft } from "react-icons/fa6";
+// import { FaRegMessage, FaRightLeft } from "react-icons/fa6";
 import Link from "next/link";
 import DownFooter from "../../DownFooter/DownFooter";
 

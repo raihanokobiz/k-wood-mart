@@ -1,12 +1,11 @@
-import ShopProducts from "@/components/pages/products/ShopProducts/ShopProducts";
-import ShopProductsCategories from "@/components/pages/products/ShopProductsCategories/ShopProductsCategories";
-import { getShopSidebar } from "@/services/shopSidebar";
+// import ShopProducts from "@/components/pages/products/ShopProducts/ShopProducts";
+// import ShopProductsCategories from "@/components/pages/products/ShopProductsCategories/ShopProductsCategories";
+// import { getShopSidebar } from "@/services/shopSidebar";
 import { getAllProductsForCurtains } from "@/services/products";
 import { getUser } from "@/services/auth";
 import { getCartProducts } from "@/services/cart";
 import CartSideBar from "@/components/pages/cartSideBar/CartSideBar";
 import React from "react";
-import { Metadata } from "next";
 import NavBar from "@/components/pages/header/NavBar/NavBar";
 import FilterSystem from "./FilterSystem";
 
@@ -18,7 +17,7 @@ export default async function ShopPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const params = await searchParams;
-  const { data: shopSideBar } = await getShopSidebar();
+  // const { data: shopSideBar } = await getShopSidebar();
 
   // 🧩 Add these lines 👇
   const categorySlug = Array.isArray(params.category)
@@ -38,6 +37,9 @@ export default async function ShopPage({
   const page = params.page ? Number(params.page) : 1;
   // 🧩 End
 
+  const sortOrder = Array.isArray(params.order) ? params.order[0] : params.order;
+  const order: "ASC" | "DESC" = sortOrder === "ASC" ? "ASC" : "DESC";
+
   const { data: products } = await getAllProductsForCurtains({
     categorySlug,
     subCategorySlug,
@@ -47,8 +49,8 @@ export default async function ShopPage({
     maxPrice,
     page,
     limit: 9,
-    sortBy: params.sortBy || "createdAt",
-    order: params.order || "DESC",
+    sortBy: Array.isArray(params.sortBy) ? params.sortBy[0] : params.sortBy || "createdAt",
+    order: order,
   });
 
   const user = await getUser();
@@ -61,8 +63,8 @@ export default async function ShopPage({
       <NavBar userCartProducts={cartProducts?.data} />
       <div className="min-h-screen pb-8 md:pb-12 lg:pb-16">
         {/* Furniture Sub Banner - same */}
-        <div className="mb-6 md:mb-8 relative overflow-hidden h-64 md:h-80 lg:h-[450px]">
-          <div className="relative w-full h-[450px] overflow-hidden">
+        <div className="mb-6 md:mb-8 relative overflow-hidden h-80 md:h-[450px] lg:h-[500px]">
+          <div className="relative w-full h-full overflow-hidden">
             <video
               src="/C1.mp4"
               autoPlay
@@ -90,14 +92,14 @@ export default async function ShopPage({
         {/* ✅ নতুন Filter System */}
         <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
           <FilterSystem
-            shopSideBar={shopSideBar}
+            // shopSideBar={shopSideBar}
             products={products}
-            ShopProducts={ShopProducts}
-            ShopProductsCategories={ShopProductsCategories}
-            categorySlug={categorySlug}
-            subCategorySlug={subCategorySlug}
-            childCategorySlug={childCategorySlug}
-            brand={brand}
+            // ShopProducts={ShopProducts}
+            // ShopProductsCategories={ShopProductsCategories}
+            // categorySlug={categorySlug}
+            // subCategorySlug={subCategorySlug}
+            // childCategorySlug={childCategorySlug}
+            // brand={brand}
           />
           <CartSideBar cartProducts={cartProducts?.data} />
         </div>

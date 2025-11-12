@@ -5,8 +5,31 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function FurnitureShowcaseFull({ twoData }) {
+
+interface FurnitureData {
+  _id: string;
+  name: string;
+  image: string;
+  price: number;
+  slug: string
+}
+
+interface FurnitureShowcaseFullProps {
+  twoData: {
+    data: FurnitureData[]
+  }
+}
+
+export default function FurnitureShowcaseFull({ twoData }: FurnitureShowcaseFullProps) {
   const [startTableAnimation, setStartTableAnimation] = useState(false);
+
+  if (!twoData?.data || twoData.data.length < 2) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        No furniture data available.
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full">
@@ -14,10 +37,10 @@ export default function FurnitureShowcaseFull({ twoData }) {
       <div className="grid grid-cols-1 lg:grid-cols-2">
         {/* Left Image - Chair */}
         <Link
-          href={`curtains?subcategory=${twoData?.data[0]?.slug}`}
+          href={`curtains?subCategory=${twoData?.data[0]?.slug}`}
           className="group relative w-full h-[50vh] md:h-[80vh] 2xl:h-[800px] overflow-hidden block"
         >
-          <motion.div 
+          <motion.div
             className="relative w-full h-[50vh] md:h-[80vh] 2xl:h-[800px] overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -65,7 +88,7 @@ export default function FurnitureShowcaseFull({ twoData }) {
         </Link>
         {/* Right Image - Table */}
         <Link
-          href={`curtains?subcategory=${twoData?.data[1]?.slug}`}
+          href={`curtains?subCategory=${twoData?.data[1]?.slug}`}
           className="group relative w-full h-[50vh] md:h-[80vh] 2xl:h-[800px] overflow-hidden block"
         >
           <motion.div

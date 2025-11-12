@@ -13,7 +13,7 @@ interface Props {
   videoUrl?: string; // ✅ Add this
 }
 
-const getYoutubeThumbnail = (url) => {
+const getYoutubeThumbnail = (url : string)  => {
   const videoId = url.split("v=")[1];
   return `https://img.youtube.com/vi/${videoId}/0.jpg`;
 };
@@ -23,7 +23,6 @@ const ProductDetailsSlide: React.FC<Props> = ({
   backViewImage,
   images = [],
   name,
-  controls,
   videoUrl,
 }) => {
   // ✅ Store all previewable items (images + video)
@@ -42,7 +41,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
   return (
     <div className="space-y-4">
       {/* Main preview area */}
-      <div className="relative w-full h-[450px] md:h-[550px] overflow-hidden rounded-2xl shadow-md bg-gray-100">
+      <div className="relative w-full h-[250px] md:h-[550px] overflow-hidden rounded-2xl shadow-md bg-gray-100">
         {isVideo ? (
           <iframe
             src={selectedItem.replace("watch?v=", "embed/")}

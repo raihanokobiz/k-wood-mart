@@ -1,7 +1,17 @@
 import { YouTubeModal } from "@/utilits/YouTubeModal ";
 
+interface Review {
+  _id: string;
+  name: string;
+  district: string;
+  youtubeUrl: string;
+}
 
-export default function ReviewsCard({ review }) {
+interface ReviewsCardProps {
+  review: Review;
+}
+
+export default function ReviewsCard({ review } : ReviewsCardProps) {
 
 
   return (

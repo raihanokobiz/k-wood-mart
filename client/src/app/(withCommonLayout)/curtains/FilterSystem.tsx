@@ -6,16 +6,36 @@ import { FilterDrawer } from "./FilterDrawer";
 import { SortDropdown } from "./SortDropdown";
 import { getCurtainsSubCategory } from "@/services/shopSidebar";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
-import { apiBaseUrl } from "@/config/config";
-import ProductDialog from "@/components/pages/products/ProductDialog/ProductDialog";
 import ProductCardForFurniture from "@/components/pages/products/ProductCardForFurniture/ProductCardForFurniture";
+import { TProduct } from "@/types";
+
+
+
+
+type SortKeys = "default" | "price-asc" | "price-desc";
+
+
+export type TFilterSystemProps = {
+  products: {
+    result: TProduct[];
+    filterOptions: {
+      brands: string[];
+    };
+  };
+};
+
 
 // Main Component
-export default function FilterSystem({ products }) {
+export default function FilterSystem({ products }: TFilterSystemProps) {
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [currentSort, setCurrentSort] = useState("default");
-  const [selectedFilters, setSelectedFilters] = useState({
+  const [currentSort] = useState("default");
+  const [selectedFilters, setSelectedFilters] = useState<{
+    categories: string[];
+    subCategories: string[];
+    childCategories: string[];
+    brands: string[]
+  }>({
     categories: [],
     subCategories: [],
     childCategories: [],
@@ -24,7 +44,7 @@ export default function FilterSystem({ products }) {
 
   const [priceRange, setPriceRange] = useState([0, 10000]);
   const [furnitureSubCategory, setFurnitureSubCategory] = useState(null);
-  const [brand, setBrand] = useState(null);
+
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -52,7 +72,7 @@ export default function FilterSystem({ products }) {
   const handleFilterChange = (type: string, value: string) => {
     const newParams = new URLSearchParams(searchParams.toString());
 
-    // বর্তমান value গুলো বের করা
+    //  value 
     const currentValues = new Set(
       (searchParams.get(type)?.split(",") || []).filter(Boolean)
     );
@@ -64,17 +84,17 @@ export default function FilterSystem({ products }) {
       currentValues.add(value);
     }
 
-    // param update করা
+    // param update 
     if (currentValues.size > 0) {
       newParams.set(type, Array.from(currentValues).join(","));
     } else {
       newParams.delete(type);
     }
 
-    // clean query বানানো
+    // clean query 
     const queryString = newParams.toString().replace(/(^|&)(&|$)/g, "");
 
-    // route update করা
+    // route update 
     router.push(`?${queryString}`);
   };
 
@@ -90,8 +110,8 @@ export default function FilterSystem({ products }) {
     router.push(newUrl, { scroll: false });
   };
 
-  const handleSortChange = (sortValue: string) => {
-    const sortMapping = {
+  const handleSortChange = (sortValue: SortKeys) => {
+    const sortMapping: Record<SortKeys, { sortBy: string, order: string }> = {
       default: { sortBy: "createdAt", order: "DESC" },
       "price-asc": { sortBy: "price", order: "ASC" },
       "price-desc": { sortBy: "price", order: "DESC" },

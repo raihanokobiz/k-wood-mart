@@ -3,6 +3,17 @@ import { getAllSubCategorys } from "@/services/subCategorys";
 import { apiBaseUrl } from "@/config/config";
 import Link from "next/link";
 
+interface Collection {
+  _id: string;
+  name: string;
+  slug: string;
+  image: string;
+  categoryRef?: {
+    name?: string;
+  };
+  title?: string;
+}
+
 
 export default async function SignatureCollections() {
   const { data } = await getAllSubCategorys()
@@ -16,8 +27,8 @@ export default async function SignatureCollections() {
         Our Collections
       </h2>
       <div className="">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {data?.map((collection, idx) => {
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-10">
+        {data?.map((collection :Collection , idx : number) => {
           // Dynamic redirect logic
           const categoryName = collection?.categoryRef?.name?.toLowerCase() || "";
           const basePath = categoryName.includes("curtain")
@@ -27,13 +38,13 @@ export default async function SignatureCollections() {
           return (
             <Link
               key={idx}
-              href={`${basePath}?subcategory=${collection.slug}`}
+              href={`${basePath}?subCategory=${collection.slug}`}
               className="group block rounded-md"
             >
               <div className="relative overflow-hidden aspect-square cursor-pointer">
                 <Image
                   src={`${apiBaseUrl + collection?.image}`}
-                  alt={collection.title}
+                  alt="image"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500 rounded-md"
                 />

@@ -74,7 +74,6 @@ export const columns: ColumnDef<TOrder>[] = [
   },
   {
     header: "EMI Info",
-    headerClassName: "bg-[#5e828a] text-white text-center py-2 rounded-md",
     cell: ({ row }) => {
       const { isEMI, emiMonths, emiMonthlyPayment, emiTotalAmount } = row.original;
 
