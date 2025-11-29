@@ -42,6 +42,26 @@ export function makeFormData(data: Record<string, any>) {
       }
     }
 
+    //  Handle fabrics array with nested images
+    else if (key === "fabrics" && Array.isArray(value)) {
+      value.forEach((fabric, index) => {
+        // Append colorCode and colorName as JSON string
+        formData.append(`fabrics[${index}][colorCode]`, fabric.colorCode || "");
+        formData.append(`fabrics[${index}][colorName]`, fabric.colorName || "");
+
+        // Handle fabric images
+        if (Array.isArray(fabric.images) && fabric.images.length > 0) {
+          fabric.images.forEach((file: any) => {
+            if (file?.originFileObj) {
+              formData.append(`fabrics[${index}][images]`, file.originFileObj);
+            } else if (file instanceof File) {
+              formData.append(`fabrics[${index}][images]`, file);
+            }
+          });
+        }
+      });
+    }
+
     // inventories array
     else if (key === "inventories" && Array.isArray(value)) {
       value.forEach((inventory) => {

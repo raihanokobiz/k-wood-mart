@@ -62,6 +62,58 @@ export async function createFormAction(data: FormData) {
 
     data.delete("inventories");
     data.set("inventoryArray", JSON.stringify(inventoryArray));
+
+    // ✅ NEW: Process fabrics data
+    // Extract all fabric-related entries from FormData
+    const fabricData: any[] = [];
+    const fabricKeys = Array.from(data.keys()).filter((key) =>
+      key.startsWith("fabrics[")
+    );
+
+    // Group by fabric index
+    const fabricIndices = new Set(
+      fabricKeys
+        .map((key) => {
+          const match = key.match(/fabrics\[(\d+)\]/);
+          return match ? parseInt(match[1]) : -1;
+        })
+        .filter((index) => index !== -1)
+    );
+
+    fabricIndices.forEach((index) => {
+      const colorCode = data.get(`fabrics[${index}][colorCode]`) as string;
+      const colorName = data.get(`fabrics[${index}][colorName]`) as string;
+      const images = data.getAll(`fabrics[${index}][images]`);
+
+      fabricData.push({
+        colorCode,
+        colorName,
+        images: images.length > 0 ? images : [],
+      });
+
+      // Clean up the individual fabric entries
+      data.delete(`fabrics[${index}][colorCode]`);
+      data.delete(`fabrics[${index}][colorName]`);
+      data.delete(`fabrics[${index}][images]`);
+    });
+
+    // Add fabric data as JSON (without images for now)
+    const fabricsMetadata = fabricData.map((f) => ({
+      colorCode: f.colorCode,
+      colorName: f.colorName,
+      imageCount: Array.isArray(f.images) ? f.images.length : 0,
+    }));
+    data.set("fabricsMetadata", JSON.stringify(fabricsMetadata));
+
+    // Re-append fabric images with clear naming
+    fabricData.forEach((fabric, index) => {
+      if (Array.isArray(fabric.images)) {
+        fabric.images.forEach((image: any) => {
+          data.append(`fabricImages_${index}`, image);
+        });
+      }
+    });
+
     console.log("✅ Sending FormData to backend...", data);
     await createProduct(data);
     revalidatePath("/");
@@ -76,7 +128,7 @@ export async function updateFormAction(id: string, data: FormData) {
     const inventoryType = data.get("inventoryType");
     const inventoryEntries = data.getAll("inventories") as string[];
     const parsed = inventoryEntries.map((inv) => JSON.parse(inv));
-console.log("parsed inventory entries", parsed);
+    console.log("parsed inventory entries", parsed);
     let inventoryArray: any[] = [];
 
     if (inventoryType === "colorLevelInventory") {

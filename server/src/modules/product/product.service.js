@@ -58,6 +58,9 @@ class ProductService extends BaseService {
       // categoryRef,
       // subCategoryRef,
       inventorys,
+      // 🆕 Add these:
+      material,
+      fabrics,
     } = payload;
     let inventoryIds = [];
     let totalInventoryCount = 0;

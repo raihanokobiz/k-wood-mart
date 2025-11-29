@@ -35,6 +35,9 @@ class ProductController {
       slug: req.body.slug,
       barcode: req.body.barcode,
       featured: req.body.featured === "true",
+      // 🆕 NEW FIELDS
+      material: req.body.material || null,
+      fabrics: req.body.fabrics ? JSON.parse(req.body.fabrics) : [],
     };
     // console.log("$#%$#%#$ payload from controller:", payload);
     const productResult = await ProductService.createProduct(
@@ -78,7 +81,6 @@ class ProductController {
   });
 
   getProductWithPaginationForFurniture = catchError(async (req, res) => {
-    
     let payload = {
       page: req.query.page,
       limit: req.query.limit,
@@ -181,7 +183,6 @@ class ProductController {
       bestSell: req.query.bestSell,
       featured: req.query.featured,
     };
-    
 
     // Fetch products and filter options
     const product = await ProductService.getProductWithPagination(payload);

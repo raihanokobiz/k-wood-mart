@@ -745,7 +745,7 @@ export const CreateProductForm: React.FC = () => {
               /> */}
 
               {/* Inventory Type */}
-              {/* <FormField
+              <FormField
                 control={form.control}
                 name="inventoryType"
                 render={({ field }) => (
@@ -780,7 +780,7 @@ export const CreateProductForm: React.FC = () => {
                     </FormItem>
                   </div>
                 )}
-              /> */}
+              />
             </div>
 
             {selectedInventoryType !== "" &&

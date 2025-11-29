@@ -74,7 +74,12 @@ export const productFormSchema = z.object({
     .optional()
     .default([]),
   featured: z.boolean().optional(),
-  videoUrl: z.string().url("Enter a valid URL").optional(),
+  videoUrl: z
+    .string()
+    .optional()
+    .refine((val) => !val || val === "" || /^https?:\/\/.+/.test(val), {
+      message: "Enter a valid URL",
+    }),
   // new fields
   material: z.string().optional(),
   fabrics: z
