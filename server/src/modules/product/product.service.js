@@ -296,6 +296,20 @@ class ProductService extends BaseService {
       payload[key] = images[key];
     }
 
+    // ✅ NEW: Process fabric images and update fabrics array with uploaded URLs
+    if (payload.fabrics && Array.isArray(payload.fabrics)) {
+      payload.fabrics = payload.fabrics.map((fabric, index) => {
+        const fabricImageKey = `fabricImages_${index}`;
+        // If fabric images were uploaded, get their URLs from the ImgUploader result
+        const fabricImages = images[fabricImageKey] ? (Array.isArray(images[fabricImageKey]) ? images[fabricImageKey] : [images[fabricImageKey]]) : [];
+        return {
+          ...fabric,
+          images: fabricImages || [],
+        };
+      });
+      console.log("✅ Fabrics with images:", payload.fabrics);
+    }
+
     payload.productId = await idGenerate("PRO-", "productId", this.#repository);
     payload.price = maxPrice;
 
@@ -831,6 +845,20 @@ class ProductService extends BaseService {
         const images = await ImgUploader(files);
         for (const key in images) {
           payload[key] = images[key];
+        }
+
+        // ✅ NEW: Process fabric images and update fabrics array with uploaded URLs
+        if (payload.fabrics && Array.isArray(payload.fabrics)) {
+          payload.fabrics = payload.fabrics.map((fabric, index) => {
+            const fabricImageKey = `fabricImages_${index}`;
+            // If fabric images were uploaded, get their URLs from the ImgUploader result
+            const fabricImages = images[fabricImageKey] ? (Array.isArray(images[fabricImageKey]) ? images[fabricImageKey] : [images[fabricImageKey]]) : [];
+            return {
+              ...fabric,
+              images: fabricImages || [],
+            };
+          });
+          console.log("✅ Fabrics with images (update):", payload.fabrics);
         }
       }
       payload.maxPrice = maxPrice;

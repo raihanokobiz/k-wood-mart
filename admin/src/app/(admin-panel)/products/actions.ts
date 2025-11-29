@@ -91,21 +91,23 @@ export async function createFormAction(data: FormData) {
         images: images.length > 0 ? images : [],
       });
 
-      // Clean up the individual fabric entries
+      // Clean up the individual fabric entries from FormData so backend
+      // receives them via the `fabrics` JSON payload instead
       data.delete(`fabrics[${index}][colorCode]`);
       data.delete(`fabrics[${index}][colorName]`);
       data.delete(`fabrics[${index}][images]`);
     });
 
-    // Add fabric data as JSON (without images for now)
-    const fabricsMetadata = fabricData.map((f) => ({
+    // Send fabrics metadata as JSON (without binary files for now)
+    // Backend will receive this as `req.body.fabrics`
+    const fabricsPayload = fabricData.map((f) => ({
       colorCode: f.colorCode,
       colorName: f.colorName,
-      imageCount: Array.isArray(f.images) ? f.images.length : 0,
+      images: [], // Images will be uploaded separately and added by backend
     }));
-    data.set("fabricsMetadata", JSON.stringify(fabricsMetadata));
+    data.set("fabrics", JSON.stringify(fabricsPayload));
 
-    // Re-append fabric images with clear naming
+    // Re-append fabric images with clear naming so ImgUploader processes them
     fabricData.forEach((fabric, index) => {
       if (Array.isArray(fabric.images)) {
         fabric.images.forEach((image: any) => {
@@ -182,12 +184,59 @@ export async function updateFormAction(id: string, data: FormData) {
 
     const updatedFormData = new FormData();
 
+    // ✅ Process fabrics data for update as well (mirror create behavior)
+    const fabricData: any[] = [];
+    const fabricKeys = Array.from(data.keys()).filter((key) =>
+      key.startsWith("fabrics[")
+    );
+
+    const fabricIndices = new Set(
+      fabricKeys
+        .map((key) => {
+          const match = key.match(/fabrics\[(\d+)\]/);
+          return match ? parseInt(match[1]) : -1;
+        })
+        .filter((index) => index !== -1)
+    );
+
+    fabricIndices.forEach((index) => {
+      const colorCode = data.get(`fabrics[${index}][colorCode]`) as string;
+      const colorName = data.get(`fabrics[${index}][colorName]`) as string;
+      const images = data.getAll(`fabrics[${index}][images]`);
+
+      fabricData.push({
+        colorCode,
+        colorName,
+        images: images.length > 0 ? images : [],
+      });
+    });
+
+    // Build updated form data by copying original entries (except inventories and fabric entries)
     for (const [key, value] of data.entries()) {
       if (key === "inventories") continue;
+      if (key.startsWith("fabrics[")) continue; // Skip old fabric entries
       updatedFormData.append(key, value);
     }
 
+    // Append inventoryArray
     updatedFormData.append("inventoryArray", JSON.stringify(inventoryArray));
+
+    // Add fabrics payload as JSON (without binary files)
+    const fabricsPayload = fabricData.map((f) => ({
+      colorCode: f.colorCode,
+      colorName: f.colorName,
+      images: [], // Images will be uploaded separately and added by backend
+    }));
+    updatedFormData.append("fabrics", JSON.stringify(fabricsPayload));
+
+    // Re-append fabric images with clear naming so ImgUploader processes them
+    fabricData.forEach((fabric, index) => {
+      if (Array.isArray(fabric.images)) {
+        fabric.images.forEach((image: any) => {
+          updatedFormData.append(`fabricImages_${index}`, image);
+        });
+      }
+    });
 
     console.log("✅ Updating product with data:", updatedFormData);
     await updateProduct(id, updatedFormData);
