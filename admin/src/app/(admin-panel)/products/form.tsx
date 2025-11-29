@@ -70,7 +70,6 @@ export const discountTypes = [
   { name: "Percentage", key: "percent" },
 ];
 
-
 export const inventoryTypes = [
   { name: "Color", key: "colorInventory" },
   { name: "Size", key: "levelInventory" },
@@ -178,7 +177,6 @@ export const CreateProductForm: React.FC = () => {
     const rawFiles = fileList
       .map((file: any) => file.originFileObj)
       .filter(Boolean);
-
     // Sync with react-hook-form
     form.setValue("backViewImage", rawFiles);
   };
@@ -193,6 +191,7 @@ export const CreateProductForm: React.FC = () => {
     // Sync with react-hook-form
     form.setValue("sizeChartImage", rawFiles);
   };
+  
   // console.log(fileList, "fileList................................");
 
   const onSubmit = async (values: z.infer<typeof productFormSchema>) => {

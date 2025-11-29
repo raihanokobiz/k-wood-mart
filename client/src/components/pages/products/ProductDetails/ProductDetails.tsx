@@ -1,10 +1,8 @@
 "use client";
 import React, { useState } from "react";
-
 import Image from "next/image";
 import { rajdhani } from "@/app/font";
-import { FiPlus } from "react-icons/fi";
-import { FiMinus } from "react-icons/fi";
+import { FiPlus, FiMinus } from "react-icons/fi";
 import { TProduct } from "@/types";
 import { apiBaseUrl } from "@/config/config";
 import ProductDetailsSlide from "@/slider/ProductDetailsSlide/ProductDetailsSlide";
@@ -13,6 +11,7 @@ import { toast } from "react-toastify";
 import { getUser } from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useAnimation } from "framer-motion";
+
 interface Props {
   product: TProduct;
 }
@@ -27,13 +26,114 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
   const [levelError, setLevelError] = useState(false);
   const [colorError, setColorError] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const controls = useAnimation();
 
-  const handleIncrement = () => {
-    setCount((prev) => prev + 1);
+  const {
+    name,
+    price,
+    mrpPrice,
+    isDiscounted,
+    discount,
+    discountType,
+    thumbnailImage,
+    backViewImage,
+    sizeChartImage,
+    description,
+    inventoryRef,
+    inventoryType,
+    images,
+    _id,
+    productId,
+  } = product;
+
+  const handleIncrement = () => setCount((prev) => prev + 1);
+  const handleDecrement = () => setCount((prev) => (prev > 1 ? prev - 1 : 1));
+
+  // ✅ Calculate Discounted Price from MRP
+  const calculateDiscountedPrice = (mrpPrice: number, hasDiscount: boolean, discValue?: number, discType?: string) => {
+    if (!hasDiscount || !discValue) return mrpPrice;
+
+    if (discType === "percent") {
+      // If MRP = 41 and discount = 5%, then discounted price = 41 - (41 × 0.05) = 38.95
+      return mrpPrice - (mrpPrice * discValue / 100);
+    } else if (discType === "flat") {
+      // If discount is flat amount, discounted price = MRP - discount
+      return mrpPrice - discValue;
+    }
+
+    return mrpPrice;
   };
+
+  // ✅ Get Current Price and MRP Data
+  const getCurrentPriceData = () => {
+    let selectedItem: any = null;
+
+    if (inventoryType === "colorLevelInventory") {
+      const levelItem = Array.isArray(inventoryRef)
+        ? inventoryRef.find((item) => item._id === selectedLevel)
+        : undefined;
+
+      if (levelItem && selectedColor && Array.isArray(levelItem.colors)) {
+        selectedItem = levelItem.colors.find((c: any) => c._id === selectedColor);
+      }
+    } else if (inventoryType === "levelInventory") {
+      selectedItem = Array.isArray(inventoryRef)
+        ? inventoryRef.find((item) => item._id === selectedLevel)
+        : undefined;
+    } else if (inventoryType === "colorInventory") {
+      selectedItem = Array.isArray(inventoryRef)
+        ? inventoryRef.find((item) => item._id === selectedColor)
+        : undefined;
+    } else if (inventoryType === "inventory") {
+      selectedItem = Array.isArray(inventoryRef) ? inventoryRef[0] : undefined;
+    }
+
+    // Fallback to first item if nothing selected
+    if (!selectedItem && Array.isArray(inventoryRef) && inventoryRef.length > 0) {
+      if (inventoryType === "colorLevelInventory" && inventoryRef[0]?.colors?.length > 0) {
+        selectedItem = inventoryRef[0].colors[0];
+      } else {
+        selectedItem = inventoryRef[0];
+      }
+    }
+
+    // Get MRP (original price) and discount info
+    let itemMrpPrice = selectedItem?.mrpPrice ? Number(selectedItem.mrpPrice) : Number(mrpPrice || price) || 0;
+    const itemDiscount = selectedItem?.discount ?? discount;
+    const itemDiscountType = selectedItem?.discountType ?? discountType;
+    const itemIsDiscounted = selectedItem?.isDiscounted ?? isDiscounted;
+
+    // Calculate discounted price from MRP
+    let itemPrice = itemIsDiscounted
+      ? calculateDiscountedPrice(itemMrpPrice, itemIsDiscounted, itemDiscount, itemDiscountType)
+      : itemMrpPrice;
+
+    return {
+      price: itemPrice,
+      mrpPrice: itemMrpPrice,
+    };
+  };
+
+  const { price: currentPrice, mrpPrice: currentMrpPrice } = getCurrentPriceData();
+
+  // ✅ EMI Calculation
+  const interestRates: Record<number, number> = {
+    3: 0,
+    6: 0.05,
+    9: 0.08,
+    12: 0.09,
+  };
+
+  const interestRate = emiMonths ? interestRates[emiMonths] ?? 0 : 0;
+  const totalPayable = emiMonths ? currentPrice * (1 + interestRate) : 0;
+  const monthlyPayment = emiMonths ? totalPayable / emiMonths : 0;
+
+  // Calculate discount percentage
+  const discountPercentage =
+    currentMrpPrice > currentPrice
+      ? Math.round(((currentMrpPrice - currentPrice) / currentMrpPrice) * 100)
+      : 0;
 
   const handleBuyNow = async () => {
     const user = await getUser();
@@ -44,8 +144,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
       return;
     }
     if (
-      (inventoryType === "levelInventory" ||
-        inventoryType === "colorLevelInventory") &&
+      (inventoryType === "levelInventory" || inventoryType === "colorLevelInventory") &&
       !selectedLevel
     ) {
       setLevelError(true);
@@ -54,8 +153,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
 
     if (
-      (inventoryType === "colorLevelInventory" ||
-        inventoryType === "colorInventory") &&
+      (inventoryType === "colorLevelInventory" || inventoryType === "colorInventory") &&
       !selectedColor
     ) {
       setColorError(true);
@@ -75,15 +173,15 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
         userRef: user?.id,
       };
 
-      if (inventoryType == "inventory") {
+      if (inventoryType === "inventory") {
         productPayload.inventoryRef = Array.isArray(inventoryRef)
           ? inventoryRef[0]._id
           : undefined;
-      } else if (inventoryType == "levelInventory") {
+      } else if (inventoryType === "levelInventory") {
         productPayload.inventoryRef = selectedLevel;
-      } else if (inventoryType == "colorInventory") {
+      } else if (inventoryType === "colorInventory") {
         productPayload.inventoryRef = selectedColor;
-      } else if (inventoryType == "colorLevelInventory") {
+      } else if (inventoryType === "colorLevelInventory") {
         productPayload.inventoryRef = selectedColor;
       }
 
@@ -97,57 +195,6 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
   };
 
-  const handleDecrement = () => {
-    setCount((prev) => (prev > 0 ? prev - 1 : 0));
-  };
-
-  const {
-    name,
-    thumbnailImage,
-    backViewImage,
-    sizeChartImage,
-    description,
-    inventoryRef,
-    inventoryType,
-    images,
-    _id,
-  } = product;
-
-  const currentPrice = (() => {
-    let selectedItem: any;
-    if (
-      inventoryType === "levelInventory" ||
-      inventoryType === "colorLevelInventory"
-    ) {
-      selectedItem = Array.isArray(inventoryRef)
-        ? inventoryRef.find((item) => item._id === selectedLevel)
-        : undefined;
-    } else if (inventoryType === "colorInventory") {
-      selectedItem = Array.isArray(inventoryRef)
-        ? inventoryRef.find((item) => item._id === selectedColor)
-        : undefined;
-    }
-    const fallbackItem = Array.isArray(inventoryRef)
-      ? inventoryRef[0]
-      : undefined;
-    const price = selectedItem?.price ?? fallbackItem?.price;
-    return price ? Number(price) : 0;
-  })();
-
-  const interestRates: Record<number, number> = {
-    3: 0,
-    6: 0.05,
-    9: 0.08,
-    12: 0.09,
-  };
-  const interestRate = emiMonths ? interestRates[emiMonths] ?? 0 : 0;
-  const totalPayable = emiMonths
-    ? Number((currentPrice * (1 + interestRate)).toFixed(2))
-    : 0;
-  const monthlyPayment = emiMonths
-    ? Number((totalPayable / emiMonths).toFixed(2))
-    : 0;
-
   const handleAddToCart = async () => {
     const user = await getUser();
     setLoading(true);
@@ -157,8 +204,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
       return;
     }
     if (
-      (inventoryType === "levelInventory" ||
-        inventoryType === "colorLevelInventory") &&
+      (inventoryType === "levelInventory" || inventoryType === "colorLevelInventory") &&
       !selectedLevel
     ) {
       setLevelError(true);
@@ -167,8 +213,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
 
     if (
-      (inventoryType === "colorLevelInventory" ||
-        inventoryType === "colorInventory") &&
+      (inventoryType === "colorLevelInventory" || inventoryType === "colorInventory") &&
       !selectedColor
     ) {
       setColorError(true);
@@ -188,21 +233,20 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
         userRef: user?.id,
       };
 
-      if (inventoryType == "inventory") {
+      if (inventoryType === "inventory") {
         product.inventoryRef = Array.isArray(inventoryRef)
           ? inventoryRef[0]._id
           : undefined;
-      } else if (inventoryType == "levelInventory") {
+      } else if (inventoryType === "levelInventory") {
         product.inventoryRef = selectedLevel;
-      } else if (inventoryType == "colorInventory") {
+      } else if (inventoryType === "colorInventory") {
         product.inventoryRef = selectedColor;
-      } else if (inventoryType == "colorLevelInventory") {
+      } else if (inventoryType === "colorLevelInventory") {
         product.inventoryRef = selectedColor;
       }
 
       await addToCart(product);
       toast.success("Product added to cart!");
-      // setShowModal(true);
       setLevelError(false);
       setColorError(false);
       controls.start({
@@ -223,131 +267,60 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
   };
 
+  console.log(product, "ok");
+
+
   return (
     <>
       <div className="Container py-8 min-h-100 lg:mt-0 mt-16 md:mt-20">
-        <div className="grid lg:grid-cols-2 gap-8">
-          <ProductDetailsSlide
-            controls={controls}
-            thumbnailImage={thumbnailImage}
-            backViewImage={backViewImage}
-            images={images}
-            name={name}
-            videoUrl={product.videoUrl}
-          />
-
-          <div className="space-y-6">
+        <div className="grid lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8">
+            <ProductDetailsSlide
+              controls={controls}
+              thumbnailImage={thumbnailImage}
+              backViewImage={backViewImage}
+              images={images}
+              name={name}
+              videoUrl={product.videoUrl}
+            />
+            </div>
+          <div className="space-y-6 lg:col-span-4 bg-gray-100 rounded-md p-6">
             {/* Product Title & Price */}
-            <div className="space-y-3">
-              <h2
-                className={`text-3xl font-bold text-[#262626] ${rajdhani.className}`}
-              >
+            <div className="space-y-2">
+              <h2 className={`text-3xl font-bold text-[#262626] ${rajdhani.className}`}>
                 {name}
               </h2>
-
-              <div className="flex items-center gap-3">
+              {/* Product ID */}
+              <p className="text-lg md:text-xl text-gray-500 font-semibold">
+                Product ID: <span className="text-[#D4A373]">{productId}</span>
+              </p>
+              <div className="flex items-center gap-3 flex-wrap">
+                {/* Discounted Price */}
                 <p className="flex items-center gap-1 font-bold text-3xl text-[#D4A373]">
                   <span className="text-xl">৳</span>
-                  <span>
-                    {(() => {
-                      let selectedItem;
-                      if (
-                        inventoryType === "levelInventory" ||
-                        inventoryType === "colorLevelInventory"
-                      ) {
-                        selectedItem = Array.isArray(inventoryRef)
-                          ? inventoryRef.find(
-                              (item) => item._id === selectedLevel
-                            )
-                          : undefined;
-                      } else if (inventoryType === "colorInventory") {
-                        selectedItem = Array.isArray(inventoryRef)
-                          ? inventoryRef.find(
-                              (item) => item._id === selectedColor
-                            )
-                          : undefined;
-                      }
-                      const fallbackItem = Array.isArray(inventoryRef)
-                        ? inventoryRef[0]
-                        : undefined;
-                      const price = selectedItem?.price ?? fallbackItem?.price;
-                      return price ? Number(price).toFixed(2) : "0.00";
-                    })()}
-                  </span>
+                  <span>{currentPrice.toFixed(2)}</span>
                 </p>
 
-                {/* <p className="line-through text-[#262626]/40 font-semibold text-lg flex items-center gap-1">
-                  <span>৳</span>
-                  <span>
-                    {(() => {
-                      let selectedItem;
-                      if (
-                        inventoryType === "levelInventory" ||
-                        inventoryType === "colorLevelInventory"
-                      ) {
-                        selectedItem = Array.isArray(inventoryRef)
-                          ? inventoryRef.find(
-                              (item) => item._id === selectedLevel
-                            )
-                          : undefined;
-                      } else if (inventoryType === "colorInventory") {
-                        selectedItem = Array.isArray(inventoryRef)
-                          ? inventoryRef.find(
-                              (item) => item._id === selectedColor
-                            )
-                          : undefined;
-                      }
-                      const fallbackItem = Array.isArray(inventoryRef)
-                        ? inventoryRef[0]
-                        : undefined;
-                      const mrpPrice =
-                        selectedItem?.mrpPrice ?? fallbackItem?.mrpPrice;
-                      return mrpPrice ? Number(mrpPrice).toFixed(2) : "0.00";
-                    })()}
-                  </span>
-                </p> */}
+                {/* Show MRP and discount badge only if there's a discount */}
+                {discountPercentage > 0 && (
+                  <>
+                    <p className="line-through text-[#262626]/40 font-semibold text-lg flex items-center gap-1">
+                      <span>৳</span>
+                      <span>{currentMrpPrice.toFixed(2)}</span>
+                    </p>
 
-                {/* {(() => {
-                  let selectedItem;
-                  if (
-                    inventoryType === "levelInventory" ||
-                    inventoryType === "colorLevelInventory"
-                  ) {
-                    selectedItem = Array.isArray(inventoryRef)
-                      ? inventoryRef.find((item) => item._id === selectedLevel)
-                      : undefined;
-                  } else if (inventoryType === "colorInventory") {
-                    selectedItem = Array.isArray(inventoryRef)
-                      ? inventoryRef.find((item) => item._id === selectedColor)
-                      : undefined;
-                  }
-                  const fallbackItem = Array.isArray(inventoryRef)
-                    ? inventoryRef[0]
-                    : undefined;
-                  const price = selectedItem?.price ?? fallbackItem?.price;
-                  const mrpPrice =
-                    selectedItem?.mrpPrice ?? fallbackItem?.mrpPrice;
-                  const discount =
-                    mrpPrice && price
-                      ? Math.round(((mrpPrice - price) / mrpPrice) * 100)
-                      : 0;
-
-                  return discount > 0 ? (
                     <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      {discount}% OFF
+                      {discountPercentage}% OFF
                     </span>
-                  ) : null;
-                })()} */}
+                  </>
+                )}
               </div>
             </div>
 
             {/* Size Selection */}
-            {(inventoryType === "levelInventory" ||
-              inventoryType === "colorLevelInventory") && (
+            {(inventoryType === "levelInventory" || inventoryType === "colorLevelInventory") && (
               <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                <h3
-                  className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
-                >
+                <h3 className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}>
                   Select Size
                 </h3>
                 <div className="flex flex-wrap items-center gap-3">
@@ -361,11 +334,10 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                           setSelectedColor(null);
                           setLevelError(false);
                         }}
-                        className={`min-w-[60px] px-4 py-3 border-2 font-bold text-sm uppercase rounded-lg transition-all duration-300 ${
-                          level === size.level
-                            ? "bg-[#D4A373] border-[#D4A373] text-white shadow-lg scale-105"
-                            : "bg-white border-gray-300 text-[#262626] hover:border-[#D4A373] hover:text-[#D4A373]"
-                        }`}
+                        className={`min-w-[60px] px-4 py-3 border-2 font-bold text-sm uppercase rounded-lg transition-all duration-300 ${level === size.level
+                          ? "bg-[#D4A373] border-[#D4A373] text-white shadow-lg scale-105"
+                          : "bg-white border-gray-300 text-[#262626] hover:border-[#D4A373] hover:text-[#D4A373]"
+                          }`}
                       >
                         {size.level}
                       </button>
@@ -383,28 +355,36 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
             {/* Color Selection */}
             {((inventoryType === "colorLevelInventory" && selectedLevel) ||
               inventoryType === "colorInventory") && (
-              <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                <h3
-                  className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
-                >
-                  Select Color
-                </h3>
-                <div className="flex flex-wrap items-center gap-3">
-                  {Array.isArray(inventoryRef) &&
-                    inventoryRef.map(
-                      (colorItem: { _id: string; color: string }) => (
+                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                  <h3 className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}>
+                    Select Color
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {(() => {
+                      let colorItems: Array<{ _id: string; color: string; name?: string }> = [];
+
+                      if (inventoryType === "colorLevelInventory" && selectedLevel) {
+                        const levelItem = Array.isArray(inventoryRef)
+                          ? inventoryRef.find((item) => item._id === selectedLevel)
+                          : undefined;
+                        colorItems = levelItem?.colors || [];
+                      } else if (inventoryType === "colorInventory") {
+                        colorItems = Array.isArray(inventoryRef) ? inventoryRef : [];
+                      }
+
+                      return colorItems.map((colorItem) => (
                         <button
                           key={colorItem._id}
                           onClick={() => {
                             setSelectedColor(colorItem._id);
                             setColorError(false);
                           }}
-                          className={`relative w-12 h-12 rounded-full transition-all duration-300 ${
-                            selectedColor === colorItem._id
-                              ? "ring-4 ring-[#D4A373] ring-offset-2 scale-110"
-                              : "ring-2 ring-gray-300 hover:ring-[#D4A373]/50"
-                          }`}
+                          className={`relative w-12 h-12 rounded-full transition-all duration-300 ${selectedColor === colorItem._id
+                            ? "ring-4 ring-[#D4A373] ring-offset-2 scale-110"
+                            : "ring-2 ring-gray-300 hover:ring-[#D4A373]/50"
+                            }`}
                           style={{ backgroundColor: colorItem.color }}
+                          title={colorItem.name || colorItem.color}
                         >
                           {selectedColor === colorItem._id && (
                             <span className="absolute inset-0 flex items-center justify-center text-white text-xl">
@@ -412,17 +392,17 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                             </span>
                           )}
                         </button>
-                      )
-                    )}
+                      ));
+                    })()}
+                  </div>
+                  {colorError && (
+                    <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
+                      <span>⚠️</span>
+                      <span>Please select a color to continue</span>
+                    </p>
+                  )}
                 </div>
-                {colorError && (
-                  <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
-                    <span>⚠️</span>
-                    <span>Please select a color to continue</span>
-                  </p>
-                )}
-              </div>
-            )}
+              )}
 
             {/* EMI Plan */}
             <div className="bg-gradient-to-br from-[#D4A373]/10 via-[#D4A373]/5 to-transparent rounded-xl p-6 border-2 border-[#D4A373]/30">
@@ -443,9 +423,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                     />
                   </svg>
                 </div>
-                <h3
-                  className={`text-xl font-bold text-[#262626] ${rajdhani.className}`}
-                >
+                <h3 className={`text-xl font-bold text-[#262626] ${rajdhani.className}`}>
                   EMI Payment Plan
                 </h3>
               </div>
@@ -565,9 +543,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
 
             {/* Description */}
             <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-              <h3
-                className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
-              >
+              <h3 className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}>
                 Product Details
               </h3>
               <div
@@ -579,9 +555,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
             {/* Size Chart */}
             {sizeChartImage && (
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <h3
-                  className={`text-lg font-bold text-[#262626] mb-4 ${rajdhani.className}`}
-                >
+                <h3 className={`text-lg font-bold text-[#262626] mb-4 ${rajdhani.className}`}>
                   Size Chart
                 </h3>
                 <Image
@@ -596,84 +570,6 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
           </div>
         </div>
       </div>
-
-      {/* Modal */}
-      {/* {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl transform animate-scaleIn">
-            <div className="text-center mb-6">
-              <div className="mx-auto w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-4 animate-bounce">
-                <svg
-                  className="w-10 h-10 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={3}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <h3
-                className={`text-2xl font-bold text-[#262626] mb-2 ${rajdhani.className}`}
-              >
-                Added to Cart!
-              </h3>
-              <p className="text-[#262626]/70">
-                Your product has been successfully added to the cart.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => router.push("/cart")}
-                className="w-full bg-[#D4A373] hover:bg-[#CCD5AE] transition-all duration-300 px-6 py-4 rounded-xl font-bold text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                View Cart
-              </button>
-              <button
-                onClick={() => setShowModal(false)}
-                className="w-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 px-6 py-4 rounded-xl font-bold text-[#262626]"
-              >
-                Continue Shopping
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
-        }
-
-        .animate-scaleIn {
-          animation: scaleIn 0.3s ease-out;
-        }
-      `}</style>
     </>
   );
 };
