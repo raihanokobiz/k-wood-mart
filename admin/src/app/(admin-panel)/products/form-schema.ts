@@ -75,6 +75,18 @@ export const productFormSchema = z.object({
     .default([]),
   featured: z.boolean().optional(),
   videoUrl: z.string().url("Enter a valid URL").optional(),
+  // new fields
+  material: z.string().optional(),
+  fabrics: z
+    .array(
+      z.object({
+        colorCode: z.string().optional(),
+        colorName: z.string().optional(),
+        images: z.array(z.any()).optional().default([]),
+      })
+    )
+    .optional()
+    .default([]),
 });
 
 export const dropZoneConfig = {

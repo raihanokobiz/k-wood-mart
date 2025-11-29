@@ -63,6 +63,12 @@ const defaultValues = {
   inventories: [{ quantity: "", mrpPrice: "" }], // initial entry
   featured: false,
   videoUrl: "",
+  // new item
+  material: "",
+  fabrics: [{ colorCode: "#1677ff", colorName: "", images: [] }],
+  colors: [""],
+  sizes: [""],
+  set: "",
 };
 
 export const discountTypes = [
@@ -90,6 +96,8 @@ export const CreateProductForm: React.FC = () => {
   const [childCategories, setChildCategories] = React.useState<
     TChildCategory[]
   >([]);
+  // pabric 
+  const [fabricImageFileLists, setFabricImageFileLists] = React.useState<Record<number, any[]>>({});
 
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
@@ -107,6 +115,22 @@ export const CreateProductForm: React.FC = () => {
     name: "inventories",
   });
 
+  // fabric, material, color, size field arrays
+  const { fields: fabricFields, append: appendFabric, remove: removeFabric } = useFieldArray({
+    control,
+    name: "fabrics",
+  });
+
+  const { fields: colorFields, append: appendColor, remove: removeColor } = useFieldArray({
+    control,
+    name: "colors",
+  });
+
+  const { fields: sizeFields, append: appendSize, remove: removeSize } = useFieldArray({
+    control,
+    name: "sizes",
+  });
+
   const getDefaultInventory = () => {
     const base = { id: "", quantity: "", mrpPrice: "" };
     if (selectedInventoryType === "colorInventory")
@@ -117,6 +141,13 @@ export const CreateProductForm: React.FC = () => {
       return { ...base, id: "", color: "#1677ff", colorName: "", size: "" };
     return base;
   };
+
+  // Fabric
+  const getDefaultFabric = () => ({
+    colorCode: "#1677ff",
+    colorName: "",
+    images: []
+  });
 
   const selectedColor = form.watch("color");
   // console.log(selectedColor, "selected color..........");
@@ -191,14 +222,31 @@ export const CreateProductForm: React.FC = () => {
     // Sync with react-hook-form
     form.setValue("sizeChartImage", rawFiles);
   };
-  
+
+  const handleFabricImageChange = (index: number, { fileList }: any) => {
+    // Update state for this specific fabric index
+    setFabricImageFileLists(prev => ({
+      ...prev,
+      [index]: fileList
+    }));
+
+    const rawFiles = fileList
+      .map((file: any) => file.originFileObj)
+      .filter(Boolean);
+
+    // Sync with react-hook-form
+    form.setValue(`fabrics.${index}.images`, rawFiles);
+  };
+
   // console.log(fileList, "fileList................................");
 
   const onSubmit = async (values: z.infer<typeof productFormSchema>) => {
 
     setLoading(true);
     const formData = makeFormData(values);
+
     console.log(values, "values from form++++++++++++++++++++++++++");
+
     try {
       await createFormAction(formData);
       form.reset();
@@ -474,7 +522,230 @@ export const CreateProductForm: React.FC = () => {
                   </div>
                 )}
               />
+
+              {/* Materials - Dynamic */}
               <FormField
+                control={form.control}
+                name="material"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel>Material</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter material" {...field} />
+                    </FormControl>
+                    <FormDescription className="text-red-400 text-xs min-h-4">
+                      {form.formState.errors.material?.message}
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+
+              {/* Fabrics - Dynamic with Color & Images */}
+              <div className="mt-4 col-span-3">
+                <FormLabel>Fabrics</FormLabel>
+                {fabricFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="border p-4 mb-3 rounded-md relative"
+                  >
+                    <div className="grid grid-cols-3 gap-2 mb-2">
+                      {/* Color Code Picker */}
+                      <Controller
+                        control={control}
+                        name={`fabrics.${index}.colorCode`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Color Code</FormLabel>
+                            <FormControl>
+                              <ColorPicker
+                                value={field.value || "#1677ff"}
+                                showText
+                                allowClear
+                                onChange={(color) =>
+                                  field.onChange(color.toHexString())
+                                }
+                              />
+                            </FormControl>
+                            <FormDescription className="text-red-400 text-xs min-h-4">
+                              {formState.errors?.fabrics?.[index]?.colorCode?.message}
+                            </FormDescription>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Color Name */}
+                      <FormItem>
+                        <FormLabel>Color Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter color name"
+                            {...register(`fabrics.${index}.colorName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.fabrics?.[index]?.colorName?.message}
+                        </FormDescription>
+                      </FormItem>
+
+                      {/* Image Upload - UPDATED */}
+                      <FormItem>
+                        <FormLabel>Images</FormLabel>
+                        <FormControl>
+                          <Upload
+                            listType="picture-card"
+                            beforeUpload={() => false}
+                            fileList={fabricImageFileLists[index] || []}
+                            onChange={(info) => handleFabricImageChange(index, info)}
+                            multiple
+                          >
+                            <div>
+                              <UploadOutlined />
+                              <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                          </Upload>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.fabrics?.[index]?.images?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+
+                    {/* Delete Button */}
+                    {fabricFields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          removeFabric(index);
+                          // Remove the fileList for this index
+                          setFabricImageFileLists(prev => {
+                            const newLists = { ...prev };
+                            delete newLists[index];
+                            return newLists;
+                          });
+                        }}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+
+                <Button
+                  type="button"
+                  onClick={() =>
+                    appendFabric({ colorCode: "#1677ff", colorName: "", images: [] })
+                  }
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Fabric
+                </Button>
+              </div>
+
+              {/* Colors - Dynamic */}
+              {/* <div className="mt-4">
+                <FormLabel>Colors</FormLabel>
+                {colorFields.map((field, index) => (
+                  <div key={field.id} className="flex gap-2 mb-2 items-start">
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <Input
+                          placeholder="Enter color"
+                          {...register(`colors.${index}`)}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-red-400 text-xs min-h-4">
+                        {formState.errors?.colors?.[index]?.message}
+                      </FormDescription>
+                    </FormItem>
+                    {colorFields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeColor(index)}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  onClick={() => appendColor("")}
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Color
+                </Button>
+              </div> */}
+
+              {/* Sizes - Dynamic */}
+              {/* <div className="mt-4">
+                <FormLabel>Sizes</FormLabel>
+                {sizeFields.map((field, index) => (
+                  <div key={field.id} className="flex gap-2 mb-2 items-start">
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <Input
+                          placeholder="Enter size"
+                          {...register(`sizes.${index}`)}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-red-400 text-xs min-h-4">
+                        {formState.errors?.sizes?.[index]?.message}
+                      </FormDescription>
+                    </FormItem>
+                    {sizeFields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeSize(index)}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  onClick={() => appendSize("")}
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Size
+                </Button>
+              </div> */}
+
+              {/* Set - Single Field */}
+              {/* <FormField
+                control={form.control}
+                name="set"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel>Set</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter set information" {...field} />
+                    </FormControl>
+                    <FormDescription className="text-red-400 text-xs min-h-4">
+                      {form.formState.errors.set?.message}
+                    </FormDescription>
+                  </FormItem>
+                )}
+              /> */}
+
+              {/* Inventory Type */}
+              {/* <FormField
                 control={form.control}
                 name="inventoryType"
                 render={({ field }) => (
@@ -509,7 +780,7 @@ export const CreateProductForm: React.FC = () => {
                     </FormItem>
                   </div>
                 )}
-              />
+              /> */}
             </div>
 
             {selectedInventoryType !== "" &&
@@ -630,6 +901,7 @@ export const CreateProductForm: React.FC = () => {
                   Add Item
                 </Button>
               )}
+
             <FormField
               control={form.control}
               name="videoUrl"
