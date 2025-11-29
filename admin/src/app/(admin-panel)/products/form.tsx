@@ -541,7 +541,7 @@ export const CreateProductForm: React.FC = () => {
               />
 
               {/* Fabrics - Dynamic with Color & Images */}
-              <div className="mt-4 col-span-3">
+              <div className="my-4 col-span-3">
                 <FormLabel>Fabrics</FormLabel>
                 {fabricFields.map((field, index) => (
                   <div
@@ -640,9 +640,9 @@ export const CreateProductForm: React.FC = () => {
                   }
                   variant="outline"
                   size="sm"
-                  className="mt-2"
+                  className="w-full flex items-center justify-center gap-2"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-4 h-4" />
                   Add Fabric
                 </Button>
               </div>
