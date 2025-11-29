@@ -546,7 +546,7 @@ export const CreateProductForm: React.FC = () => {
                 {fabricFields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="border p-4 mb-3 rounded-md relative"
+                    className="border p-4 mb-1 rounded-md relative"
                   >
                     <div className="grid grid-cols-3 gap-2 mb-2">
                       {/* Color Code Picker */}
