@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { apiBaseUrl } from "@/config/config";
 
 interface Props {
-  thumbnailImage: string;
-  backViewImage?: string;
+  // thumbnailImage: string;
+  // backViewImage?: string;
   images?: string[];
   name: string;
   controls: any;
@@ -19,18 +19,20 @@ const getYoutubeThumbnail = (url: string) => {
 };
 
 const ProductDetailsSlide: React.FC<Props> = ({
-  thumbnailImage,
-  backViewImage,
+  // thumbnailImage,
+  // backViewImage,
   images = [],
   name,
   videoUrl,
 }) => {
   //  Store all previewable items (images + video)
   const allMedia = [
-    apiBaseUrl + thumbnailImage,
-    ...(backViewImage ? [apiBaseUrl + backViewImage] : []),
-    ...images.map((img) => apiBaseUrl + img),
-    ...(videoUrl ? [videoUrl] : []), // Add video as last item
+    // apiBaseUrl + thumbnailImage,
+    // ...(backViewImage ? [apiBaseUrl + backViewImage] : []),
+    // ...images.map((img) => apiBaseUrl + img),
+    // ...(videoUrl ? [videoUrl] : []), // Add video as last item
+     ...images,  // ✅ এভাবে লেখো
+  ...(videoUrl ? [videoUrl] : []),
   ];
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -39,9 +41,9 @@ const ProductDetailsSlide: React.FC<Props> = ({
   const isVideo = selectedItem?.includes("youtube.com");
 
   return (
-    <div className="flex lg:flex-row flex-col gap-4 lg:gap-6">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
       {/* Thumbnail Gallery - Vertical on large screens */}
-      <div className="bg-gray-100 p-4 rounded-md">
+      <div className="bg-gray-100 p-4 rounded-md order-2 lg:order-1">
         <div className="flex lg:flex-col flex-row gap-3 lg:max-h-[550px] overflow-x-auto lg:overflow-y-auto scrollbar-hide">
           {allMedia.map((item, index) => {
             const isVideoThumb = item.includes("youtube.com");
@@ -117,7 +119,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
         </div>
       </div>
       {/* Main Preview Area */}
-      <div className="flex-1 relative w-full h-[300px] md:h-[450px] lg:h-[650px] rounded-md overflow-hidden shadow-md bg-gray-100">
+      <div className=" relative order-1 lg:order-2 w-full h-[300px] sm:min-h-[420px] md:min-h-[500px] lg:min-h-[650px] rounded-md overflow-hidden shadow-md bg-gray-100">
         <AnimatePresence mode="wait">
           {isVideo ? (
             <motion.div
@@ -148,7 +150,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
                 src={selectedItem}
                 alt={`${name} - View ${selectedIndex + 1}`}
                 fill
-                className="object-containt p-4 w-full h-full rounded-md"
+                className="object-cover p-4 w-full h-full rounded-md"
                 priority={selectedIndex === 0}
               />
 

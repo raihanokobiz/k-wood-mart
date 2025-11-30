@@ -77,9 +77,9 @@ export const discountTypes = [
 ];
 
 export const inventoryTypes = [
-  { name: "Color", key: "colorInventory" },
-  { name: "Size", key: "levelInventory" },
-  { name: "Color - Size", key: "colorLevelInventory" },
+  // { name: "Color", key: "colorInventory" },
+  // { name: "Size", key: "levelInventory" },
+  // { name: "Color - Size", key: "colorLevelInventory" },
   { name: "Without Any", key: "inventory" },
 ];
 
@@ -289,7 +289,7 @@ export const CreateProductForm: React.FC = () => {
     const rawFiles = fileList
       .map((file: any) => file.originFileObj)
       .filter(Boolean);
-    form.setValue(`sizes.${index}.images`, rawFiles);
+    form.setValue(`sizes.${index}.images`, rawFiles); 
   };
 
   const handleSetImageChange = (index: number, { fileList }: any) => {

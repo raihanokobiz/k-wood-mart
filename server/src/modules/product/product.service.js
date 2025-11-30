@@ -958,6 +958,23 @@ class ProductService extends BaseService {
           });
           console.log("✅ Sizes with images:", payload.sizes);
         }
+        
+        //  NEW: Process set images
+        if (payload.set && Array.isArray(payload.set)) {
+          payload.set = payload.set.map((setItem, index) => {
+            const setImageKey = `setImages_${index}`;
+            const setImages = images[setImageKey]
+              ? Array.isArray(images[setImageKey])
+                ? images[setImageKey]
+                : [images[setImageKey]]
+              : [];
+            return {
+              ...setItem,
+              images: setImages || [],
+            };
+          });
+          console.log("✅ Set with images:", payload.set);
+        }
       }
       payload.maxPrice = maxPrice;
 
