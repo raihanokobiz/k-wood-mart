@@ -208,6 +208,48 @@ export async function createFormAction(data: FormData) {
       }
     });
 
+    // Process set data
+    const setData: any[] = [];
+    const setKeys = Array.from(data.keys()).filter((key) =>
+      key.startsWith("set[")
+    );
+
+    const setIndices = new Set(
+      setKeys
+        .map((key) => {
+          const match = key.match(/set\[(\d+)\]/);
+          return match ? parseInt(match[1]) : -1;
+        })
+        .filter((index) => index !== -1)
+    );
+
+    setIndices.forEach((index) => {
+      const setName = data.get(`set[${index}][setName]`) as string;
+      const images = data.getAll(`set[${index}][images]`);
+
+      setData.push({
+        setName,
+        images: images.length > 0 ? images : [],
+      });
+
+      data.delete(`set[${index}][setName]`);
+      data.delete(`set[${index}][images]`);
+    });
+
+    const setPayload = setData.map((s) => ({
+      setName: s.setName,
+      images: [],
+    }));
+    data.set("set", JSON.stringify(setPayload));
+
+    setData.forEach((setItem, index) => {
+      if (Array.isArray(setItem.images)) {
+        setItem.images.forEach((image: any) => {
+          data.append(`setImages_${index}`, image);
+        });
+      }
+    });
+
     console.log("✅ Sending FormData to backend...", data);
     await createProduct(data);
     revalidatePath("/");

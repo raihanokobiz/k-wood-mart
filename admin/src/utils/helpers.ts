@@ -100,6 +100,23 @@ export function makeFormData(data: Record<string, any>) {
       });
     }
 
+    // Handle set array with nested images   
+    else if (key === "set" && Array.isArray(value)) {
+      value.forEach((setItem, index) => {
+        formData.append(`set[${index}][setName]`, setItem.setName || "");
+
+        if (Array.isArray(setItem.images) && setItem.images.length > 0) {
+          setItem.images.forEach((file: any) => {
+            if (file?.originFileObj) {
+              formData.append(`set[${index}][images]`, file.originFileObj);
+            } else if (file instanceof File) {
+              formData.append(`set[${index}][images]`, file);
+            }
+          });
+        }
+      });
+    }
+
     // inventories array
     else if (key === "inventories" && Array.isArray(value)) {
       value.forEach((inventory) => {

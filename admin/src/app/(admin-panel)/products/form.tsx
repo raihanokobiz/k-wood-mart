@@ -68,7 +68,7 @@ const defaultValues = {
   fabrics: [{ colorCode: "#1677ff", colorName: "", images: [] }],
   colors: [{ colorCode: "#1677ff", colorName: "", images: [] }],
   sizes: [{ colorCode: "#1677ff", colorName: "", images: [] }],
-  set: "",
+  set: [{ setName: "", images: [] }],
 };
 
 export const discountTypes = [
@@ -104,6 +104,9 @@ export const CreateProductForm: React.FC = () => {
     Record<number, any[]>
   >({});
   const [sizeImageFileLists, setSizeImageFileLists] = React.useState<
+    Record<number, any[]>
+  >({});
+  const [setImageFileLists, setSetImageFileLists] = React.useState<
     Record<number, any[]>
   >({});
 
@@ -149,6 +152,15 @@ export const CreateProductForm: React.FC = () => {
   } = useFieldArray({
     control,
     name: "sizes",
+  });
+
+  const {
+    fields: setFields,
+    append: appendSet,
+    remove: removeSet,
+  } = useFieldArray({
+    control,
+    name: "set",
   });
 
   const getDefaultInventory = () => {
@@ -278,6 +290,17 @@ export const CreateProductForm: React.FC = () => {
       .map((file: any) => file.originFileObj)
       .filter(Boolean);
     form.setValue(`sizes.${index}.images`, rawFiles);
+  };
+
+  const handleSetImageChange = (index: number, { fileList }: any) => {
+    setSetImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+    const rawFiles = fileList
+      .map((file: any) => file.originFileObj)
+      .filter(Boolean);
+    form.setValue(`set.${index}.images`, rawFiles);
   };
 
   // console.log(fileList, "fileList................................");
@@ -933,22 +956,87 @@ export const CreateProductForm: React.FC = () => {
                 </Button>
               </div>
 
-              {/* Set - Single Field */}
-              {/* <FormField
-                control={form.control}
-                name="set"
-                render={({ field }) => (
-                  <FormItem className="mt-4">
-                    <FormLabel>Set</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter set information" {...field} />
-                    </FormControl>
-                    <FormDescription className="text-red-400 text-xs min-h-4">
-                      {form.formState.errors.set?.message}
-                    </FormDescription>
-                  </FormItem>
-                )}
-              /> */}
+              {/* Set - Dynamic with Images */}
+              <div className="my-4 col-span-3">
+                <FormLabel>Sets</FormLabel>
+                {setFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="border p-4 mb-1 rounded-md relative"
+                  >
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      {/* Set Name */}
+                      <FormItem>
+                        <FormLabel>Set Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter set name"
+                            {...register(`set.${index}.setName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.set?.[index]?.setName?.message}
+                        </FormDescription>
+                      </FormItem>
+
+                      {/* Image Upload */}
+                      <FormItem>
+                        <FormLabel>Images</FormLabel>
+                        <FormControl>
+                          <Upload
+                            listType="picture-card"
+                            beforeUpload={() => false}
+                            fileList={setImageFileLists[index] || []}
+                            onChange={(info) =>
+                              handleSetImageChange(index, info)
+                            }
+                            multiple
+                          >
+                            <div>
+                              <UploadOutlined />
+                              <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                          </Upload>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.set?.[index]?.images?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+
+                    {/* Delete Button */}
+                    {setFields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          removeSet(index);
+                          setSetImageFileLists((prev) => {
+                            const newLists = { ...prev };
+                            delete newLists[index];
+                            return newLists;
+                          });
+                        }}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+
+                <Button
+                  type="button"
+                  onClick={() => appendSet({ setName: "", images: [] })}
+                  variant="outline"
+                  size="sm"
+                  className="w-full flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Set
+                </Button>
+              </div>
 
               {/* Inventory Type */}
               <FormField

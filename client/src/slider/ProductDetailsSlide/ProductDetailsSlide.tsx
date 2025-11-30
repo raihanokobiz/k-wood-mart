@@ -25,12 +25,12 @@ const ProductDetailsSlide: React.FC<Props> = ({
   name,
   videoUrl,
 }) => {
-  // ✅ Store all previewable items (images + video)
+  //  Store all previewable items (images + video)
   const allMedia = [
     apiBaseUrl + thumbnailImage,
     ...(backViewImage ? [apiBaseUrl + backViewImage] : []),
     ...images.map((img) => apiBaseUrl + img),
-    ...(videoUrl ? [videoUrl] : []), // ✅ Add video as last item
+    ...(videoUrl ? [videoUrl] : []), // Add video as last item
   ];
 
   const [selectedIndex, setSelectedIndex] = useState(0);

@@ -40,6 +40,7 @@ class ProductController {
       fabrics: req.body.fabrics ? JSON.parse(req.body.fabrics) : [],
       colors: req.body.colors ? JSON.parse(req.body.colors) : [],
       sizes: req.body.sizes ? JSON.parse(req.body.sizes) : [],
+      set: req.body.set ? JSON.parse(req.body.set) : [],
     };
 
     // console.log("$#%$#%#$ payload from controller:", payload);

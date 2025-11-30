@@ -22,6 +22,12 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
   const [level, setLevel] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [emiMonths, setEmiMonths] = useState<number | null>(null);
+  // ADD THESE NEW STATES
+  const [accordionOpen, setAccordionOpen] = useState<string | null>(null);
+  const [selectedFabric, setSelectedFabric] = useState<any>(null);
+  const [selectedProductColor, setSelectedProductColor] = useState<any>(null);
+  const [selectedProductSize, setSelectedProductSize] = useState<any>(null);
+  const [selectedSet, setSelectedSet] = useState<any>(null);
 
   const [levelError, setLevelError] = useState(false);
   const [colorError, setColorError] = useState(false);
@@ -45,18 +51,29 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     images,
     _id,
     productId,
+    // ADD THESE
+    material,
+    fabrics,
+    colors,
+    sizes,
+    set,
   } = product;
 
   const handleIncrement = () => setCount((prev) => prev + 1);
   const handleDecrement = () => setCount((prev) => (prev > 1 ? prev - 1 : 1));
 
   // ✅ Calculate Discounted Price from MRP
-  const calculateDiscountedPrice = (mrpPrice: number, hasDiscount: boolean, discValue?: number, discType?: string) => {
+  const calculateDiscountedPrice = (
+    mrpPrice: number,
+    hasDiscount: boolean,
+    discValue?: number,
+    discType?: string
+  ) => {
     if (!hasDiscount || !discValue) return mrpPrice;
 
     if (discType === "percent") {
       // If MRP = 41 and discount = 5%, then discounted price = 41 - (41 × 0.05) = 38.95
-      return mrpPrice - (mrpPrice * discValue / 100);
+      return mrpPrice - (mrpPrice * discValue) / 100;
     } else if (discType === "flat") {
       // If discount is flat amount, discounted price = MRP - discount
       return mrpPrice - discValue;
@@ -75,7 +92,9 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
         : undefined;
 
       if (levelItem && selectedColor && Array.isArray(levelItem.colors)) {
-        selectedItem = levelItem.colors.find((c: any) => c._id === selectedColor);
+        selectedItem = levelItem.colors.find(
+          (c: any) => c._id === selectedColor
+        );
       }
     } else if (inventoryType === "levelInventory") {
       selectedItem = Array.isArray(inventoryRef)
@@ -90,8 +109,15 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
 
     // Fallback to first item if nothing selected
-    if (!selectedItem && Array.isArray(inventoryRef) && inventoryRef.length > 0) {
-      if (inventoryType === "colorLevelInventory" && inventoryRef[0]?.colors?.length > 0) {
+    if (
+      !selectedItem &&
+      Array.isArray(inventoryRef) &&
+      inventoryRef.length > 0
+    ) {
+      if (
+        inventoryType === "colorLevelInventory" &&
+        inventoryRef[0]?.colors?.length > 0
+      ) {
         selectedItem = inventoryRef[0].colors[0];
       } else {
         selectedItem = inventoryRef[0];
@@ -99,14 +125,21 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
 
     // Get MRP (original price) and discount info
-    let itemMrpPrice = selectedItem?.mrpPrice ? Number(selectedItem.mrpPrice) : Number(mrpPrice || price) || 0;
+    let itemMrpPrice = selectedItem?.mrpPrice
+      ? Number(selectedItem.mrpPrice)
+      : Number(mrpPrice || price) || 0;
     const itemDiscount = selectedItem?.discount ?? discount;
     const itemDiscountType = selectedItem?.discountType ?? discountType;
     const itemIsDiscounted = selectedItem?.isDiscounted ?? isDiscounted;
 
     // Calculate discounted price from MRP
     let itemPrice = itemIsDiscounted
-      ? calculateDiscountedPrice(itemMrpPrice, itemIsDiscounted, itemDiscount, itemDiscountType)
+      ? calculateDiscountedPrice(
+          itemMrpPrice,
+          itemIsDiscounted,
+          itemDiscount,
+          itemDiscountType
+        )
       : itemMrpPrice;
 
     return {
@@ -115,7 +148,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     };
   };
 
-  const { price: currentPrice, mrpPrice: currentMrpPrice } = getCurrentPriceData();
+  const { price: currentPrice, mrpPrice: currentMrpPrice } =
+    getCurrentPriceData();
 
   // ✅ EMI Calculation
   const interestRates: Record<number, number> = {
@@ -144,7 +178,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
       return;
     }
     if (
-      (inventoryType === "levelInventory" || inventoryType === "colorLevelInventory") &&
+      (inventoryType === "levelInventory" ||
+        inventoryType === "colorLevelInventory") &&
       !selectedLevel
     ) {
       setLevelError(true);
@@ -153,7 +188,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
 
     if (
-      (inventoryType === "colorLevelInventory" || inventoryType === "colorInventory") &&
+      (inventoryType === "colorLevelInventory" ||
+        inventoryType === "colorInventory") &&
       !selectedColor
     ) {
       setColorError(true);
@@ -204,7 +240,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
       return;
     }
     if (
-      (inventoryType === "levelInventory" || inventoryType === "colorLevelInventory") &&
+      (inventoryType === "levelInventory" ||
+        inventoryType === "colorLevelInventory") &&
       !selectedLevel
     ) {
       setLevelError(true);
@@ -213,7 +250,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
 
     if (
-      (inventoryType === "colorLevelInventory" || inventoryType === "colorInventory") &&
+      (inventoryType === "colorLevelInventory" ||
+        inventoryType === "colorInventory") &&
       !selectedColor
     ) {
       setColorError(true);
@@ -267,8 +305,38 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
   };
 
-  console.log(product, "ok");
+  //  ADD THIS FUNCTION
+  const getDisplayImages = () => {
+    const baseImages = [
+      apiBaseUrl + thumbnailImage,
+      ...(backViewImage ? [apiBaseUrl + backViewImage] : []),
+      ...images.map((img) => apiBaseUrl + img),
+    ];
 
+    let additionalImages: string[] = [];
+
+    if (selectedFabric?.images?.length) {
+      additionalImages = selectedFabric.images.map(
+        (img: string) => apiBaseUrl + img
+      );
+    } else if (selectedProductColor?.images?.length) {
+      additionalImages = selectedProductColor.images.map(
+        (img: string) => apiBaseUrl + img
+      );
+    } else if (selectedProductSize?.images?.length) {
+      additionalImages = selectedProductSize.images.map(
+        (img: string) => apiBaseUrl + img
+      );
+    } else if (selectedSet?.images?.length) {
+      additionalImages = selectedSet.images.map(
+        (img: string) => apiBaseUrl + img
+      );
+    }
+
+    return [...baseImages, ...additionalImages];
+  };
+
+  const displayImages = getDisplayImages();
 
   return (
     <>
@@ -279,15 +347,18 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               controls={controls}
               thumbnailImage={thumbnailImage}
               backViewImage={backViewImage}
-              images={images}
+              // images={images}
+              images={displayImages}
               name={name}
               videoUrl={product.videoUrl}
             />
-            </div>
+          </div>
           <div className="space-y-6 lg:col-span-4 bg-gray-100 rounded-md p-6">
             {/* Product Title & Price */}
             <div className="space-y-2">
-              <h2 className={`text-3xl font-bold text-[#262626] ${rajdhani.className}`}>
+              <h2
+                className={`text-3xl font-bold text-[#262626] ${rajdhani.className}`}
+              >
                 {name}
               </h2>
               {/* Product ID */}
@@ -317,10 +388,336 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               </div>
             </div>
 
+            {/* Fabric, Material, Color, Size, Set Accordion */}
+            {(material ||
+              fabrics?.length > 0 ||
+              colors?.length > 0 ||
+              sizes?.length > 0 ||
+              set?.length > 0) && (
+              <div className="space-y-2">
+                {/* Material Accordion */}
+                {material && (
+                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button
+                      onClick={() =>
+                        setAccordionOpen(
+                          accordionOpen === "material" ? null : "material"
+                        )
+                      }
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                          <span className="text-lg">🧵</span>
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-[#262626]">Material</p>
+                          <p className="text-sm text-gray-500">
+                            Material And Wood Finish
+                          </p>
+                        </div>
+                      </div>
+                      <svg
+                        className={`w-5 h-5 transition-transform ${
+                          accordionOpen === "material" ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {accordionOpen === "material" && (
+                      <div className="p-4 pt-0 border-t">
+                        <div className="bg-gray-100 rounded-lg px-4 py-3 text-sm text-gray-700">
+                          {material}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Fabric Accordion */}
+                {fabrics?.length > 0 && (
+                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button
+                      onClick={() =>
+                        setAccordionOpen(
+                          accordionOpen === "fabric" ? null : "fabric"
+                        )
+                      }
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                          <span className="text-lg">🧶</span>
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-[#262626]">Fabric</p>
+                          <p className="text-sm text-gray-500">
+                            Fabric configuration
+                          </p>
+                        </div>
+                      </div>
+                      <svg
+                        className={`w-5 h-5 transition-transform ${
+                          accordionOpen === "fabric" ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {accordionOpen === "fabric" && (
+                      <div className="p-4 pt-0 border-t space-y-2">
+                        {fabrics.map((fabric: any, index: number) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setSelectedFabric(fabric);
+                              setSelectedProductColor(null);
+                              setSelectedProductSize(null);
+                              setSelectedSet(null);
+                            }}
+                            className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
+                              selectedFabric === fabric
+                                ? "border-[#D4A373] bg-[#D4A373]/5"
+                                : "border-gray-200 hover:border-[#D4A373]/50"
+                            }`}
+                          >
+                            <div
+                              className="w-6 h-6 rounded-full border-2 border-white shadow"
+                              style={{ backgroundColor: fabric.colorCode }}
+                            />
+                            <span className="font-medium text-sm">
+                              {fabric.colorName}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Colors Accordion */}
+                {colors?.length > 0 && (
+                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button
+                      onClick={() =>
+                        setAccordionOpen(
+                          accordionOpen === "color" ? null : "color"
+                        )
+                      }
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                          <span className="text-lg">🎨</span>
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-[#262626]">Color</p>
+                          <p className="text-sm text-gray-500">
+                            Material & Wood Finish Color
+                          </p>
+                        </div>
+                      </div>
+                      <svg
+                        className={`w-5 h-5 transition-transform ${
+                          accordionOpen === "color" ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {accordionOpen === "color" && (
+                      <div className="p-4 pt-0 border-t space-y-2">
+                        {colors.map((color: any, index: number) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setSelectedProductColor(color);
+                              setSelectedFabric(null);
+                              setSelectedProductSize(null);
+                              setSelectedSet(null);
+                            }}
+                            className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
+                              selectedProductColor === color
+                                ? "border-[#D4A373] bg-[#D4A373]/5"
+                                : "border-gray-200 hover:border-[#D4A373]/50"
+                            }`}
+                          >
+                            <div
+                              className="w-6 h-6 rounded-full border-2 border-white shadow"
+                              style={{ backgroundColor: color.colorCode }}
+                            />
+                            <span className="font-medium text-sm">
+                              {color.colorName}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Sizes Accordion */}
+                {sizes?.length > 0 && (
+                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button
+                      onClick={() =>
+                        setAccordionOpen(
+                          accordionOpen === "size" ? null : "size"
+                        )
+                      }
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                          <span className="text-lg">📏</span>
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-[#262626]">Size</p>
+                          <p className="text-sm text-gray-500">Material Size</p>
+                        </div>
+                      </div>
+                      <svg
+                        className={`w-5 h-5 transition-transform ${
+                          accordionOpen === "size" ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {accordionOpen === "size" && (
+                      <div className="p-4 pt-0 border-t space-y-2">
+                        {sizes.map((size: any, index: number) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setSelectedProductSize(size);
+                              setSelectedFabric(null);
+                              setSelectedProductColor(null);
+                              setSelectedSet(null);
+                            }}
+                            className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
+                              selectedProductSize === size
+                                ? "border-[#D4A373] bg-[#D4A373]/5"
+                                : "border-gray-200 hover:border-[#D4A373]/50"
+                            }`}
+                          >
+                            <div
+                              className="w-6 h-6 rounded-full border-2 border-white shadow"
+                              style={{ backgroundColor: size.colorCode }}
+                            />
+                            <span className="font-medium text-sm">
+                              {size.colorName}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Set Accordion */}
+                {set?.length > 0 && (
+                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button
+                      onClick={() =>
+                        setAccordionOpen(accordionOpen === "set" ? null : "set")
+                      }
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                          <span className="text-lg">📦</span>
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-[#262626]">Set</p>
+                          <p className="text-sm text-gray-500">Set Option</p>
+                        </div>
+                      </div>
+                      <svg
+                        className={`w-5 h-5 transition-transform ${
+                          accordionOpen === "set" ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {accordionOpen === "set" && (
+                      <div className="p-4 pt-0 border-t space-y-2">
+                        {set.map((setItem: any, index: number) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setSelectedSet(setItem);
+                              setSelectedFabric(null);
+                              setSelectedProductColor(null);
+                              setSelectedProductSize(null);
+                            }}
+                            className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
+                              selectedSet === setItem
+                                ? "border-[#D4A373] bg-[#D4A373]/5"
+                                : "border-gray-200 hover:border-[#D4A373]/50"
+                            }`}
+                          >
+                            <span className="font-medium text-sm">
+                              {setItem.setName}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Size Selection */}
-            {(inventoryType === "levelInventory" || inventoryType === "colorLevelInventory") && (
+            {(inventoryType === "levelInventory" ||
+              inventoryType === "colorLevelInventory") && (
               <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                <h3 className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}>
+                <h3
+                  className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
+                >
                   Select Size
                 </h3>
                 <div className="flex flex-wrap items-center gap-3">
@@ -334,10 +731,11 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                           setSelectedColor(null);
                           setLevelError(false);
                         }}
-                        className={`min-w-[60px] px-4 py-3 border-2 font-bold text-sm uppercase rounded-lg transition-all duration-300 ${level === size.level
-                          ? "bg-[#D4A373] border-[#D4A373] text-white shadow-lg scale-105"
-                          : "bg-white border-gray-300 text-[#262626] hover:border-[#D4A373] hover:text-[#D4A373]"
-                          }`}
+                        className={`min-w-[60px] px-4 py-3 border-2 font-bold text-sm uppercase rounded-lg transition-all duration-300 ${
+                          level === size.level
+                            ? "bg-[#D4A373] border-[#D4A373] text-white shadow-lg scale-105"
+                            : "bg-white border-gray-300 text-[#262626] hover:border-[#D4A373] hover:text-[#D4A373]"
+                        }`}
                       >
                         {size.level}
                       </button>
@@ -355,54 +753,68 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
             {/* Color Selection */}
             {((inventoryType === "colorLevelInventory" && selectedLevel) ||
               inventoryType === "colorInventory") && (
-                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                  <h3 className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}>
-                    Select Color
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-3">
-                    {(() => {
-                      let colorItems: Array<{ _id: string; color: string; name?: string }> = [];
+              <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                <h3
+                  className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
+                >
+                  Select Color
+                </h3>
+                <div className="flex flex-wrap items-center gap-3">
+                  {(() => {
+                    let colorItems: Array<{
+                      _id: string;
+                      color: string;
+                      name?: string;
+                    }> = [];
 
-                      if (inventoryType === "colorLevelInventory" && selectedLevel) {
-                        const levelItem = Array.isArray(inventoryRef)
-                          ? inventoryRef.find((item) => item._id === selectedLevel)
-                          : undefined;
-                        colorItems = levelItem?.colors || [];
-                      } else if (inventoryType === "colorInventory") {
-                        colorItems = Array.isArray(inventoryRef) ? inventoryRef : [];
-                      }
+                    if (
+                      inventoryType === "colorLevelInventory" &&
+                      selectedLevel
+                    ) {
+                      const levelItem = Array.isArray(inventoryRef)
+                        ? inventoryRef.find(
+                            (item) => item._id === selectedLevel
+                          )
+                        : undefined;
+                      colorItems = levelItem?.colors || [];
+                    } else if (inventoryType === "colorInventory") {
+                      colorItems = Array.isArray(inventoryRef)
+                        ? inventoryRef
+                        : [];
+                    }
 
-                      return colorItems.map((colorItem) => (
-                        <button
-                          key={colorItem._id}
-                          onClick={() => {
-                            setSelectedColor(colorItem._id);
-                            setColorError(false);
-                          }}
-                          className={`relative w-12 h-12 rounded-full transition-all duration-300 ${selectedColor === colorItem._id
+                    return colorItems.map((colorItem) => (
+                      <button
+                        key={colorItem._id}
+                        onClick={() => {
+                          setSelectedColor(colorItem._id);
+                          setColorError(false);
+                        }}
+                        className={`relative w-12 h-12 rounded-full transition-all duration-300 ${
+                          selectedColor === colorItem._id
                             ? "ring-4 ring-[#D4A373] ring-offset-2 scale-110"
                             : "ring-2 ring-gray-300 hover:ring-[#D4A373]/50"
-                            }`}
-                          style={{ backgroundColor: colorItem.color }}
-                          title={colorItem.name || colorItem.color}
-                        >
-                          {selectedColor === colorItem._id && (
-                            <span className="absolute inset-0 flex items-center justify-center text-white text-xl">
-                              ✓
-                            </span>
-                          )}
-                        </button>
-                      ));
-                    })()}
-                  </div>
-                  {colorError && (
-                    <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
-                      <span>⚠️</span>
-                      <span>Please select a color to continue</span>
-                    </p>
-                  )}
+                        }`}
+                        style={{ backgroundColor: colorItem.color }}
+                        title={colorItem.name || colorItem.color}
+                      >
+                        {selectedColor === colorItem._id && (
+                          <span className="absolute inset-0 flex items-center justify-center text-white text-xl">
+                            ✓
+                          </span>
+                        )}
+                      </button>
+                    ));
+                  })()}
                 </div>
-              )}
+                {colorError && (
+                  <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
+                    <span>⚠️</span>
+                    <span>Please select a color to continue</span>
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* EMI Plan */}
             <div className="bg-gradient-to-br from-[#D4A373]/10 via-[#D4A373]/5 to-transparent rounded-xl p-6 border-2 border-[#D4A373]/30">
@@ -423,7 +835,9 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                     />
                   </svg>
                 </div>
-                <h3 className={`text-xl font-bold text-[#262626] ${rajdhani.className}`}>
+                <h3
+                  className={`text-xl font-bold text-[#262626] ${rajdhani.className}`}
+                >
                   EMI Payment Plan
                 </h3>
               </div>
@@ -543,7 +957,9 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
 
             {/* Description */}
             <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-              <h3 className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}>
+              <h3
+                className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
+              >
                 Product Details
               </h3>
               <div
@@ -555,7 +971,9 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
             {/* Size Chart */}
             {sizeChartImage && (
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <h3 className={`text-lg font-bold text-[#262626] mb-4 ${rajdhani.className}`}>
+                <h3
+                  className={`text-lg font-bold text-[#262626] mb-4 ${rajdhani.className}`}
+                >
                   Size Chart
                 </h3>
                 <Image

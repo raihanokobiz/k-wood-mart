@@ -156,6 +156,15 @@ const Productschema = new Schema(
       ],
       default: [],
     },
+    set: {
+      type: [
+        {
+          setName: { type: String },
+          images: { type: [String], default: [] },
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

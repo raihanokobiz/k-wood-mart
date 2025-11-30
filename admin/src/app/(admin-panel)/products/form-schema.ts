@@ -112,6 +112,15 @@ export const productFormSchema = z.object({
     )
     .optional()
     .default([]),
+  set: z
+    .array(
+      z.object({
+        setName: z.string().optional(),
+        images: z.array(z.any()).optional().default([]),
+      })
+    )
+    .optional()
+    .default([]),
 });
 
 export const dropZoneConfig = {

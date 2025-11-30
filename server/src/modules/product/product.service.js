@@ -63,6 +63,7 @@ class ProductService extends BaseService {
       fabrics,
       colors,
       sizes,
+      set,
     } = payload;
     let inventoryIds = [];
     let totalInventoryCount = 0;
@@ -350,6 +351,23 @@ class ProductService extends BaseService {
         };
       });
       console.log("✅ Sizes with images:", payload.sizes);
+    }
+
+    // ✅ NEW: Process set images and update set array with uploaded URLs
+    if (payload.set && Array.isArray(payload.set)) {
+      payload.set = payload.set.map((setItem, index) => {
+        const setImageKey = `setImages_${index}`;
+        const setImages = images[setImageKey]
+          ? Array.isArray(images[setImageKey])
+            ? images[setImageKey]
+            : [images[setImageKey]]
+          : [];
+        return {
+          ...setItem,
+          images: setImages || [],
+        };
+      });
+      console.log("✅ Set with images:", payload.set);
     }
 
     payload.productId = await idGenerate("PRO-", "productId", this.#repository);
