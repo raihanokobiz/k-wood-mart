@@ -92,6 +92,26 @@ export const productFormSchema = z.object({
     )
     .optional()
     .default([]),
+  colors: z
+    .array(
+      z.object({
+        colorCode: z.string().optional(),
+        colorName: z.string().optional(),
+        images: z.array(z.any()).optional().default([]),
+      })
+    )
+    .optional()
+    .default([]),
+  sizes: z
+    .array(
+      z.object({
+        colorCode: z.string().optional(),
+        colorName: z.string().optional(),
+        images: z.array(z.any()).optional().default([]),
+      })
+    )
+    .optional()
+    .default([]),
 });
 
 export const dropZoneConfig = {

@@ -116,6 +116,98 @@ export async function createFormAction(data: FormData) {
       }
     });
 
+    // Process colors data
+    const colorData: any[] = [];
+    const colorKeys = Array.from(data.keys()).filter((key) =>
+      key.startsWith("colors[")
+    );
+
+    const colorIndices = new Set(
+      colorKeys
+        .map((key) => {
+          const match = key.match(/colors\[(\d+)\]/);
+          return match ? parseInt(match[1]) : -1;
+        })
+        .filter((index) => index !== -1)
+    );
+
+    colorIndices.forEach((index) => {
+      const colorCode = data.get(`colors[${index}][colorCode]`) as string;
+      const colorName = data.get(`colors[${index}][colorName]`) as string;
+      const images = data.getAll(`colors[${index}][images]`);
+
+      colorData.push({
+        colorCode,
+        colorName,
+        images: images.length > 0 ? images : [],
+      });
+
+      data.delete(`colors[${index}][colorCode]`);
+      data.delete(`colors[${index}][colorName]`);
+      data.delete(`colors[${index}][images]`);
+    });
+
+    const colorsPayload = colorData.map((c) => ({
+      colorCode: c.colorCode,
+      colorName: c.colorName,
+      images: [],
+    }));
+    data.set("colors", JSON.stringify(colorsPayload));
+
+    colorData.forEach((color, index) => {
+      if (Array.isArray(color.images)) {
+        color.images.forEach((image: any) => {
+          data.append(`colorImages_${index}`, image);
+        });
+      }
+    });
+
+    // Process sizes data
+    const sizeData: any[] = [];
+    const sizeKeys = Array.from(data.keys()).filter((key) =>
+      key.startsWith("sizes[")
+    );
+
+    const sizeIndices = new Set(
+      sizeKeys
+        .map((key) => {
+          const match = key.match(/sizes\[(\d+)\]/);
+          return match ? parseInt(match[1]) : -1;
+        })
+        .filter((index) => index !== -1)
+    );
+
+    sizeIndices.forEach((index) => {
+      const colorCode = data.get(`sizes[${index}][colorCode]`) as string;
+      const colorName = data.get(`sizes[${index}][colorName]`) as string;
+      const images = data.getAll(`sizes[${index}][images]`);
+
+      sizeData.push({
+        colorCode,
+        colorName,
+        images: images.length > 0 ? images : [],
+      });
+
+      data.delete(`sizes[${index}][colorCode]`);
+      data.delete(`sizes[${index}][colorName]`);
+      data.delete(`sizes[${index}][images]`);
+    });
+
+    const sizesPayload = sizeData.map((s) => ({
+      colorCode: s.colorCode,
+      colorName: s.colorName,
+      images: [],
+    }));
+    data.set("sizes", JSON.stringify(sizesPayload));
+
+    sizeData.forEach((size, index) => {
+      if (Array.isArray(size.images)) {
+        size.images.forEach((image: any) => {
+          data.append(`sizeImages_${index}`, image);
+        });
+      }
+    });
+
     console.log("✅ Sending FormData to backend...", data);
     await createProduct(data);
     revalidatePath("/");

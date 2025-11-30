@@ -66,8 +66,8 @@ const defaultValues = {
   // new item
   material: "",
   fabrics: [{ colorCode: "#1677ff", colorName: "", images: [] }],
-  colors: [""],
-  sizes: [""],
+  colors: [{ colorCode: "#1677ff", colorName: "", images: [] }],
+  sizes: [{ colorCode: "#1677ff", colorName: "", images: [] }],
   set: "",
 };
 
@@ -96,8 +96,16 @@ export const CreateProductForm: React.FC = () => {
   const [childCategories, setChildCategories] = React.useState<
     TChildCategory[]
   >([]);
-  // pabric 
-  const [fabricImageFileLists, setFabricImageFileLists] = React.useState<Record<number, any[]>>({});
+  // pabric
+  const [fabricImageFileLists, setFabricImageFileLists] = React.useState<
+    Record<number, any[]>
+  >({});
+  const [colorImageFileLists, setColorImageFileLists] = React.useState<
+    Record<number, any[]>
+  >({});
+  const [sizeImageFileLists, setSizeImageFileLists] = React.useState<
+    Record<number, any[]>
+  >({});
 
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
@@ -116,17 +124,29 @@ export const CreateProductForm: React.FC = () => {
   });
 
   // fabric, material, color, size field arrays
-  const { fields: fabricFields, append: appendFabric, remove: removeFabric } = useFieldArray({
+  const {
+    fields: fabricFields,
+    append: appendFabric,
+    remove: removeFabric,
+  } = useFieldArray({
     control,
     name: "fabrics",
   });
 
-  const { fields: colorFields, append: appendColor, remove: removeColor } = useFieldArray({
+  const {
+    fields: colorFields,
+    append: appendColor,
+    remove: removeColor,
+  } = useFieldArray({
     control,
     name: "colors",
   });
 
-  const { fields: sizeFields, append: appendSize, remove: removeSize } = useFieldArray({
+  const {
+    fields: sizeFields,
+    append: appendSize,
+    remove: removeSize,
+  } = useFieldArray({
     control,
     name: "sizes",
   });
@@ -146,7 +166,7 @@ export const CreateProductForm: React.FC = () => {
   const getDefaultFabric = () => ({
     colorCode: "#1677ff",
     colorName: "",
-    images: []
+    images: [],
   });
 
   const selectedColor = form.watch("color");
@@ -225,9 +245,9 @@ export const CreateProductForm: React.FC = () => {
 
   const handleFabricImageChange = (index: number, { fileList }: any) => {
     // Update state for this specific fabric index
-    setFabricImageFileLists(prev => ({
+    setFabricImageFileLists((prev) => ({
       ...prev,
-      [index]: fileList
+      [index]: fileList,
     }));
 
     const rawFiles = fileList
@@ -238,10 +258,31 @@ export const CreateProductForm: React.FC = () => {
     form.setValue(`fabrics.${index}.images`, rawFiles);
   };
 
+  const handleColorImageChange = (index: number, { fileList }: any) => {
+    setColorImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+    const rawFiles = fileList
+      .map((file: any) => file.originFileObj)
+      .filter(Boolean);
+    form.setValue(`colors.${index}.images`, rawFiles);
+  };
+
+  const handleSizeImageChange = (index: number, { fileList }: any) => {
+    setSizeImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+    const rawFiles = fileList
+      .map((file: any) => file.originFileObj)
+      .filter(Boolean);
+    form.setValue(`sizes.${index}.images`, rawFiles);
+  };
+
   // console.log(fileList, "fileList................................");
 
   const onSubmit = async (values: z.infer<typeof productFormSchema>) => {
-
     setLoading(true);
     const formData = makeFormData(values);
 
@@ -567,7 +608,10 @@ export const CreateProductForm: React.FC = () => {
                               />
                             </FormControl>
                             <FormDescription className="text-red-400 text-xs min-h-4">
-                              {formState.errors?.fabrics?.[index]?.colorCode?.message}
+                              {
+                                formState.errors?.fabrics?.[index]?.colorCode
+                                  ?.message
+                              }
                             </FormDescription>
                           </FormItem>
                         )}
@@ -583,7 +627,10 @@ export const CreateProductForm: React.FC = () => {
                           />
                         </FormControl>
                         <FormDescription className="text-red-400 text-xs min-h-4">
-                          {formState.errors?.fabrics?.[index]?.colorName?.message}
+                          {
+                            formState.errors?.fabrics?.[index]?.colorName
+                              ?.message
+                          }
                         </FormDescription>
                       </FormItem>
 
@@ -595,7 +642,9 @@ export const CreateProductForm: React.FC = () => {
                             listType="picture-card"
                             beforeUpload={() => false}
                             fileList={fabricImageFileLists[index] || []}
-                            onChange={(info) => handleFabricImageChange(index, info)}
+                            onChange={(info) =>
+                              handleFabricImageChange(index, info)
+                            }
                             multiple
                           >
                             <div>
@@ -620,7 +669,7 @@ export const CreateProductForm: React.FC = () => {
                         onClick={() => {
                           removeFabric(index);
                           // Remove the fileList for this index
-                          setFabricImageFileLists(prev => {
+                          setFabricImageFileLists((prev) => {
                             const newLists = { ...prev };
                             delete newLists[index];
                             return newLists;
@@ -636,7 +685,11 @@ export const CreateProductForm: React.FC = () => {
                 <Button
                   type="button"
                   onClick={() =>
-                    appendFabric({ colorCode: "#1677ff", colorName: "", images: [] })
+                    appendFabric({
+                      colorCode: "#1677ff",
+                      colorName: "",
+                      images: [],
+                    })
                   }
                   variant="outline"
                   size="sm"
@@ -648,84 +701,237 @@ export const CreateProductForm: React.FC = () => {
               </div>
 
               {/* Colors - Dynamic */}
-              {/* <div className="mt-4">
+              <div className="my-4 col-span-3">
                 <FormLabel>Colors</FormLabel>
                 {colorFields.map((field, index) => (
-                  <div key={field.id} className="flex gap-2 mb-2 items-start">
-                    <FormItem className="flex-1">
-                      <FormControl>
-                        <Input
-                          placeholder="Enter color"
-                          {...register(`colors.${index}`)}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {formState.errors?.colors?.[index]?.message}
-                      </FormDescription>
-                    </FormItem>
+                  <div
+                    key={field.id}
+                    className="border p-4 mb-1 rounded-md relative"
+                  >
+                    <div className="grid grid-cols-3 gap-2 mb-2">
+                      {/* Color Code Picker */}
+                      <Controller
+                        control={control}
+                        name={`colors.${index}.colorCode`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Color Code</FormLabel>
+                            <FormControl>
+                              <ColorPicker
+                                value={field.value || "#1677ff"}
+                                showText
+                                allowClear
+                                onChange={(color) =>
+                                  field.onChange(color.toHexString())
+                                }
+                              />
+                            </FormControl>
+                            <FormDescription className="text-red-400 text-xs min-h-4">
+                              {
+                                formState.errors?.colors?.[index]?.colorCode
+                                  ?.message
+                              }
+                            </FormDescription>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Color Name */}
+                      <FormItem>
+                        <FormLabel>Color Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter color name"
+                            {...register(`colors.${index}.colorName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {
+                            formState.errors?.colors?.[index]?.colorName
+                              ?.message
+                          }
+                        </FormDescription>
+                      </FormItem>
+
+                      {/* Image Upload */}
+                      <FormItem>
+                        <FormLabel>Images</FormLabel>
+                        <FormControl>
+                          <Upload
+                            listType="picture-card"
+                            beforeUpload={() => false}
+                            fileList={colorImageFileLists[index] || []}
+                            onChange={(info) =>
+                              handleColorImageChange(index, info)
+                            }
+                            multiple
+                          >
+                            <div>
+                              <UploadOutlined />
+                              <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                          </Upload>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.colors?.[index]?.images?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+
+                    {/* Delete Button */}
                     {colorFields.length > 1 && (
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeColor(index)}
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          removeColor(index);
+                          setColorImageFileLists((prev) => {
+                            const newLists = { ...prev };
+                            delete newLists[index];
+                            return newLists;
+                          });
+                        }}
                       >
                         <Trash className="w-4 h-4" />
                       </Button>
                     )}
                   </div>
                 ))}
+
                 <Button
                   type="button"
-                  onClick={() => appendColor("")}
+                  onClick={() =>
+                    appendColor({
+                      colorCode: "#1677ff",
+                      colorName: "",
+                      images: [],
+                    })
+                  }
                   variant="outline"
                   size="sm"
-                  className="mt-2"
+                  className="w-full flex items-center justify-center gap-2"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-4 h-4" />
                   Add Color
                 </Button>
-              </div> */}
+              </div>
 
               {/* Sizes - Dynamic */}
-              {/* <div className="mt-4">
+              <div className="my-4 col-span-3">
                 <FormLabel>Sizes</FormLabel>
                 {sizeFields.map((field, index) => (
-                  <div key={field.id} className="flex gap-2 mb-2 items-start">
-                    <FormItem className="flex-1">
-                      <FormControl>
-                        <Input
-                          placeholder="Enter size"
-                          {...register(`sizes.${index}`)}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {formState.errors?.sizes?.[index]?.message}
-                      </FormDescription>
-                    </FormItem>
+                  <div
+                    key={field.id}
+                    className="border p-4 mb-1 rounded-md relative"
+                  >
+                    <div className="grid grid-cols-3 gap-2 mb-2">
+                      {/* Color Code Picker */}
+                      <Controller
+                        control={control}
+                        name={`sizes.${index}.colorCode`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Color Code</FormLabel>
+                            <FormControl>
+                              <ColorPicker
+                                value={field.value || "#1677ff"}
+                                showText
+                                allowClear
+                                onChange={(color) =>
+                                  field.onChange(color.toHexString())
+                                }
+                              />
+                            </FormControl>
+                            <FormDescription className="text-red-400 text-xs min-h-4">
+                              {
+                                formState.errors?.sizes?.[index]?.colorCode
+                                  ?.message
+                              }
+                            </FormDescription>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Color Name */}
+                      <FormItem>
+                        <FormLabel>Size Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter size name"
+                            {...register(`sizes.${index}.colorName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.sizes?.[index]?.colorName?.message}
+                        </FormDescription>
+                      </FormItem>
+
+                      {/* Image Upload */}
+                      <FormItem>
+                        <FormLabel>Images</FormLabel>
+                        <FormControl>
+                          <Upload
+                            listType="picture-card"
+                            beforeUpload={() => false}
+                            fileList={sizeImageFileLists[index] || []}
+                            onChange={(info) =>
+                              handleSizeImageChange(index, info)
+                            }
+                            multiple
+                          >
+                            <div>
+                              <UploadOutlined />
+                              <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                          </Upload>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.sizes?.[index]?.images?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+
+                    {/* Delete Button */}
                     {sizeFields.length > 1 && (
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeSize(index)}
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          removeSize(index);
+                          setSizeImageFileLists((prev) => {
+                            const newLists = { ...prev };
+                            delete newLists[index];
+                            return newLists;
+                          });
+                        }}
                       >
                         <Trash className="w-4 h-4" />
                       </Button>
                     )}
                   </div>
                 ))}
+
                 <Button
                   type="button"
-                  onClick={() => appendSize("")}
+                  onClick={() =>
+                    appendSize({
+                      colorCode: "#1677ff",
+                      colorName: "",
+                      images: [],
+                    })
+                  }
                   variant="outline"
                   size="sm"
-                  className="mt-2"
+                  className="w-full flex items-center justify-center gap-2"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-4 h-4" />
                   Add Size
                 </Button>
-              </div> */}
+              </div>
 
               {/* Set - Single Field */}
               {/* <FormField
@@ -791,67 +997,67 @@ export const CreateProductForm: React.FC = () => {
                 >
                   {(selectedInventoryType === "colorInventory" ||
                     selectedInventoryType === "colorLevelInventory") && (
-                      <Controller
-                        control={control}
-                        name={`inventories.${index}.color`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <FormLabel>Color</FormLabel>
-                            <FormControl>
-                              <ColorPicker
-                                value={field.value || "#1677ff"}
-                                showText
-                                allowClear
-                                onChange={(color) =>
-                                  field.onChange(color.toHexString())
-                                }
-                              />
-                            </FormControl>
-                            <FormDescription className="text-red-400 text-xs min-h-4">
-                              {
-                                formState.errors?.inventories?.[index]?.color
-                                  ?.message
+                    <Controller
+                      control={control}
+                      name={`inventories.${index}.color`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Color</FormLabel>
+                          <FormControl>
+                            <ColorPicker
+                              value={field.value || "#1677ff"}
+                              showText
+                              allowClear
+                              onChange={(color) =>
+                                field.onChange(color.toHexString())
                               }
-                            </FormDescription>
-                          </FormItem>
-                        )}
-                      />
-                    )}
+                            />
+                          </FormControl>
+                          <FormDescription className="text-red-400 text-xs min-h-4">
+                            {
+                              formState.errors?.inventories?.[index]?.color
+                                ?.message
+                            }
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
                   {(selectedInventoryType === "colorInventory" ||
                     selectedInventoryType === "colorLevelInventory") && (
-                      <FormItem>
-                        <FormLabel>Color Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter color name"
-                            {...register(`inventories.${index}.colorName`)}
-                          />
-                        </FormControl>
-                        <FormDescription className="text-red-400 text-xs min-h-4">
-                          {
-                            formState.errors?.inventories?.[index]?.colorName
-                              ?.message
-                          }
-                        </FormDescription>
-                      </FormItem>
-                    )}
+                    <FormItem>
+                      <FormLabel>Color Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter color name"
+                          {...register(`inventories.${index}.colorName`)}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-red-400 text-xs min-h-4">
+                        {
+                          formState.errors?.inventories?.[index]?.colorName
+                            ?.message
+                        }
+                      </FormDescription>
+                    </FormItem>
+                  )}
 
                   {(selectedInventoryType === "levelInventory" ||
                     selectedInventoryType === "colorLevelInventory") && (
-                      <FormItem>
-                        <FormLabel>Size</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter size"
-                            {...register(`inventories.${index}.size`)}
-                          />
-                        </FormControl>
-                        <FormDescription className="text-red-400 text-xs min-h-4">
-                          {formState.errors?.inventories?.[index]?.size?.message}
-                        </FormDescription>
-                      </FormItem>
-                    )}
+                    <FormItem>
+                      <FormLabel>Size</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter size"
+                          {...register(`inventories.${index}.size`)}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-red-400 text-xs min-h-4">
+                        {formState.errors?.inventories?.[index]?.size?.message}
+                      </FormDescription>
+                    </FormItem>
+                  )}
 
                   {selectedInventoryType !== "" && (
                     <>
@@ -1140,8 +1346,6 @@ export const CreateProductForm: React.FC = () => {
                 {form.formState.errors.sizeChartImage?.message}
               </div>
             </div> */}
-
-
           </div>
         </form>
       </Form>

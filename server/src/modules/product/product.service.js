@@ -61,6 +61,8 @@ class ProductService extends BaseService {
       // 🆕 Add these:
       material,
       fabrics,
+      colors,
+      sizes,
     } = payload;
     let inventoryIds = [];
     let totalInventoryCount = 0;
@@ -301,13 +303,53 @@ class ProductService extends BaseService {
       payload.fabrics = payload.fabrics.map((fabric, index) => {
         const fabricImageKey = `fabricImages_${index}`;
         // If fabric images were uploaded, get their URLs from the ImgUploader result
-        const fabricImages = images[fabricImageKey] ? (Array.isArray(images[fabricImageKey]) ? images[fabricImageKey] : [images[fabricImageKey]]) : [];
+        const fabricImages = images[fabricImageKey]
+          ? Array.isArray(images[fabricImageKey])
+            ? images[fabricImageKey]
+            : [images[fabricImageKey]]
+          : [];
         return {
           ...fabric,
           images: fabricImages || [],
         };
       });
       console.log("✅ Fabrics with images:", payload.fabrics);
+    }
+
+    // ✅ NEW: Process color images and update colors array with uploaded URLs
+    if (payload.colors && Array.isArray(payload.colors)) {
+      payload.colors = payload.colors.map((color, index) => {
+        const colorImageKey = `colorImages_${index}`;
+        // If color images were uploaded, get their URLs from the ImgUploader result
+        const colorImages = images[colorImageKey]
+          ? Array.isArray(images[colorImageKey])
+            ? images[colorImageKey]
+            : [images[colorImageKey]]
+          : [];
+        return {
+          ...color,
+          images: colorImages || [],
+        };
+      });
+      console.log("✅ Colors with images:", payload.colors);
+    }
+
+    // ✅ NEW: Process size images and update sizes array with uploaded URLs
+    if (payload.sizes && Array.isArray(payload.sizes)) {
+      payload.sizes = payload.sizes.map((size, index) => {
+        const sizeImageKey = `sizeImages_${index}`;
+        // If size images were uploaded, get their URLs from the ImgUploader result
+        const sizeImages = images[sizeImageKey]
+          ? Array.isArray(images[sizeImageKey])
+            ? images[sizeImageKey]
+            : [images[sizeImageKey]]
+          : [];
+        return {
+          ...size,
+          images: sizeImages || [],
+        };
+      });
+      console.log("✅ Sizes with images:", payload.sizes);
     }
 
     payload.productId = await idGenerate("PRO-", "productId", this.#repository);
@@ -852,13 +894,51 @@ class ProductService extends BaseService {
           payload.fabrics = payload.fabrics.map((fabric, index) => {
             const fabricImageKey = `fabricImages_${index}`;
             // If fabric images were uploaded, get their URLs from the ImgUploader result
-            const fabricImages = images[fabricImageKey] ? (Array.isArray(images[fabricImageKey]) ? images[fabricImageKey] : [images[fabricImageKey]]) : [];
+            const fabricImages = images[fabricImageKey]
+              ? Array.isArray(images[fabricImageKey])
+                ? images[fabricImageKey]
+                : [images[fabricImageKey]]
+              : [];
             return {
               ...fabric,
               images: fabricImages || [],
             };
           });
           console.log("✅ Fabrics with images (update):", payload.fabrics);
+        }
+
+        // ✅ NEW: Process color images
+        if (payload.colors && Array.isArray(payload.colors)) {
+          payload.colors = payload.colors.map((color, index) => {
+            const colorImageKey = `colorImages_${index}`;
+            const colorImages = images[colorImageKey]
+              ? Array.isArray(images[colorImageKey])
+                ? images[colorImageKey]
+                : [images[colorImageKey]]
+              : [];
+            return {
+              ...color,
+              images: colorImages || [],
+            };
+          });
+          console.log("✅ Colors with images:", payload.colors);
+        }
+
+        // ✅ NEW: Process size images
+        if (payload.sizes && Array.isArray(payload.sizes)) {
+          payload.sizes = payload.sizes.map((size, index) => {
+            const sizeImageKey = `sizeImages_${index}`;
+            const sizeImages = images[sizeImageKey]
+              ? Array.isArray(images[sizeImageKey])
+                ? images[sizeImageKey]
+                : [images[sizeImageKey]]
+              : [];
+            return {
+              ...size,
+              images: sizeImages || [],
+            };
+          });
+          console.log("✅ Sizes with images:", payload.sizes);
         }
       }
       payload.maxPrice = maxPrice;

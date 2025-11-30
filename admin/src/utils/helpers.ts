@@ -62,6 +62,44 @@ export function makeFormData(data: Record<string, any>) {
       });
     }
 
+    // Handle colors array with nested images
+    else if (key === "colors" && Array.isArray(value)) {
+      value.forEach((color, index) => {
+        formData.append(`colors[${index}][colorCode]`, color.colorCode || "");
+        formData.append(`colors[${index}][colorName]`, color.colorName || "");
+
+        // Handle color images
+        if (Array.isArray(color.images) && color.images.length > 0) {
+          color.images.forEach((file: any) => {
+            if (file?.originFileObj) {
+              formData.append(`colors[${index}][images]`, file.originFileObj);
+            } else if (file instanceof File) {
+              formData.append(`colors[${index}][images]`, file);
+            }
+          });
+        }
+      });
+    }
+
+    // Handle sizes array with nested images
+    else if (key === "sizes" && Array.isArray(value)) {
+      value.forEach((size, index) => {
+        formData.append(`sizes[${index}][colorCode]`, size.colorCode || "");
+        formData.append(`sizes[${index}][colorName]`, size.colorName || "");
+
+        // Handle size images
+        if (Array.isArray(size.images) && size.images.length > 0) {
+          size.images.forEach((file: any) => {
+            if (file?.originFileObj) {
+              formData.append(`sizes[${index}][images]`, file.originFileObj);
+            } else if (file instanceof File) {
+              formData.append(`sizes[${index}][images]`, file);
+            }
+          });
+        }
+      });
+    }
+
     // inventories array
     else if (key === "inventories" && Array.isArray(value)) {
       value.forEach((inventory) => {

@@ -38,7 +38,10 @@ class ProductController {
       // 🆕 NEW FIELDS
       material: req.body.material || null,
       fabrics: req.body.fabrics ? JSON.parse(req.body.fabrics) : [],
+      colors: req.body.colors ? JSON.parse(req.body.colors) : [],
+      sizes: req.body.sizes ? JSON.parse(req.body.sizes) : [],
     };
+
     // console.log("$#%$#%#$ payload from controller:", payload);
     const productResult = await ProductService.createProduct(
       payloadFiles,
@@ -323,6 +326,11 @@ class ProductController {
           : [],
         slug: req.body.slug,
         barcode: req.body.barcode,
+        // 🆕 NEW FIELDS for update
+        material: req.body.material || null,
+        fabrics: req.body.fabrics ? JSON.parse(req.body.fabrics) : [],
+        colors: req.body.colors ? JSON.parse(req.body.colors) : [],
+        sizes: req.body.sizes ? JSON.parse(req.body.sizes) : [],
       };
 
       await ProductService.updateProduct(id, payloadFiles, payload, session);

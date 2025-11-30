@@ -118,7 +118,7 @@ const Productschema = new Schema(
       type: Boolean,
       default: false,
     },
-    
+
     // material: string
     material: {
       type: String,
@@ -127,6 +127,26 @@ const Productschema = new Schema(
 
     // fabrics: array of objects
     fabrics: {
+      type: [
+        {
+          colorCode: { type: String },
+          colorName: { type: String },
+          images: { type: [String], default: [] },
+        },
+      ],
+      default: [],
+    },
+    colors: {
+      type: [
+        {
+          colorCode: { type: String },
+          colorName: { type: String },
+          images: { type: [String], default: [] },
+        },
+      ],
+      default: [],
+    },
+    sizes: {
       type: [
         {
           colorCode: { type: String },
