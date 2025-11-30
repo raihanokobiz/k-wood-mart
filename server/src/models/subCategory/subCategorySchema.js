@@ -29,6 +29,10 @@ const SubCategoryschema = new Schema(
       type: String,
       enum: ["top", "middle", "lowerMiddle", "buttom"],
     },
+    isSpecial: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

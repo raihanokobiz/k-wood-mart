@@ -128,13 +128,13 @@ class SubCategoryController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
-  updateSubCategoryStatus = catchError(async (req, res, next) => {
+  updateSubCategoryStatusIsSpecial = catchError(async (req, res, next) => {
     const id = req.params.id;
     const status = req.query.status;
-    const subCategoryResult = await SubCategoryService.updateSubCategoryStatus(
-      id,
-      status
-    );
+    console.log(status, "---------------------------ok");
+
+    const subCategoryResult =
+      await SubCategoryService.updateSubCategoryStatusIsSpecial(id, status);
     const resDoc = responseHandler(
       201,
       "SubCategory Status Update successfully"

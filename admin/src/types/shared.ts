@@ -298,6 +298,7 @@ export type TSubCategory = {
   viewType?: string;
   slug: string;
   status: boolean;
+  isSpecial?: boolean;
   categoryRef: TCategory;
   createdAt: string;
   updatedAt: string;

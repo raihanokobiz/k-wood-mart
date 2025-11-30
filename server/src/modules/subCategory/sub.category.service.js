@@ -143,12 +143,17 @@ class SubCategoryService extends BaseService {
     return subCategoryData;
   }
 
-  async updateSubCategoryStatus(id, status) {
+  async updateSubCategoryStatusIsSpecial(id, status) {
     if (!status) throw new NotFoundError("Status is required");
-    status = status === "true";
-    const subCategory = await this.#repository.updateSubCategoryStatus(id, {
-      status: status,
-    });
+
+      const booleanStatus = status === "true" || status === true;
+
+    const subCategory = await this.#repository.updateSubCategoryStatusIsSpecial(
+      id,
+      {
+        isSpecial: booleanStatus,
+      }
+    );
     console.log("subCategory", subCategory);
     if (!subCategory) throw new NotFoundError("SubCategory not found");
     return subCategory;

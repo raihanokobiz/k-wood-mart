@@ -16,12 +16,11 @@ export default async function FurnitureCurtainGallery() {
     );
   }
 
-
   return (
     <section className="pb-6 md:pb-8 2xl:pb-12 px-4 md:px-6 lg:px-8 2xl:px-12">
       <div className="mx-auto">
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Left Column - Single Large Image */}
           <Link
             href={`furniture?subCategory=${threeData?.data[0]?.slug}`}
@@ -45,7 +44,7 @@ export default async function FurnitureCurtainGallery() {
           </Link>
 
           {/* Right Column - Two Stacked Images */}
-          <div className="flex flex-col gap-6 lg:h-screen">
+          <div className="flex flex-col gap-4 lg:h-screen">
             {/* Top Image */}
             <Link
               href={`furniture?subCategory=${threeData?.data[1]?.slug}`}

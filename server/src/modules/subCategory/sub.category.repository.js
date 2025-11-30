@@ -18,8 +18,8 @@ class SubCategoryRepository extends BaseRepository {
         throw new Error("Invalid viewType provided");
       }
       await this.#model.findOneAndUpdate(
-        {  viewType: viewType },
-        { viewType: '' },
+        { viewType: viewType },
+        { viewType: "" },
         { new: true, session }
       );
     }
@@ -35,8 +35,8 @@ class SubCategoryRepository extends BaseRepository {
         throw new Error("Invalid viewType provided");
       }
       await this.#model.findOneAndUpdate(
-        {viewType: viewType },
-        { viewType: '' },
+        { viewType: viewType },
+        { viewType: "" },
         { new: true, session }
       );
     }
@@ -62,7 +62,7 @@ class SubCategoryRepository extends BaseRepository {
             .sort({ createdAt: sortOrder })
             .skip(offset)
             .limit(limit)
-            .populate('categoryRef')
+            .populate("categoryRef");
           // .populate('')
           const totalSubCategory = await this.#model.countDocuments();
 
@@ -75,6 +75,16 @@ class SubCategoryRepository extends BaseRepository {
       console.error("Error getting subCategorys with pagination:", error);
       throw error;
     }
+  }
+
+  async updateSubCategoryStatusIsSpecial(id, statusPayload) {
+    const updatedSubCategory = await this.#model.findByIdAndUpdate(
+      id,
+      statusPayload,
+      { new: true }
+    );
+
+    return updatedSubCategory;
   }
 }
 

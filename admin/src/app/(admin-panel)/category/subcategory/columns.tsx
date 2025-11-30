@@ -5,8 +5,14 @@ import { SubCategoryDetailsSheet } from "./details";
 import { fileUrlGenerator, makeBDPrice, truncateText } from "@/utils/helpers";
 import React from "react";
 import { upperCase, upperFirst } from "lodash";
+import { Switch } from "antd";
+import { BASE_URL } from "@/config/config";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export const columns: ColumnDef<TSubCategory>[] = [
+export const getColumns = (
+  tableData: TSubCategory[]
+): ColumnDef<TSubCategory>[] => [
   {
     header: "SL",
     cell: ({ row }) => row.index + 1,
@@ -85,6 +91,59 @@ export const columns: ColumnDef<TSubCategory>[] = [
         <div>
           <p>{upperFirst(row.original.categoryRef?.name)}</p>
         </div>
+      );
+    },
+  },
+
+  {
+    header: "Special",
+    accessorKey: "isSpecial",
+    cell: ({ row }) => {
+      const sub = row.original;
+      const router = useRouter();
+
+      const handleToggle = async (checked: boolean) => {
+        try {
+          const anyActive = tableData.some(
+            (item) => item._id !== sub._id && item.isSpecial === true
+          );
+
+          if (checked && anyActive) {
+            alert("A special sub-category is already active!");
+            return;
+          }
+
+          const res = await fetch(
+            `${BASE_URL}/sub-category/status/isSpecial/${sub._id}?status=${checked}`,
+            { method: "PATCH" }
+          );
+
+          if (!res.ok) {
+            toast.error("Failed to update!");
+            return;
+          }
+
+          toast.success(
+            checked
+              ? "Special status activated successfully!"
+              : "Special removed!"
+          );
+          router.refresh();
+        } catch {
+          toast.error("Something went wrong!");
+        }
+      };
+
+      return (
+        <Switch
+          checked={sub.isSpecial}
+          onChange={handleToggle}
+          style={{
+            width: 50,
+            height: 24,
+            backgroundColor: sub.isSpecial ? "#3b82f6" : "#d1d5db",
+          }}
+        />
       );
     },
   },

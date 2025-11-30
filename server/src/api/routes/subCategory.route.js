@@ -28,6 +28,9 @@ SubCategoryRoute.route("/:id")
   .put(upload.any(), controller.updateSubCategory)
   .delete(controller.deleteSubCategory);
 
-SubCategoryRoute.put("/status/:id", controller.updateSubCategoryStatus);
+SubCategoryRoute.patch(
+  "/status/isSpecial/:id",
+  controller.updateSubCategoryStatusIsSpecial
+);
 
 module.exports = SubCategoryRoute;
