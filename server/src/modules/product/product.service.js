@@ -432,8 +432,9 @@ class ProductService extends BaseService {
     return { product };
   }
 
-  async getAllDiscountedProduct(payload) {
-    const product = await this.#repository.getAllDiscountedProduct(payload);
+  // getSpecialProduct
+  async getSpecialProduct() {
+    const product = await this.#repository.getSpecialProduct();
     return { product };
   }
 

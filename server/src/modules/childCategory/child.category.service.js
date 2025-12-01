@@ -100,6 +100,19 @@ class ChildCategoryService extends BaseService {
     return childCategory;
   }
 
+  async updateChildCategoryStatusIsSpecial(id, status) {
+    if (!status) throw new NotFoundError("Status is required");
+    const booleanStatus = status === "true" || status === true;
+
+    const childCategory =
+      await this.#repository.updateChildCategoryStatusIsSpecial(id, {
+        isSpecial: booleanStatus,
+      });
+
+    if (!childCategory) throw new NotFoundError("ChildCategory not found");
+    return childCategory;
+  }
+
   async deleteChildCategory(id) {
     const childCategory = await this.#repository.findById(id);
     if (!childCategory) throw new NotFoundError("ChildCategory not found");

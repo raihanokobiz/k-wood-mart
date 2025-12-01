@@ -29,6 +29,10 @@ const ChildCategoryschema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "subCategory",
     },
+    isSpecial: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

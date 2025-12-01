@@ -34,7 +34,9 @@ class ChildCategoryController {
       viewType: req.query.viewType,
       limit: req.query.limit,
     };
-    const childCategoryResult = await ChildCategoryService.getAllChildCategory(payload);
+    const childCategoryResult = await ChildCategoryService.getAllChildCategory(
+      payload
+    );
     const resDoc = responseHandler(
       200,
       "Get All ChildCategorys",
@@ -49,9 +51,8 @@ class ChildCategoryController {
       limit: req.query.limit,
       order: req.query.order,
     };
-    const childCategory = await ChildCategoryService.getChildCategoryWithPagination(
-      payload
-    );
+    const childCategory =
+      await ChildCategoryService.getChildCategoryWithPagination(payload);
     const resDoc = responseHandler(
       200,
       "ChildCategorys get successfully",
@@ -62,7 +63,8 @@ class ChildCategoryController {
 
   getSingleChildCategory = catchError(async (req, res, next) => {
     const id = req.params.id;
-    const childCategoryResult = await ChildCategoryService.getSingleChildCategory(id);
+    const childCategoryResult =
+      await ChildCategoryService.getSingleChildCategory(id);
     const resDoc = responseHandler(
       201,
       "Single ChildCategory successfully",
@@ -73,7 +75,8 @@ class ChildCategoryController {
 
   getSingleChildCategoryWithSlug = catchError(async (req, res, next) => {
     const slug = req.params.slug;
-    const childCategoryResult = await ChildCategoryService.getSingleChildCategoryWithSlug(slug);
+    const childCategoryResult =
+      await ChildCategoryService.getSingleChildCategoryWithSlug(slug);
     const resDoc = responseHandler(
       201,
       "Single ChildCategory successfully",
@@ -106,10 +109,20 @@ class ChildCategoryController {
   updateChildCategoryStatus = catchError(async (req, res, next) => {
     const id = req.params.id;
     const status = req.query.status;
-    const childCategoryResult = await ChildCategoryService.updateChildCategoryStatus(
-      id,
-      status
+    const childCategoryResult =
+      await ChildCategoryService.updateChildCategoryStatus(id, status);
+    const resDoc = responseHandler(
+      201,
+      "ChildCategory Status Update successfully"
     );
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
+  updateChildCategoryStatusIsSpecial = catchError(async (req, res, next) => {
+    const id = req.params.id;
+    const status = req.query.status;
+    const childCategoryResult =
+      await ChildCategoryService.updateChildCategoryStatusIsSpecial(id, status);
     const resDoc = responseHandler(
       201,
       "ChildCategory Status Update successfully"
@@ -119,7 +132,9 @@ class ChildCategoryController {
 
   deleteChildCategory = catchError(async (req, res, next) => {
     const id = req.params.id;
-    const childCategoryResult = await ChildCategoryService.deleteChildCategory(id);
+    const childCategoryResult = await ChildCategoryService.deleteChildCategory(
+      id
+    );
     const resDoc = responseHandler(200, "ChildCategory Deleted successfully");
     res.status(resDoc.statusCode).json(resDoc);
   });

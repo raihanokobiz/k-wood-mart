@@ -17,7 +17,7 @@ import {
 import { Label } from "@radix-ui/react-label";
 import { Card } from "@/components/ui/card";
 import { TChildCategory } from "@/types/shared";
-import { columns } from "./columns";
+import { columns, getColumns } from "./columns";
 import { DataTablePagination } from "@/components/ui/data-table-pagination";
 
 interface Props {
@@ -30,6 +30,7 @@ interface Props {
 }
 
 export const ChildCategoryTable: React.FC<Props> = ({ data, pagination }) => {
+  const columns = getColumns(data);
   const table = useReactTable({
     data,
     columns,

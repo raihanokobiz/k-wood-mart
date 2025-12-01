@@ -93,6 +93,16 @@ class ChildCategoryRepository extends BaseRepository {
       throw error;
     }
   }
+
+  async updateChildCategoryStatusIsSpecial(id, statusPayload) {
+    const updatedChildCategory = await this.#model.findByIdAndUpdate(
+      id,
+      statusPayload,
+      { new: true }
+    );
+
+    return updatedChildCategory;
+  }
 }
 
 module.exports = new ChildCategoryRepository(ChildCategorySchema);

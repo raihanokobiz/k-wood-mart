@@ -25,6 +25,7 @@ ProductRoute.get("/pagination", controller.getProductWithPagination);
 ProductRoute.get("/related-product/:id", controller.getRelatedProduct);
 ProductRoute.get("/shop/pagination", controller.getProductWithPagination);
 ProductRoute.get("/discounted-product", controller.getAllDiscountedProduct);
+ProductRoute.get("/special-products", controller.getSpecialProduct);
 ProductRoute.get("/brand-or-gender", controller.getAllProductByBrandOrGender);
 ProductRoute.get("/search", controller.getSearchProduct);
 ProductRoute.get("/best-sell", controller.getAllBestSellProduct);

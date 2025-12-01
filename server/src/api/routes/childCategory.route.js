@@ -28,4 +28,9 @@ ChildCategoryRoute.route("/:id")
 
 ChildCategoryRoute.put("/status/:id", controller.updateChildCategoryStatus);
 
+ChildCategoryRoute.patch(
+  "/status/isSpecial/:id",
+  controller.updateChildCategoryStatusIsSpecial
+);
+
 module.exports = ChildCategoryRoute;

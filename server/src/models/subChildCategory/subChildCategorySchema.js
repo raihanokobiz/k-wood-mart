@@ -22,6 +22,7 @@ const SubChildCategoryschema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "childCategory",
     },
+    
   },
   { timestamps: true }
 );

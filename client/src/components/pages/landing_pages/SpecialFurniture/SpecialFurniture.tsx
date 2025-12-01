@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { TProduct } from "@/types";
+import { apiBaseUrl } from "@/config/config";
 
 interface FurnitureItem {
   id: number;
@@ -9,8 +11,10 @@ interface FurnitureItem {
   price: string;
 }
 
-const SpecialFurniture = () => {
+const SpecialFurniture = ({ specialProducts }: TProduct) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  console.log(specialProducts, "ok");
 
   const furnitureItems: FurnitureItem[] = [
     {
@@ -113,14 +117,14 @@ const SpecialFurniture = () => {
 
             {/* Carousel Items */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1 max-w-5xl">
-              {getVisibleItems().map((item, index) => (
+              {specialProducts?.data?.result?.products.map((item, index) => (
                 <div
                   key={`${item.id}-${index}`}
                   className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden group cursor-pointer"
                 >
                   <div className="aspect-square overflow-hidden">
                     <img
-                      src={item.image}
+                      src={`${apiBaseUrl}${item?.thumbnailImage}`}
                       alt={item.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />

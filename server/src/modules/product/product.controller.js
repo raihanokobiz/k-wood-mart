@@ -262,6 +262,17 @@ class ProductController {
     res.status(resDoc.statusCode).json(resDoc);
   });
 
+  // getSpecialProduct
+  getSpecialProduct = catchError(async (req, res) => {
+    const productResult = await ProductService.getSpecialProduct();
+
+    const data = {
+      result: productResult?.product,
+    };
+    const resDoc = responseHandler(200, "Get All Special Products", data);
+    res.status(resDoc.statusCode).json(resDoc);
+  });
+
   getAllProductByBrandOrGender = catchError(async (req, res) => {
     const payload = {
       limit: req?.query?.limit,

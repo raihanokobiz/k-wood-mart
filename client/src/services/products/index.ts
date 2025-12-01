@@ -16,6 +16,11 @@ export const getAllProducts = async () => {
   return res.json();
 };
 
+export const getSpecialProducts = async () => {
+  const res = await fetch(`${apiBaseUrl}/product/special-products`);
+  return res.json();
+};
+
 export const getFeaturedProducts = async () => {
   const res = await fetch(`${apiBaseUrl}/product/for-home-page`);
   return res.json();
@@ -193,7 +198,7 @@ export const getAllProductsForCurtains = async ({
   if (maxPrice !== undefined) {
     searchParams.append("maxPrice", maxPrice.toString());
   }
- 
+
   if (level) {
     searchParams.append("level", level);
   }

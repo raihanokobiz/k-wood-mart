@@ -591,7 +591,6 @@ class ProductRepository extends BaseRepository {
         filter._id = { $in: productIds };
         sortCriteria = { orderCount: -1, discountPercentage: -1 }; // Sort by highest orders + discount
       }
-      
 
       const productsWithPagination = await pagination(
         payload,
@@ -1357,6 +1356,42 @@ class ProductRepository extends BaseRepository {
     })
       .sort({ createdAt: -1 })
       .populate("inventoryRef");
+  }
+
+  // getSpecialProduct
+  async getSpecialProduct() {
+    // Special child categories
+    const specialChildCategories = await ChildCategorySchema.find({
+      isSpecial: true,
+    })
+      .select("_id name image")
+      .lean();
+
+    if (!specialChildCategories.length) {
+      return { childCategory: null, products: [] };
+    }
+
+    const specialChildCategoryIds = specialChildCategories.map(
+      (child) => child._id
+    );
+
+    // Products fetch
+    const products = await ProductSchema.find({
+      childCategoryRef: { $in: specialChildCategoryIds },
+    })
+      .populate("childCategoryRef", "name image isSpecial")
+      .populate("categoryRef", "name")
+      .populate("subCategoryRef", "name")
+      .sort({ createdAt: -1 });
+
+    return {
+      childCategory: {
+        _id: specialChildCategories[0]._id,
+        name: specialChildCategories[0].name,
+        image: specialChildCategories[0].image,
+      },
+      products: products,
+    };
   }
 }
 
