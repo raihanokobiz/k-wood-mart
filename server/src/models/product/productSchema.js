@@ -114,7 +114,14 @@ const Productschema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "subChildCategory",
     },
+    
     featured: {
+      type: Boolean,
+      default: false,
+    },
+
+    // New field added here
+    isNewArrival: {
       type: Boolean,
       default: false,
     },
@@ -139,7 +146,6 @@ const Productschema = new Schema(
     colors: {
       type: [
         {
-          colorCode: { type: String },
           colorName: { type: String },
           images: { type: [String], default: [] },
         },
@@ -149,8 +155,7 @@ const Productschema = new Schema(
     sizes: {
       type: [
         {
-          colorCode: { type: String },
-          colorName: { type: String },
+          sizeName: { type: String },
           images: { type: [String], default: [] },
         },
       ],

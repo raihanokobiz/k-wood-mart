@@ -95,7 +95,6 @@ export const productFormSchema = z.object({
   colors: z
     .array(
       z.object({
-        colorCode: z.string().optional(),
         colorName: z.string().optional(),
         images: z.array(z.any()).optional().default([]),
       })
@@ -105,8 +104,7 @@ export const productFormSchema = z.object({
   sizes: z
     .array(
       z.object({
-        colorCode: z.string().optional(),
-        colorName: z.string().optional(),
+        sizeName: z.string().optional(),
         images: z.array(z.any()).optional().default([]),
       })
     )

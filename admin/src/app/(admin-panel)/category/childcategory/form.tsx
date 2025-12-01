@@ -217,10 +217,10 @@ export const CreateChildCategoryForm: React.FC = () => {
           {/* Image */}
           <div className="col-span-1 grid grid-cols-2">
             <div className="">
-              {/* <Label>
+              <Label>
                 Image <b className="text-red-500">*</b>
-              </Label> */}
-              {/* <FormField
+              </Label>
+              <FormField
                 control={form.control}
                 name="image"
                 render={({ field }) => (
@@ -238,9 +238,9 @@ export const CreateChildCategoryForm: React.FC = () => {
                     </Upload>
                   </div>
                 )}
-              /> */}
+              /> 
 
-              {/* <div className="mt-4">
+              <div className="mt-4">
                 {form.getValues("image") &&
                   form.getValues("image").length > 0 &&
                   form.getValues("image").map((file, i) => (
@@ -260,7 +260,7 @@ export const CreateChildCategoryForm: React.FC = () => {
                       </div>
                     </div>
                   ))}
-              </div> */}
+              </div>
 
               <div className="text-red-400 text-xs min-h-4">
                 {form.formState.errors.image?.message}

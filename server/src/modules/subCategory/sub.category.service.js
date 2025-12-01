@@ -63,15 +63,14 @@ class SubCategoryService extends BaseService {
 
   // three
   async getThreeForFurniture() {
-    const furnitureCategory = await CategorySchema.findOne({
-      name: /furniture/i,
-    });
+    // Fetch 3 subcategories where isSpecial is true
+    const specialSubCategories = await SubCategorySchema.find({
+      isSpecial: true,
+    })
+      .populate("categoryRef", "name slug")
+      .limit(3);
 
-    if (!furnitureCategory) return [];
-
-    return this.#repository.findAll({
-      categoryRef: furnitureCategory._id,
-    });
+    return specialSubCategories;
   }
 
   // two

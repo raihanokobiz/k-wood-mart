@@ -52,7 +52,7 @@ interface Props {
 }
 
 export const SubCategoryDetailsSheet: React.FC<Props> = ({ subCategory }) => {
-  console.log("subCategory from props:", subCategory);
+  // console.log("subCategory from props:", subCategory);
   const { toast } = useToast();
 
   const [sheetOpen, setSheetOpen] = React.useState(false);

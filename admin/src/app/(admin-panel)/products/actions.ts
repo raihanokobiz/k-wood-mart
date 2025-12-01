@@ -9,6 +9,10 @@ import {
 import { revalidatePath } from "next/cache";
 
 export async function createFormAction(data: FormData) {
+
+  console.log(FormData, "form data in action ts........");
+  
+
   try {
     const inventoryType = data.get("inventoryType");
     const inventoryEntries = data.getAll("inventories") as string[];
@@ -132,23 +136,18 @@ export async function createFormAction(data: FormData) {
     );
 
     colorIndices.forEach((index) => {
-      const colorCode = data.get(`colors[${index}][colorCode]`) as string;
       const colorName = data.get(`colors[${index}][colorName]`) as string;
       const images = data.getAll(`colors[${index}][images]`);
 
       colorData.push({
-        colorCode,
         colorName,
         images: images.length > 0 ? images : [],
       });
-
-      data.delete(`colors[${index}][colorCode]`);
       data.delete(`colors[${index}][colorName]`);
       data.delete(`colors[${index}][images]`);
     });
 
     const colorsPayload = colorData.map((c) => ({
-      colorCode: c.colorCode,
       colorName: c.colorName,
       images: [],
     }));
@@ -178,24 +177,20 @@ export async function createFormAction(data: FormData) {
     );
 
     sizeIndices.forEach((index) => {
-      const colorCode = data.get(`sizes[${index}][colorCode]`) as string;
-      const colorName = data.get(`sizes[${index}][colorName]`) as string;
+      const sizeName = data.get(`sizes[${index}][sizeName]`) as string;
       const images = data.getAll(`sizes[${index}][images]`);
 
       sizeData.push({
-        colorCode,
-        colorName,
+         sizeName,
         images: images.length > 0 ? images : [],
       });
 
-      data.delete(`sizes[${index}][colorCode]`);
-      data.delete(`sizes[${index}][colorName]`);
+      data.delete(`sizes[${index}][sizeName]`);
       data.delete(`sizes[${index}][images]`);
     });
 
     const sizesPayload = sizeData.map((s) => ({
-      colorCode: s.colorCode,
-      colorName: s.colorName,
+      sizeName: s.sizeName,
       images: [],
     }));
     data.set("sizes", JSON.stringify(sizesPayload));
@@ -345,10 +340,88 @@ export async function updateFormAction(id: string, data: FormData) {
       });
     });
 
+    // add colors processing
+    const colorData: any[] = [];
+    const colorKeys = Array.from(data.keys()).filter((key) =>
+      key.startsWith("colors[")
+    );
+
+    const colorIndices = new Set(
+      colorKeys
+        .map((key) => {
+          const match = key.match(/colors\[(\d+)\]/);
+          return match ? parseInt(match[1]) : -1;
+        })
+        .filter((index) => index !== -1)
+    );
+
+    colorIndices.forEach((index) => {
+      const colorName = data.get(`colors[${index}][colorName]`) as string;
+      const images = data.getAll(`colors[${index}][images]`);
+
+      colorData.push({
+        colorName,
+        images: images.length > 0 ? images : [],
+      });
+    });
+
+    // Sizes data processing
+    const sizeData: any[] = [];
+    const sizeKeys = Array.from(data.keys()).filter((key) =>
+      key.startsWith("sizes[")
+    );
+
+    const sizeIndices = new Set(
+      sizeKeys
+        .map((key) => {
+          const match = key.match(/sizes\[(\d+)\]/);
+          return match ? parseInt(match[1]) : -1;
+        })
+        .filter((index) => index !== -1)
+    );
+
+    sizeIndices.forEach((index) => {
+      const colorName = data.get(`sizes[${index}][colorName]`) as string;
+      const images = data.getAll(`sizes[${index}][images]`);
+
+      sizeData.push({
+        colorName,
+        images: images.length > 0 ? images : [],
+      });
+    });
+
+    // Set data processing
+    const setData: any[] = [];
+    const setKeys = Array.from(data.keys()).filter((key) =>
+      key.startsWith("set[")
+    );
+
+    const setIndices = new Set(
+      setKeys
+        .map((key) => {
+          const match = key.match(/set\[(\d+)\]/);
+          return match ? parseInt(match[1]) : -1;
+        })
+        .filter((index) => index !== -1)
+    );
+
+    setIndices.forEach((index) => {
+      const setName = data.get(`set[${index}][setName]`) as string;
+      const images = data.getAll(`set[${index}][images]`);
+
+      setData.push({
+        setName,
+        images: images.length > 0 ? images : [],
+      });
+    });
+
     // Build updated form data by copying original entries (except inventories and fabric entries)
     for (const [key, value] of data.entries()) {
       if (key === "inventories") continue;
-      if (key.startsWith("fabrics[")) continue; // Skip old fabric entries
+      if (key.startsWith("fabrics[")) continue;
+      if (key.startsWith("colors[")) continue;
+      if (key.startsWith("sizes[")) continue;
+      if (key.startsWith("set[")) continue;
       updatedFormData.append(key, value);
     }
 
@@ -361,13 +434,72 @@ export async function updateFormAction(id: string, data: FormData) {
       colorName: f.colorName,
       images: [], // Images will be uploaded separately and added by backend
     }));
+
     updatedFormData.append("fabrics", JSON.stringify(fabricsPayload));
+
+    // After fabrics append
+    updatedFormData.append(
+      "colors",
+      JSON.stringify(
+        colorData.map((c) => ({
+          colorCode: c.colorCode,
+          colorName: c.colorName,
+          images: [],
+        }))
+      )
+    );
+
+    updatedFormData.append(
+      "sizes",
+      JSON.stringify(
+        sizeData.map((s) => ({
+          colorCode: s.colorCode,
+          colorName: s.colorName,
+          images: [],
+        }))
+      )
+    );
+
+    updatedFormData.append(
+      "set",
+      JSON.stringify(
+        setData.map((s) => ({
+          setName: s.setName,
+          images: [],
+        }))
+      )
+    );
 
     // Re-append fabric images with clear naming so ImgUploader processes them
     fabricData.forEach((fabric, index) => {
       if (Array.isArray(fabric.images)) {
         fabric.images.forEach((image: any) => {
           updatedFormData.append(`fabricImages_${index}`, image);
+        });
+      }
+    });
+
+    // Re-append images
+    colorData.forEach((color, index) => {
+      if (Array.isArray(color.images)) {
+        color.images.forEach((image: any) => {
+          updatedFormData.append(`colorImages_${index}`, image);
+        });
+      }
+    });
+
+    sizeData.forEach((size, index) => {
+      if (Array.isArray(size.images)) {
+        size.images.forEach((image: any) => {
+          updatedFormData.append(`sizeImages_${index}`, image);
+        });
+      }
+    });
+
+    setData.forEach((setItem, index) => {
+      if (Array.isArray(setItem.images)) {
+        setItem.images.forEach((image: any) => {
+          updatedFormData.append(`setImages_${index}`, image);
         });
       }
     });

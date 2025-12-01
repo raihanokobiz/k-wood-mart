@@ -39,6 +39,6 @@ ProductRoute.route("/:id")
   .put(upload.any(), controller.updateProduct)
   .delete(controller.deleteProduct);
 
-// ProductRoute.put("/status/:id", controller.updateProductStatus);
+ProductRoute.patch("/status/isNewArrival/:id", controller.updateProductStatusisNewArrival);
 
 module.exports = ProductRoute;

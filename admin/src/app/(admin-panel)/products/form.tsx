@@ -65,9 +65,9 @@ const defaultValues = {
   videoUrl: "",
   // new item
   material: "",
-  fabrics: [{ colorCode: "#1677ff", colorName: "", images: [] }],
-  colors: [{ colorCode: "#1677ff", colorName: "", images: [] }],
-  sizes: [{ colorCode: "#1677ff", colorName: "", images: [] }],
+  fabrics: [{ colorCode: "", colorName: "", images: [] }],
+  colors: [{ colorName: "", images: [] }],
+  sizes: [{ sizeName: "", images: [] }],
   set: [{ setName: "", images: [] }],
 };
 
@@ -77,9 +77,9 @@ export const discountTypes = [
 ];
 
 export const inventoryTypes = [
-  { name: "Color", key: "colorInventory" },
-  { name: "Size", key: "levelInventory" },
-  { name: "Color - Size", key: "colorLevelInventory" },
+  // { name: "Color", key: "colorInventory" },
+  // { name: "Size", key: "levelInventory" },
+  // { name: "Color - Size", key: "colorLevelInventory" },
   { name: "Without Any", key: "inventory" },
 ];
 
@@ -642,7 +642,7 @@ export const CreateProductForm: React.FC = () => {
 
                       {/* Color Name */}
                       <FormItem>
-                        <FormLabel>Color Name</FormLabel>
+                        <FormLabel>Fabric Name</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter color name"
@@ -732,33 +732,6 @@ export const CreateProductForm: React.FC = () => {
                     className="border p-4 mb-1 rounded-md relative"
                   >
                     <div className="grid grid-cols-3 gap-2 mb-2">
-                      {/* Color Code Picker */}
-                      <Controller
-                        control={control}
-                        name={`colors.${index}.colorCode`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <FormLabel>Color Code</FormLabel>
-                            <FormControl>
-                              <ColorPicker
-                                value={field.value || "#1677ff"}
-                                showText
-                                allowClear
-                                onChange={(color) =>
-                                  field.onChange(color.toHexString())
-                                }
-                              />
-                            </FormControl>
-                            <FormDescription className="text-red-400 text-xs min-h-4">
-                              {
-                                formState.errors?.colors?.[index]?.colorCode
-                                  ?.message
-                              }
-                            </FormDescription>
-                          </FormItem>
-                        )}
-                      />
-
                       {/* Color Name */}
                       <FormItem>
                         <FormLabel>Color Name</FormLabel>
@@ -827,7 +800,6 @@ export const CreateProductForm: React.FC = () => {
                   type="button"
                   onClick={() =>
                     appendColor({
-                      colorCode: "#1677ff",
                       colorName: "",
                       images: [],
                     })
@@ -850,44 +822,18 @@ export const CreateProductForm: React.FC = () => {
                     className="border p-4 mb-1 rounded-md relative"
                   >
                     <div className="grid grid-cols-3 gap-2 mb-2">
-                      {/* Color Code Picker */}
-                      <Controller
-                        control={control}
-                        name={`sizes.${index}.colorCode`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <FormLabel>Color Code</FormLabel>
-                            <FormControl>
-                              <ColorPicker
-                                value={field.value || "#1677ff"}
-                                showText
-                                allowClear
-                                onChange={(color) =>
-                                  field.onChange(color.toHexString())
-                                }
-                              />
-                            </FormControl>
-                            <FormDescription className="text-red-400 text-xs min-h-4">
-                              {
-                                formState.errors?.sizes?.[index]?.colorCode
-                                  ?.message
-                              }
-                            </FormDescription>
-                          </FormItem>
-                        )}
-                      />
-
-                      {/* Color Name */}
+                      {/* size Name */}
+                     // Sizes - Dynamic section এ
                       <FormItem>
                         <FormLabel>Size Name</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter size name"
-                            {...register(`sizes.${index}.colorName`)}
+                            {...register(`sizes.${index}.sizeName`)} 
                           />
                         </FormControl>
                         <FormDescription className="text-red-400 text-xs min-h-4">
-                          {formState.errors?.sizes?.[index]?.colorName?.message}
+                          {formState.errors?.sizes?.[index]?.sizeName?.message} 
                         </FormDescription>
                       </FormItem>
 
@@ -942,8 +888,7 @@ export const CreateProductForm: React.FC = () => {
                   type="button"
                   onClick={() =>
                     appendSize({
-                      colorCode: "#1677ff",
-                      colorName: "",
+                      sizeName: "",
                       images: [],
                     })
                   }
@@ -1085,67 +1030,67 @@ export const CreateProductForm: React.FC = () => {
                 >
                   {(selectedInventoryType === "colorInventory" ||
                     selectedInventoryType === "colorLevelInventory") && (
-                    <Controller
-                      control={control}
-                      name={`inventories.${index}.color`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel>Color</FormLabel>
-                          <FormControl>
-                            <ColorPicker
-                              value={field.value || "#1677ff"}
-                              showText
-                              allowClear
-                              onChange={(color) =>
-                                field.onChange(color.toHexString())
+                      <Controller
+                        control={control}
+                        name={`inventories.${index}.color`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Color</FormLabel>
+                            <FormControl>
+                              <ColorPicker
+                                value={field.value || "#1677ff"}
+                                showText
+                                allowClear
+                                onChange={(color) =>
+                                  field.onChange(color.toHexString())
+                                }
+                              />
+                            </FormControl>
+                            <FormDescription className="text-red-400 text-xs min-h-4">
+                              {
+                                formState.errors?.inventories?.[index]?.color
+                                  ?.message
                               }
-                            />
-                          </FormControl>
-                          <FormDescription className="text-red-400 text-xs min-h-4">
-                            {
-                              formState.errors?.inventories?.[index]?.color
-                                ?.message
-                            }
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-                  )}
+                            </FormDescription>
+                          </FormItem>
+                        )}
+                      />
+                    )}
 
                   {(selectedInventoryType === "colorInventory" ||
                     selectedInventoryType === "colorLevelInventory") && (
-                    <FormItem>
-                      <FormLabel>Color Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter color name"
-                          {...register(`inventories.${index}.colorName`)}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {
-                          formState.errors?.inventories?.[index]?.colorName
-                            ?.message
-                        }
-                      </FormDescription>
-                    </FormItem>
-                  )}
+                      <FormItem>
+                        <FormLabel>Color Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter color name"
+                            {...register(`inventories.${index}.colorName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {
+                            formState.errors?.inventories?.[index]?.colorName
+                              ?.message
+                          }
+                        </FormDescription>
+                      </FormItem>
+                    )}
 
                   {(selectedInventoryType === "levelInventory" ||
                     selectedInventoryType === "colorLevelInventory") && (
-                    <FormItem>
-                      <FormLabel>Size</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter size"
-                          {...register(`inventories.${index}.size`)}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {formState.errors?.inventories?.[index]?.size?.message}
-                      </FormDescription>
-                    </FormItem>
-                  )}
+                      <FormItem>
+                        <FormLabel>Size</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter size"
+                            {...register(`inventories.${index}.size`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.inventories?.[index]?.size?.message}
+                        </FormDescription>
+                      </FormItem>
+                    )}
 
                   {selectedInventoryType !== "" && (
                     <>

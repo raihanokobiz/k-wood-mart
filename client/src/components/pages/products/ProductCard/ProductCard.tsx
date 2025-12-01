@@ -48,7 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="text-xl font-medium text-secondaryt px-4 py-4">
         <h3 className="text-left text-md text-gray-800">{name}</h3>
         <p className="text-left mt-4" style={{ fontVariantNumeric: "lining-nums" }}>
-          ৳ {price}
+          ৳ {price} 678768
         </p>
       </div>
     </Link>

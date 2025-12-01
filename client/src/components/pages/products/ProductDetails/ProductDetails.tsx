@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { getUser } from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useAnimation } from "framer-motion";
+import Link from "next/link";
 
 interface Props {
   product: TProduct;
@@ -34,6 +35,9 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const controls = useAnimation();
+
+
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
 
   const {
     name,
@@ -61,6 +65,10 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
 
   const handleIncrement = () => setCount((prev) => prev + 1);
   const handleDecrement = () => setCount((prev) => (prev > 1 ? prev - 1 : 1));
+
+
+  console.log(product, "ok");
+
 
   // ✅ Calculate Discounted Price from MRP
   const calculateDiscountedPrice = (
@@ -135,11 +143,11 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     // Calculate discounted price from MRP
     let itemPrice = itemIsDiscounted
       ? calculateDiscountedPrice(
-          itemMrpPrice,
-          itemIsDiscounted,
-          itemDiscount,
-          itemDiscountType
-        )
+        itemMrpPrice,
+        itemIsDiscounted,
+        itemDiscount,
+        itemDiscountType
+      )
       : itemMrpPrice;
 
     return {
@@ -305,35 +313,39 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
   };
 
-  //  ADD THIS FUNCTION
+  //  FIXED IMAGE DISPLAY FUNCTION
   const getDisplayImages = () => {
-    const baseImages = [
+    // Helper function to properly format image URLs
+    const formatImageUrl = (img: string) => {
+      if (img.startsWith('http://') || img.startsWith('https://')) {
+        return img;
+      }
+      if (img.startsWith('/public/')) {
+        return apiBaseUrl + img;
+      }
+      if (img.startsWith('/')) {
+        return apiBaseUrl + img;
+      }
+      return apiBaseUrl + '/' + img;
+    };
+
+    // ✅ Jodi kono item select kora thake, shudhu oi item er images dekhao
+    if (selectedFabric?.images?.length) {
+      return selectedFabric.images.map((img: string) => formatImageUrl(img));
+    } else if (selectedProductColor?.images?.length) {
+      return selectedProductColor.images.map((img: string) => formatImageUrl(img));
+    } else if (selectedProductSize?.images?.length) {
+      return selectedProductSize.images.map((img: string) => formatImageUrl(img));
+    } else if (selectedSet?.images?.length) {
+      return selectedSet.images.map((img: string) => formatImageUrl(img));
+    }
+
+    // ✅ Default: base images dekhao
+    return [
       apiBaseUrl + thumbnailImage,
       ...(backViewImage ? [apiBaseUrl + backViewImage] : []),
       ...images.map((img) => apiBaseUrl + img),
     ];
-
-    let additionalImages: string[] = [];
-
-    if (selectedFabric?.images?.length) {
-      additionalImages = selectedFabric.images.map(
-        (img: string) => apiBaseUrl + img
-      );
-    } else if (selectedProductColor?.images?.length) {
-      additionalImages = selectedProductColor.images.map(
-        (img: string) => apiBaseUrl + img
-      );
-    } else if (selectedProductSize?.images?.length) {
-      additionalImages = selectedProductSize.images.map(
-        (img: string) => apiBaseUrl + img
-      );
-    } else if (selectedSet?.images?.length) {
-      additionalImages = selectedSet.images.map(
-        (img: string) => apiBaseUrl + img
-      );
-    }
-
-    return [...baseImages, ...additionalImages];
   };
 
   const displayImages = getDisplayImages();
@@ -342,6 +354,32 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     <>
       <div className="Container py-8 min-h-100 lg:mt-0 mt-16 md:mt-20">
         <div className="grid lg:grid-cols-12 gap-8">
+          {/* Product Title & Price - Mobile/Tablet only */}
+          <div className="lg:hidden space-y-2 mb-4">
+            <h2 className={`text-3xl font-bold text-[#262626] ${rajdhani.className}`}>
+              {name}
+            </h2>
+            <p className="text-lg md:text-xl text-gray-500 font-semibold">
+              Product ID: <span className="text-[#D4A373]">{productId}</span>
+            </p>
+            <div className="flex items-center gap-3 flex-wrap">
+              <p className="flex items-center gap-1 font-bold text-3xl text-[#D4A373]">
+                <span className="text-xl">৳</span>
+                <span>{currentPrice.toFixed(2)}</span>
+              </p>
+              {discountPercentage > 0 && (
+                <>
+                  <p className="line-through text-[#262626]/40 font-semibold text-lg flex items-center gap-1">
+                    <span>৳</span>
+                    <span>{currentMrpPrice.toFixed(2)}</span>
+                  </p>
+                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    {discountPercentage}% OFF
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
           <div className="lg:col-span-8">
             <ProductDetailsSlide
               controls={controls}
@@ -352,6 +390,30 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               name={name}
               videoUrl={product.videoUrl}
             />
+            {/* Description */}
+            <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden mt-6">
+              <button
+                onClick={() => setIsDescriptionOpen(!isDescriptionOpen)}
+                className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                    <span className="text-lg">📋</span>
+                  </div>
+                  <h3 className={`text-lg font-bold text-[#262626] ${rajdhani.className}`}>
+                    Product Details
+                  </h3>
+                </div>
+                <svg className={`w-5 h-5 transition-transform duration-300 ${isDescriptionOpen ? "rotate-180" : ""}`}>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isDescriptionOpen && (
+                <div className="px-6 pb-6 border-t border-gray-200 pt-4">
+                  <div dangerouslySetInnerHTML={{ __html: description }} />
+                </div>
+              )}
+            </div>
           </div>
           <div className="space-y-6 lg:col-span-4 bg-gray-100 rounded-md p-6">
             {/* Product Title & Price */}
@@ -394,427 +456,467 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               colors?.length > 0 ||
               sizes?.length > 0 ||
               set?.length > 0) && (
-              <div className="space-y-2">
-                {/* Material Accordion */}
-                {material && (
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <button
-                      onClick={() =>
-                        setAccordionOpen(
-                          accordionOpen === "material" ? null : "material"
-                        )
-                      }
-                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
-                          <span className="text-lg">🧵</span>
-                        </div>
-                        <div className="text-left">
-                          <p className="font-bold text-[#262626]">Material</p>
-                          <p className="text-sm text-gray-500">
-                            Material And Wood Finish
-                          </p>
-                        </div>
-                      </div>
-                      <svg
-                        className={`w-5 h-5 transition-transform ${
-                          accordionOpen === "material" ? "rotate-180" : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                <div className="space-y-2">
+                  {/* Material Accordion */}
+                  {material && (
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                      <button
+                        onClick={() =>
+                          setAccordionOpen(
+                            accordionOpen === "material" ? null : "material"
+                          )
+                        }
+                        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-                    {accordionOpen === "material" && (
-                      <div className="p-4 pt-0 border-t">
-                        <div className="bg-gray-100 rounded-lg px-4 py-3 text-sm text-gray-700">
-                          {material}
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                            <span className="text-lg">🧵</span>
+                          </div>
+                          <div className="text-left">
+                            <p className="font-bold text-[#262626]">Material</p>
+                            <p className="text-sm text-gray-500">
+                              Material And Wood Finish
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+                        <svg
+                          className={`w-5 h-5 transition-transform ${accordionOpen === "material" ? "rotate-180" : ""
+                            }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {accordionOpen === "material" && (
+                        <div className="p-4 pt-0 border-t">
+                          <div className="bg-gray-100 rounded-lg px-4 py-3 text-sm text-gray-700 mt-4">
+                            {material}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-                {/* Fabric Accordion */}
-                {fabrics?.length > 0 && (
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <button
-                      onClick={() =>
-                        setAccordionOpen(
-                          accordionOpen === "fabric" ? null : "fabric"
-                        )
-                      }
-                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
-                          <span className="text-lg">🧶</span>
-                        </div>
-                        <div className="text-left">
-                          <p className="font-bold text-[#262626]">Fabric</p>
-                          <p className="text-sm text-gray-500">
-                            Fabric configuration
-                          </p>
-                        </div>
-                      </div>
-                      <svg
-                        className={`w-5 h-5 transition-transform ${
-                          accordionOpen === "fabric" ? "rotate-180" : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                  {/* Fabric Accordion */}
+                  {fabrics?.length > 0 && (
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                      <button
+                        onClick={() =>
+                          setAccordionOpen(
+                            accordionOpen === "fabric" ? null : "fabric"
+                          )
+                        }
+                        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-                    {accordionOpen === "fabric" && (
-                      <div className="p-4 pt-0 border-t space-y-2">
-                        {fabrics.map((fabric: any, index: number) => (
-                          <button
-                            key={index}
-                            onClick={() => {
-                              setSelectedFabric(fabric);
-                              setSelectedProductColor(null);
-                              setSelectedProductSize(null);
-                              setSelectedSet(null);
-                            }}
-                            className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
-                              selectedFabric === fabric
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                            <span className="text-lg">🧶</span>
+                          </div>
+                          <div className="text-left">
+                            <p className="font-bold text-[#262626]">Fabric</p>
+                            <p className="text-sm text-gray-500">
+                              Fabric configuration
+                            </p>
+                          </div>
+                        </div>
+                        <svg
+                          className={`w-5 h-5 transition-transform ${accordionOpen === "fabric" ? "rotate-180" : ""
+                            }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {accordionOpen === "fabric" && (
+                        <div className="p-4 pt-0 border-t space-y-2">
+                          {fabrics.map((fabric: any, index: number) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setSelectedFabric(fabric);
+                                setSelectedProductColor(null);
+                                setSelectedProductSize(null);
+                                setSelectedSet(null);
+                              }}
+                              className={`mt-4 w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer ${selectedFabric === fabric
                                 ? "border-[#D4A373] bg-[#D4A373]/5"
                                 : "border-gray-200 hover:border-[#D4A373]/50"
-                            }`}
-                          >
-                            <div
-                              className="w-6 h-6 rounded-full border-2 border-white shadow"
-                              style={{ backgroundColor: fabric.colorCode }}
-                            />
-                            <span className="font-medium text-sm">
-                              {fabric.colorName}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+                                }`}
+                            >
+                              <div
+                                className="w-10 h-10 rounded-md border-2 border-white shadow"
+                                style={{ backgroundColor: fabric.colorCode }}
+                              />
+                              <span className="font-medium text-sm">
+                                {fabric.colorName}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-                {/* Colors Accordion */}
-                {colors?.length > 0 && (
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <button
-                      onClick={() =>
-                        setAccordionOpen(
-                          accordionOpen === "color" ? null : "color"
-                        )
-                      }
-                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
-                          <span className="text-lg">🎨</span>
-                        </div>
-                        <div className="text-left">
-                          <p className="font-bold text-[#262626]">Color</p>
-                          <p className="text-sm text-gray-500">
-                            Material & Wood Finish Color
-                          </p>
-                        </div>
-                      </div>
-                      <svg
-                        className={`w-5 h-5 transition-transform ${
-                          accordionOpen === "color" ? "rotate-180" : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                  {/* Colors Accordion */}
+                  {colors?.length > 0 && (
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                      <button
+                        onClick={() =>
+                          setAccordionOpen(
+                            accordionOpen === "color" ? null : "color"
+                          )
+                        }
+                        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-                    {accordionOpen === "color" && (
-                      <div className="p-4 pt-0 border-t space-y-2">
-                        {colors.map((color: any, index: number) => (
-                          <button
-                            key={index}
-                            onClick={() => {
-                              setSelectedProductColor(color);
-                              setSelectedFabric(null);
-                              setSelectedProductSize(null);
-                              setSelectedSet(null);
-                            }}
-                            className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
-                              selectedProductColor === color
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                            <span className="text-lg">🎨</span>
+                          </div>
+                          <div className="text-left">
+                            <p className="font-bold text-[#262626]">Color</p>
+                            <p className="text-sm text-gray-500">
+                              Material & Wood Finish Color
+                            </p>
+                          </div>
+                        </div>
+                        <svg
+                          className={`w-5 h-5 transition-transform ${accordionOpen === "color" ? "rotate-180" : ""
+                            }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {accordionOpen === "color" && (
+                        <div className="p-4 pt-0 border-t space-y-2">
+                          {colors.map((color: any, index: number) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setSelectedProductColor(color);
+                                setSelectedFabric(null);
+                                setSelectedProductSize(null);
+                                setSelectedSet(null);
+                              }}
+                              className={` mt-4 w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer ${selectedProductColor === color
                                 ? "border-[#D4A373] bg-[#D4A373]/5"
                                 : "border-gray-200 hover:border-[#D4A373]/50"
-                            }`}
-                          >
-                            <div
-                              className="w-6 h-6 rounded-full border-2 border-white shadow"
-                              style={{ backgroundColor: color.colorCode }}
-                            />
-                            <span className="font-medium text-sm">
-                              {color.colorName}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+                                }`}
+                            >
+                              <span className="font-medium text-sm">
+                                {color.colorName}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-                {/* Sizes Accordion */}
-                {sizes?.length > 0 && (
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <button
-                      onClick={() =>
-                        setAccordionOpen(
-                          accordionOpen === "size" ? null : "size"
-                        )
-                      }
-                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
-                          <span className="text-lg">📏</span>
-                        </div>
-                        <div className="text-left">
-                          <p className="font-bold text-[#262626]">Size</p>
-                          <p className="text-sm text-gray-500">Material Size</p>
-                        </div>
-                      </div>
-                      <svg
-                        className={`w-5 h-5 transition-transform ${
-                          accordionOpen === "size" ? "rotate-180" : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                  {/* Sizes Accordion */}
+                  {sizes?.length > 0 && (
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                      <button
+                        onClick={() =>
+                          setAccordionOpen(
+                            accordionOpen === "size" ? null : "size"
+                          )
+                        }
+                        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-                    {accordionOpen === "size" && (
-                      <div className="p-4 pt-0 border-t space-y-2">
-                        {sizes.map((size: any, index: number) => (
-                          <button
-                            key={index}
-                            onClick={() => {
-                              setSelectedProductSize(size);
-                              setSelectedFabric(null);
-                              setSelectedProductColor(null);
-                              setSelectedSet(null);
-                            }}
-                            className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
-                              selectedProductSize === size
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                            <span className="text-lg">📏</span>
+                          </div>
+                          <div className="text-left">
+                            <p className="font-bold text-[#262626]">Size</p>
+                            <p className="text-sm text-gray-500">Material Size</p>
+                          </div>
+                        </div>
+                        <svg
+                          className={`w-5 h-5 transition-transform ${accordionOpen === "size" ? "rotate-180" : ""
+                            }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {accordionOpen === "size" && (
+                        <div className="p-4 pt-0 border-t space-y-2">
+                          {sizes.map((size: any, index: number) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setSelectedProductSize(size);
+                                setSelectedFabric(null);
+                                setSelectedProductColor(null);
+                                setSelectedSet(null);
+                              }}
+                              className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer mt-4 ${selectedProductSize === size
                                 ? "border-[#D4A373] bg-[#D4A373]/5"
                                 : "border-gray-200 hover:border-[#D4A373]/50"
-                            }`}
-                          >
-                            <div
-                              className="w-6 h-6 rounded-full border-2 border-white shadow"
-                              style={{ backgroundColor: size.colorCode }}
-                            />
-                            <span className="font-medium text-sm">
-                              {size.colorName}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+                                }`}
+                            >
+                              <span className="font-medium text-sm text-gray-600">
+                                {size.sizeName}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-                {/* Set Accordion */}
-                {set?.length > 0 && (
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <button
-                      onClick={() =>
-                        setAccordionOpen(accordionOpen === "set" ? null : "set")
-                      }
-                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
-                          <span className="text-lg">📦</span>
-                        </div>
-                        <div className="text-left">
-                          <p className="font-bold text-[#262626]">Set</p>
-                          <p className="text-sm text-gray-500">Set Option</p>
-                        </div>
-                      </div>
-                      <svg
-                        className={`w-5 h-5 transition-transform ${
-                          accordionOpen === "set" ? "rotate-180" : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                  {/* Set Accordion */}
+                  {set?.length > 0 && (
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                      <button
+                        onClick={() =>
+                          setAccordionOpen(accordionOpen === "set" ? null : "set")
+                        }
+                        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-                    {accordionOpen === "set" && (
-                      <div className="p-4 pt-0 border-t space-y-2">
-                        {set.map((setItem: any, index: number) => (
-                          <button
-                            key={index}
-                            onClick={() => {
-                              setSelectedSet(setItem);
-                              setSelectedFabric(null);
-                              setSelectedProductColor(null);
-                              setSelectedProductSize(null);
-                            }}
-                            className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
-                              selectedSet === setItem
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                            <span className="text-lg">📦</span>
+                          </div>
+                          <div className="text-left">
+                            <p className="font-bold text-[#262626]">Set</p>
+                            <p className="text-sm text-gray-500">Set Option</p>
+                          </div>
+                        </div>
+                        <svg
+                          className={`w-5 h-5 transition-transform ${accordionOpen === "set" ? "rotate-180" : ""
+                            }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {accordionOpen === "set" && (
+                        <div className="p-4 pt-0 border-t space-y-2">
+                          {set.map((setItem: any, index: number) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setSelectedSet(setItem);
+                                setSelectedFabric(null);
+                                setSelectedProductColor(null);
+                                setSelectedProductSize(null);
+                              }}
+                              className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all mt-4 cursor-pointer ${selectedSet === setItem
                                 ? "border-[#D4A373] bg-[#D4A373]/5"
                                 : "border-gray-200 hover:border-[#D4A373]/50"
-                            }`}
-                          >
-                            <span className="font-medium text-sm">
-                              {setItem.setName}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+                                }`}
+                            >
+                              <span className="font-medium text-sm">
+                                {setItem.setName}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
             {/* Size Selection */}
             {(inventoryType === "levelInventory" ||
               inventoryType === "colorLevelInventory") && (
-              <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                <h3
-                  className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
-                >
-                  Select Size
-                </h3>
-                <div className="flex flex-wrap items-center gap-3">
-                  {Array.isArray(inventoryRef) &&
-                    inventoryRef.map((size) => (
-                      <button
-                        key={size._id}
-                        onClick={() => {
-                          setLevel(size.level);
-                          setSelectedLevel(size._id);
-                          setSelectedColor(null);
-                          setLevelError(false);
-                        }}
-                        className={`min-w-[60px] px-4 py-3 border-2 font-bold text-sm uppercase rounded-lg transition-all duration-300 ${
-                          level === size.level
+                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                  <h3
+                    className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
+                  >
+                    Select Size
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {Array.isArray(inventoryRef) &&
+                      inventoryRef.map((size) => (
+                        <button
+                          key={size._id}
+                          onClick={() => {
+                            setLevel(size.level);
+                            setSelectedLevel(size._id);
+                            setSelectedColor(null);
+                            setLevelError(false);
+                          }}
+                          className={`min-w-[60px] px-4 py-3 border-2 font-bold text-sm uppercase rounded-lg transition-all duration-300 ${level === size.level
                             ? "bg-[#D4A373] border-[#D4A373] text-white shadow-lg scale-105"
                             : "bg-white border-gray-300 text-[#262626] hover:border-[#D4A373] hover:text-[#D4A373]"
-                        }`}
-                      >
-                        {size.level}
-                      </button>
-                    ))}
+                            }`}
+                        >
+                          {size.level}
+                        </button>
+                      ))}
+                  </div>
+                  {levelError && (
+                    <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
+                      <span>⚠️</span>
+                      <span>Please select a size to continue</span>
+                    </p>
+                  )}
                 </div>
-                {levelError && (
-                  <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
-                    <span>⚠️</span>
-                    <span>Please select a size to continue</span>
-                  </p>
-                )}
-              </div>
-            )}
+              )}
 
             {/* Color Selection */}
             {((inventoryType === "colorLevelInventory" && selectedLevel) ||
               inventoryType === "colorInventory") && (
-              <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                <h3
-                  className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
-                >
-                  Select Color
-                </h3>
-                <div className="flex flex-wrap items-center gap-3">
-                  {(() => {
-                    let colorItems: Array<{
-                      _id: string;
-                      color: string;
-                      name?: string;
-                    }> = [];
+                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                  <h3
+                    className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
+                  >
+                    Select Color
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {(() => {
+                      let colorItems: Array<{
+                        _id: string;
+                        color: string;
+                        name?: string;
+                      }> = [];
 
-                    if (
-                      inventoryType === "colorLevelInventory" &&
-                      selectedLevel
-                    ) {
-                      const levelItem = Array.isArray(inventoryRef)
-                        ? inventoryRef.find(
+                      if (
+                        inventoryType === "colorLevelInventory" &&
+                        selectedLevel
+                      ) {
+                        const levelItem = Array.isArray(inventoryRef)
+                          ? inventoryRef.find(
                             (item) => item._id === selectedLevel
                           )
-                        : undefined;
-                      colorItems = levelItem?.colors || [];
-                    } else if (inventoryType === "colorInventory") {
-                      colorItems = Array.isArray(inventoryRef)
-                        ? inventoryRef
-                        : [];
-                    }
+                          : undefined;
+                        colorItems = levelItem?.colors || [];
+                      } else if (inventoryType === "colorInventory") {
+                        colorItems = Array.isArray(inventoryRef)
+                          ? inventoryRef
+                          : [];
+                      }
 
-                    return colorItems.map((colorItem) => (
-                      <button
-                        key={colorItem._id}
-                        onClick={() => {
-                          setSelectedColor(colorItem._id);
-                          setColorError(false);
-                        }}
-                        className={`relative w-12 h-12 rounded-full transition-all duration-300 ${
-                          selectedColor === colorItem._id
+                      return colorItems.map((colorItem) => (
+                        <button
+                          key={colorItem._id}
+                          onClick={() => {
+                            setSelectedColor(colorItem._id);
+                            setColorError(false);
+                          }}
+                          className={`relative w-12 h-12 rounded-full transition-all duration-300 ${selectedColor === colorItem._id
                             ? "ring-4 ring-[#D4A373] ring-offset-2 scale-110"
                             : "ring-2 ring-gray-300 hover:ring-[#D4A373]/50"
-                        }`}
-                        style={{ backgroundColor: colorItem.color }}
-                        title={colorItem.name || colorItem.color}
-                      >
-                        {selectedColor === colorItem._id && (
-                          <span className="absolute inset-0 flex items-center justify-center text-white text-xl">
-                            ✓
-                          </span>
-                        )}
-                      </button>
-                    ));
-                  })()}
+                            }`}
+                          style={{ backgroundColor: colorItem.color }}
+                          title={colorItem.name || colorItem.color}
+                        >
+                          {selectedColor === colorItem._id && (
+                            <span className="absolute inset-0 flex items-center justify-center text-white text-xl">
+                              ✓
+                            </span>
+                          )}
+                        </button>
+                      ));
+                    })()}
+                  </div>
+                  {colorError && (
+                    <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
+                      <span>⚠️</span>
+                      <span>Please select a color to continue</span>
+                    </p>
+                  )}
                 </div>
-                {colorError && (
-                  <p className="text-red-500 text-sm mt-3 flex items-center gap-2">
-                    <span>⚠️</span>
-                    <span>Please select a color to continue</span>
-                  </p>
-                )}
+              )}
+
+
+            {/* Quantity & Actions */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                {/* Quantity Counter */}
+                <div className="flex items-center bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    onClick={handleDecrement}
+                    className="px-8 py-3 hover:bg-gray-100 transition-colors duration-200 font-bold text-lg"
+                  >
+                    <FiMinus />
+                  </button>
+                  <span className="px-8 py-3 font-bold text-lg border-x-2 border-gray-300 min-w-[60px] text-center">
+                    {count}
+                  </span>
+                  <button
+                    onClick={handleIncrement}
+                    className="px-8 py-3 hover:bg-gray-100 transition-colors duration-200 font-bold text-lg"
+                  >
+                    <FiPlus />
+                  </button>
+                </div>
+
+                {/* Action Buttons */}
+                {/* <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={loading}
+                    className="cursor-pointer flex-1 bg-[#D4A373] hover:bg-[#CCD5AE] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    <FiPlus className="text-xl" />
+                    <span>{loading ? "Adding..." : "Add To Cart"}</span>
+                  </button>
+
+                  <button
+                    onClick={handleBuyNow}
+                    disabled={loading}
+                    className="cursor-pointer flex-1 bg-[#262626] hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    {loading ? "Processing..." : "Buy Now"}
+                  </button>
+                </div> */}
+                <Link href="/contact" className="flex-1 w-full">
+                  <button
+                    className="flex-1 w-full bg-gradient-to-r from-[#D4A373] to-[#CCD5AE] hover:from-[#CCD5AE] hover:to-[#D4A373] transition-all duration-500 px-8 py-4 font-bold text-lg rounded-lg text-white shadow-lg hover:shadow-md  flex items-center justify-center gap-3 group cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Get a Quote</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </Link>
+
               </div>
-            )}
+            </div>
 
             {/* EMI Plan */}
             <div className="bg-gradient-to-br from-[#D4A373]/10 via-[#D4A373]/5 to-transparent rounded-xl p-6 border-2 border-[#D4A373]/30">
@@ -911,52 +1013,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               )}
             </div>
 
-            {/* Quantity & Actions */}
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row items-center gap-3">
-                {/* Quantity Counter */}
-                <div className="flex items-center bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
-                  <button
-                    onClick={handleDecrement}
-                    className="px-5 py-3 hover:bg-gray-100 transition-colors duration-200 font-bold text-lg"
-                  >
-                    <FiMinus />
-                  </button>
-                  <span className="px-6 py-3 font-bold text-lg border-x-2 border-gray-300 min-w-[60px] text-center">
-                    {count}
-                  </span>
-                  <button
-                    onClick={handleIncrement}
-                    className="px-5 py-3 hover:bg-gray-100 transition-colors duration-200 font-bold text-lg"
-                  >
-                    <FiPlus />
-                  </button>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={loading}
-                    className="cursor-pointer flex-1 bg-[#D4A373] hover:bg-[#CCD5AE] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                  >
-                    <FiPlus className="text-xl" />
-                    <span>{loading ? "Adding..." : "Add To Cart"}</span>
-                  </button>
-
-                  <button
-                    onClick={handleBuyNow}
-                    disabled={loading}
-                    className="cursor-pointer flex-1 bg-[#262626] hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                  >
-                    {loading ? "Processing..." : "Buy Now"}
-                  </button>
-                </div>
-              </div>
-            </div>
-
             {/* Description */}
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 lg:hidden">
               <h3
                 className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
               >

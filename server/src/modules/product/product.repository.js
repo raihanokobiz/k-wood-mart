@@ -1199,10 +1199,12 @@ class ProductRepository extends BaseRepository {
     );
     return data;
   }
+
   async getAllProductForHomePage() {
     const product = await this.#model
       .find({ featured: true })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .limit(10)
 
     console.log("Featured products found:", product.length);
     return product;
@@ -1392,6 +1394,15 @@ class ProductRepository extends BaseRepository {
       },
       products: products,
     };
+  }
+
+  async updateProductStatusisNewArrival(id, statusPayload) {
+    const updatedChildCategory = await this.#model.findByIdAndUpdate(
+      id,
+      statusPayload,
+      { new: true }
+    );
+    return updatedChildCategory;
   }
 }
 

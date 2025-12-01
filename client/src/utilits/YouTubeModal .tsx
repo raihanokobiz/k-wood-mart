@@ -22,7 +22,7 @@ export const YouTubeModal = ({ url }: Props) => {
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="relative group cursor-pointer w-full h-96"
+                className="relative group cursor-pointer w-full h-[600px]"
             >
                 <div className="relative w-full h-full">
                     <iframe
@@ -30,7 +30,7 @@ export const YouTubeModal = ({ url }: Props) => {
                         // height="70"
                         src={`https://www.youtube.com/embed/${videoId}?controls=0&autoplay=0`}
                         title="YouTube preview"
-                        className="rounded-md pointer-events-none w-full h-full" // 👈 pointer-events-none মানে ক্লিক iframe এ নয়, button এ হবে
+                        className="rounded-md pointer-events-none w-full h-full" // 
                     ></iframe>
 
                     {/* hover effect */}

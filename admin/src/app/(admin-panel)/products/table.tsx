@@ -17,7 +17,7 @@ import {
 import { Label } from "@radix-ui/react-label";
 import { Card } from "@/components/ui/card";
 import { TProduct } from "@/types/shared";
-import { columns } from "./columns";
+import { columns, getColumns } from "./columns";
 import { DataTablePagination } from "@/components/ui/data-table-pagination";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -52,6 +52,8 @@ export const ProductTable: React.FC<Props> = ({ data, pagination }) => {
     params.set("page", "1"); // Reset to first page
     router.push(`?${params.toString()}`);
   };
+
+  const columns = getColumns(data);
 
   const table = useReactTable({
     data,

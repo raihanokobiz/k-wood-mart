@@ -148,6 +148,7 @@ const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
     "/checkout",
     "/login",
     "/register",
+    "/collections",
   ];
 
   const shouldHaveWhiteBg = pagesWithWhiteBg.some((page) =>

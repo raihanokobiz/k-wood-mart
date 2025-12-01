@@ -291,7 +291,7 @@ export const ChildCategoryDetailsSheet: React.FC<Props> = ({
             </div>
 
             {/* Image */}
-            {/* <div className="col-span-1 grid grid-cols-2">
+            <div className="col-span-1 grid grid-cols-2">
               <div className="">
                 <Label>
                   Image <b className="text-red-500">*</b>
@@ -343,7 +343,7 @@ export const ChildCategoryDetailsSheet: React.FC<Props> = ({
                 </div>
               </div>
 
-              <div className="">
+              {/* <div className="">
                 <Label>
                   Banner Image <b className="text-red-500">*</b>
                 </Label>
@@ -392,8 +392,8 @@ export const ChildCategoryDetailsSheet: React.FC<Props> = ({
                 <div className="text-red-400 text-xs min-h-4">
                   {form.formState.errors.bannerImage?.message}
                 </div>
-              </div>
-            </div> */}
+              </div> */}
+            </div> 
           </form>
         </Form>
       </SheetContent>

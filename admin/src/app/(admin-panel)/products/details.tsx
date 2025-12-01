@@ -74,10 +74,7 @@ type InventoryForm = {
 
 
 export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
-  console.log(
-    "product from props 1111111111111111111111111111111111111111111",
-    product
-  );
+ 
   const { toast } = useToast();
 
   const [sheetOpen, setSheetOpen] = React.useState(false);
@@ -91,6 +88,19 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
       url: fileUrlGenerator(item),
     })) || []
   );
+  // pabric
+  const [fabricImageFileLists, setFabricImageFileLists] = React.useState<
+    Record<number, any[]>
+  >({});
+  const [colorImageFileLists, setColorImageFileLists] = React.useState<
+    Record<number, any[]>
+  >({});
+  const [sizeImageFileLists, setSizeImageFileLists] = React.useState<
+    Record<number, any[]>
+  >({});
+  const [setImageFileLists, setSetImageFileLists] = React.useState<
+    Record<number, any[]>
+  >({});
 
   const imagesDemo = product.images?.map((data) => { });
   // console.log(
@@ -137,6 +147,7 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
     },
   ]);
 
+
   const [brands, setBrands] = React.useState<TBrand[]>([]);
   const [categories, setCategories] = React.useState<TCategory[]>([]);
   const [subCategories, setSubCategories] = React.useState<TSubCategory[]>([]);
@@ -166,6 +177,8 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
       inventories: [{ quantity: 0 } as InventoryForm],
     },
   });
+
+
 
   // ✅ Step 2: Product আসলে form reset করুন
   useEffect(() => {
@@ -197,11 +210,62 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
             ...(item.mrpPrice && { mrpPrice: upperCase(item.mrpPrice) }),
           }))
           : [{ quantity: product.mainInventory }],
+        // ......
+        videoUrl: product.videoUrl || "",
+        material: product.material || "",
+        fabrics: product.fabrics?.length ? product.fabrics : [{ colorCode: "#1677ff", colorName: "", images: [] }],
+        colors: product.colors?.length ? product.colors : [{ colorCode: "#1677ff", colorName: "", images: [] }],
+        sizes: product.sizes?.length ? product.sizes : [{ colorCode: "#1677ff", colorName: "", images: [] }],
+        set: product.set?.length ? product.set : [{ setName: "", images: [] }],
       });
+      // ✅ এই part টা যোগ করুন - manually field arrays reset করার জন্য
+
+      // Reset fabrics if they exist
+      if (product.fabrics?.length) {
+        // Clear existing fields first
+        while (fabricFields.length > 0) {
+          removeFabric(0);
+        }
+        // Add product fabrics
+        product.fabrics.forEach((fabric: any) => {
+          appendFabric(fabric);
+        });
+      }
+
+      // Reset colors if they exist
+      if (product.colors?.length) {
+        while (colorFields.length > 0) {
+          removeColor(0);
+        }
+        product.colors.forEach((color: any) => {
+          appendColor(color);
+        });
+      }
+
+      // Reset sizes if they exist
+      if (product.sizes?.length) {
+        while (sizeFields.length > 0) {
+          removeSize(0);
+        }
+        product.sizes.forEach((size: any) => {
+          appendSize(size);
+        });
+      }
+
+      // Reset sets if they exist
+      if (product.set?.length) {
+        while (setFields.length > 0) {
+          removeSet(0);
+        }
+        product.set.forEach((setItem: any) => {
+          appendSet(setItem);
+        });
+      }
+
     }
   }, [product]);
 
-  console.log("form values from product details 55555555555555555555555", form.getValues());
+
 
   const selectedCategoryId = form.watch("categoryRef");
   const selectedSubCategoryId = form.watch("subCategoryRef");
@@ -212,6 +276,43 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "inventories",
+  });
+
+  // fabric, material, color, size field arrays
+  const {
+    fields: fabricFields,
+    append: appendFabric,
+    remove: removeFabric,
+  } = useFieldArray({
+    control,
+    name: "fabrics",
+  });
+
+  const {
+    fields: colorFields,
+    append: appendColor,
+    remove: removeColor,
+  } = useFieldArray({
+    control,
+    name: "colors",
+  });
+
+  const {
+    fields: sizeFields,
+    append: appendSize,
+    remove: removeSize,
+  } = useFieldArray({
+    control,
+    name: "sizes",
+  });
+
+  const {
+    fields: setFields,
+    append: appendSet,
+    remove: removeSet,
+  } = useFieldArray({
+    control,
+    name: "set",
   });
 
   const getDefaultInventory = () => {
@@ -279,6 +380,79 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
     }
   }, [product.thumbnailImage]);
 
+
+  // Load existing fabric images
+  React.useEffect(() => {
+    if (product.fabrics && product.fabrics.length > 0) {
+      const fabricLists: Record<number, any[]> = {};
+      product.fabrics.forEach((fabric: any, index: number) => {
+        if (fabric.images && fabric.images.length > 0) {
+          fabricLists[index] = fabric.images.map((img: string, imgIndex: number) => ({
+            uid: `fabric-${index}-${imgIndex}`,
+            name: String(img).split("/").pop() || `fabric-${index}-${imgIndex}`,
+            status: "done",
+            url: fileUrlGenerator(img),
+          }));
+        }
+      });
+      setFabricImageFileLists(fabricLists);
+    }
+  }, [product.fabrics]);
+
+  // Load existing color images
+  React.useEffect(() => {
+    if (product.colors && product.colors.length > 0) {
+      const colorLists: Record<number, any[]> = {};
+      product.colors.forEach((color: any, index: number) => {
+        if (color.images && color.images.length > 0) {
+          colorLists[index] = color.images.map((img: string, imgIndex: number) => ({
+            uid: `color-${index}-${imgIndex}`,
+            name: String(img).split("/").pop() || `color-${index}-${imgIndex}`,
+            status: "done",
+            url: fileUrlGenerator(img),
+          }));
+        }
+      });
+      setColorImageFileLists(colorLists);
+    }
+  }, [product.colors]);
+
+  // Load existing size images
+  React.useEffect(() => {
+    if (product.sizes && product.sizes.length > 0) {
+      const sizeLists: Record<number, any[]> = {};
+      product.sizes.forEach((size: any, index: number) => {
+        if (size.images && size.images.length > 0) {
+          sizeLists[index] = size.images.map((img: string, imgIndex: number) => ({
+            uid: `size-${index}-${imgIndex}`,
+            name: String(img).split("/").pop() || `size-${index}-${imgIndex}`,
+            status: "done",
+            url: fileUrlGenerator(img),
+          }));
+        }
+      });
+      setSizeImageFileLists(sizeLists);
+    }
+  }, [product.sizes]);
+
+  // Load existing set images
+  React.useEffect(() => {
+    if (product.set && product.set.length > 0) {
+      const setLists: Record<number, any[]> = {};
+      product.set.forEach((setItem: any, index: number) => {
+        if (setItem.images && setItem.images.length > 0) {
+          setLists[index] = setItem.images.map((img: string, imgIndex: number) => ({
+            uid: `set-${index}-${imgIndex}`,
+            name: String(img).split("/").pop() || `set-${index}-${imgIndex}`,
+            status: "done",
+            url: fileUrlGenerator(img),
+          }));
+        }
+      });
+      setSetImageFileLists(setLists);
+    }
+  }, [product.set]);
+
   const handleImageFileChange = ({ fileList }: any) => {
     setImageFileList(fileList);
 
@@ -341,6 +515,78 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
 
     // Sync with react-hook-form
     form.setValue("sizeChartImage", rawFiles);
+  };
+
+  const handleFabricImageChange = (index: number, { fileList }: any) => {
+    setFabricImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+
+    const rawFiles = fileList
+      .map((file: any) => {
+        if (file.originFileObj) {
+          return file.originFileObj;
+        }
+        return file.url; // ✅ এটা যোগ করুন - existing URL handle করবে
+      })
+      .filter(Boolean);
+
+    form.setValue(`fabrics.${index}.images`, rawFiles);
+  };
+
+  const handleColorImageChange = (index: number, { fileList }: any) => {
+    setColorImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+
+    const rawFiles = fileList
+      .map((file: any) => {
+        if (file.originFileObj) {
+          return file.originFileObj;
+        }
+        return file.url; // ✅ এটা যোগ করুন
+      })
+      .filter(Boolean);
+
+    form.setValue(`colors.${index}.images`, rawFiles);
+  };
+
+  const handleSizeImageChange = (index: number, { fileList }: any) => {
+    setSizeImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+
+    const rawFiles = fileList
+      .map((file: any) => {
+        if (file.originFileObj) {
+          return file.originFileObj;
+        }
+        return file.url; // ✅ এটা যোগ করুন
+      })
+      .filter(Boolean);
+
+    form.setValue(`sizes.${index}.images`, rawFiles);
+  };
+
+  const handleSetImageChange = (index: number, { fileList }: any) => {
+    setSetImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+
+    const rawFiles = fileList
+      .map((file: any) => {
+        if (file.originFileObj) {
+          return file.originFileObj;
+        }
+        return file.url; // ✅ এটা যোগ করুন
+      })
+      .filter(Boolean);
+
+    form.setValue(`set.${index}.images`, rawFiles);
   };
 
   const onSubmitUpdate = async (values: z.infer<typeof productFormSchema>) => {
@@ -468,7 +714,6 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                     </div>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="discountType"
@@ -702,6 +947,456 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                     </div>
                   )}
                 />
+                {/* Material */}
+                <FormField
+                  control={form.control}
+                  name="material"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Material</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter material" {...field} />
+                      </FormControl>
+                      <FormDescription className="text-red-400 text-xs min-h-4">
+                        {form.formState.errors.material?.message}
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Fabrics - Dynamic with Color & Images */}
+              <div className="my-4 col-span-3">
+                <FormLabel>Fabrics</FormLabel>
+                {fabricFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="border p-4 mb-1 rounded-md relative"
+                  >
+                    <div className="grid grid-cols-3 gap-2 mb-2">
+                      {/* Color Code Picker */}
+                      <Controller
+                        control={control}
+                        name={`fabrics.${index}.colorCode`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Color Code</FormLabel>
+                            <FormControl>
+                              <ColorPicker
+                                value={field.value || "#1677ff"}
+                                showText
+                                allowClear
+                                onChange={(color) =>
+                                  field.onChange(color.toHexString())
+                                }
+                              />
+                            </FormControl>
+                            <FormDescription className="text-red-400 text-xs min-h-4">
+                              {
+                                formState.errors?.fabrics?.[index]?.colorCode
+                                  ?.message
+                              }
+                            </FormDescription>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Color Name */}
+                      <FormItem>
+                        <FormLabel>Color Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter color name"
+                            {...register(`fabrics.${index}.colorName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {
+                            formState.errors?.fabrics?.[index]?.colorName
+                              ?.message
+                          }
+                        </FormDescription>
+                      </FormItem>
+
+                      {/* Image Upload - UPDATED */}
+                      <FormItem>
+                        <FormLabel>Images</FormLabel>
+                        <FormControl>
+                          <Upload
+                            listType="picture-card"
+                            beforeUpload={() => false}
+                            fileList={fabricImageFileLists[index] || []}
+                            onChange={(info) =>
+                              handleFabricImageChange(index, info)
+                            }
+                            multiple
+                          >
+                            <div>
+                              <UploadOutlined />
+                              <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                          </Upload>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.fabrics?.[index]?.images?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+
+                    {/* Delete Button */}
+                    {fabricFields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          removeFabric(index);
+                          // Remove the fileList for this index
+                          setFabricImageFileLists((prev) => {
+                            const newLists = { ...prev };
+                            delete newLists[index];
+                            return newLists;
+                          });
+                        }}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+
+                <Button
+                  type="button"
+                  onClick={() =>
+                    appendFabric({
+                      colorCode: "#1677ff",
+                      colorName: "",
+                      images: [],
+                    })
+                  }
+                  variant="outline"
+                  size="sm"
+                  className="w-full flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Fabric
+                </Button>
+              </div>
+
+              {/* Colors - Dynamic */}
+              <div className="my-4 col-span-3">
+                <FormLabel>Colors</FormLabel>
+                {colorFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="border p-4 mb-1 rounded-md relative"
+                  >
+                    <div className="grid grid-cols-3 gap-2 mb-2">
+                      {/* Color Code Picker */}
+                      <Controller
+                        control={control}
+                        name={`colors.${index}.colorCode`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Color Code</FormLabel>
+                            <FormControl>
+                              <ColorPicker
+                                value={field.value || "#1677ff"}
+                                showText
+                                allowClear
+                                onChange={(color) =>
+                                  field.onChange(color.toHexString())
+                                }
+                              />
+                            </FormControl>
+                            <FormDescription className="text-red-400 text-xs min-h-4">
+                              {
+                                formState.errors?.colors?.[index]?.colorCode
+                                  ?.message
+                              }
+                            </FormDescription>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Color Name */}
+                      <FormItem>
+                        <FormLabel>Color Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter color name"
+                            {...register(`colors.${index}.colorName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {
+                            formState.errors?.colors?.[index]?.colorName
+                              ?.message
+                          }
+                        </FormDescription>
+                      </FormItem>
+
+                      {/* Image Upload */}
+                      <FormItem>
+                        <FormLabel>Images</FormLabel>
+                        <FormControl>
+                          <Upload
+                            listType="picture-card"
+                            beforeUpload={() => false}
+                            fileList={colorImageFileLists[index] || []}
+                            onChange={(info) =>
+                              handleColorImageChange(index, info)
+                            }
+                            multiple
+                          >
+                            <div>
+                              <UploadOutlined />
+                              <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                          </Upload>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.colors?.[index]?.images?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+
+                    {/* Delete Button */}
+                    {colorFields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          removeColor(index);
+                          setColorImageFileLists((prev) => {
+                            const newLists = { ...prev };
+                            delete newLists[index];
+                            return newLists;
+                          });
+                        }}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+
+                <Button
+                  type="button"
+                  onClick={() =>
+                    appendColor({
+                      colorCode: "#1677ff",
+                      colorName: "",
+                      images: [],
+                    })
+                  }
+                  variant="outline"
+                  size="sm"
+                  className="w-full flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Color
+                </Button>
+              </div>
+
+              {/* Sizes - Dynamic */}
+              <div className="my-4 col-span-3">
+                <FormLabel>Sizes</FormLabel>
+                {sizeFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="border p-4 mb-1 rounded-md relative"
+                  >
+                    <div className="grid grid-cols-3 gap-2 mb-2">
+                      {/* Color Code Picker */}
+                      <Controller
+                        control={control}
+                        name={`sizes.${index}.colorCode`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Color Code</FormLabel>
+                            <FormControl>
+                              <ColorPicker
+                                value={field.value || "#1677ff"}
+                                showText
+                                allowClear
+                                onChange={(color) =>
+                                  field.onChange(color.toHexString())
+                                }
+                              />
+                            </FormControl>
+                            <FormDescription className="text-red-400 text-xs min-h-4">
+                              {
+                                formState.errors?.sizes?.[index]?.colorCode
+                                  ?.message
+                              }
+                            </FormDescription>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Color Name */}
+                      <FormItem>
+                        <FormLabel>Size Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter size name"
+                            {...register(`sizes.${index}.colorName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.sizes?.[index]?.colorName?.message}
+                        </FormDescription>
+                      </FormItem>
+
+                      {/* Image Upload */}
+                      <FormItem>
+                        <FormLabel>Images</FormLabel>
+                        <FormControl>
+                          <Upload
+                            listType="picture-card"
+                            beforeUpload={() => false}
+                            fileList={sizeImageFileLists[index] || []}
+                            onChange={(info) =>
+                              handleSizeImageChange(index, info)
+                            }
+                            multiple
+                          >
+                            <div>
+                              <UploadOutlined />
+                              <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                          </Upload>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.sizes?.[index]?.images?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+
+                    {/* Delete Button */}
+                    {sizeFields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          removeSize(index);
+                          setSizeImageFileLists((prev) => {
+                            const newLists = { ...prev };
+                            delete newLists[index];
+                            return newLists;
+                          });
+                        }}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+
+                <Button
+                  type="button"
+                  onClick={() =>
+                    appendSize({
+                      colorCode: "#1677ff",
+                      colorName: "",
+                      images: [],
+                    })
+                  }
+                  variant="outline"
+                  size="sm"
+                  className="w-full flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Size
+                </Button>
+              </div>
+
+              {/* Set - Dynamic with Images */}
+              <div className="my-4 col-span-3">
+                <FormLabel>Sets</FormLabel>
+                {setFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="border p-4 mb-1 rounded-md relative"
+                  >
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      {/* Set Name */}
+                      <FormItem>
+                        <FormLabel>Set Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter set name"
+                            {...register(`set.${index}.setName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.set?.[index]?.setName?.message}
+                        </FormDescription>
+                      </FormItem>
+
+                      {/* Image Upload */}
+                      <FormItem>
+                        <FormLabel>Images</FormLabel>
+                        <FormControl>
+                          <Upload
+                            listType="picture-card"
+                            beforeUpload={() => false}
+                            fileList={setImageFileLists[index] || []}
+                            onChange={(info) =>
+                              handleSetImageChange(index, info)
+                            }
+                            multiple
+                          >
+                            <div>
+                              <UploadOutlined />
+                              <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                          </Upload>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {formState.errors?.set?.[index]?.images?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+
+                    {/* Delete Button */}
+                    {setFields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          removeSet(index);
+                          setSetImageFileLists((prev) => {
+                            const newLists = { ...prev };
+                            delete newLists[index];
+                            return newLists;
+                          });
+                        }}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+
+                <Button
+                  type="button"
+                  onClick={() => appendSet({ setName: "", images: [] })}
+                  variant="outline"
+                  size="sm"
+                  className="w-full flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Set
+                </Button>
               </div>
 
               {selectedInventoryType !== "" &&
@@ -848,6 +1543,22 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                   </Button>
                 )}
 
+              {/* Video URL */}
+              <FormField
+                control={form.control}
+                name="videoUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Product Video URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter video URL" {...field} />
+                    </FormControl>
+                    <FormDescription className="text-red-400 text-xs min-h-4">
+                      {form.formState.errors.videoUrl?.message}
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}

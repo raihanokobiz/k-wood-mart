@@ -1,48 +1,102 @@
-
+"use client";
 import ProductCard from "../../products/ProductCard/ProductCard";
-import { getFeaturedProducts } from "@/services/products";
 import { TProduct } from "@/types";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Autoplay, Pagination } from "swiper/modules";
+import Link from "next/link";
+import Image from "next/image";
+import { apiBaseUrl } from "@/config/config";
 
-
-export default async function FeaturedProducts() {
-  const products = await getFeaturedProducts();
-
+export default function FeaturedProducts({ featuredProducts }) {
   return (
-    <section className="Container">
-      <h2 className="rounded text-[#D4A373] text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-light text-center mb-6">
-        Featured Products
-      </h2>
-      <div className="rounded">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-10">
-          {products?.data?.result?.map((product: TProduct) => (
-            <ProductCard
-              key={product?._id}
-              product={product}
+    <section className="Container py-12">
+      <div className="flex items-center mb-8">
+        <div className="flex items-center gap-2 text-[#D4A373]">
+          <svg
+            className="w-16 h-16 md:w-10 md:h-10 font-bold"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M13 7l5 5m0 0l-5 5m5-5H6"
             />
-          ))}
+          </svg>
         </div>
-        {/* {products.map((product, idx) => (
-            <div
-              key={idx}
-              className="bg-white shadow-md shadow-gray-400 rounded  text-center hover:shadow-lg transition-shadow"
-            >
-              <div className=" relative h-[400px] mb-4">
-                <Image
-                  src="https://cdn.pixabay.com/photo/2022/07/05/14/59/living-room-7303275_640.jpg"
-                  alt={product.name}
-                  fill
-                  className="mx-auto mb-4"
-                />
-              </div>
-              <h3 className="text-xl font-semibold mb-3 text-secondary text-left px-4">
-                {product.name}
-              </h3>
-              <p className="text-base text-secondary text-right px-8 pb-4" style={{ fontVariantNumeric: 'lining-nums' }}>
-                ৳ {product.price}
-              </p>
-            </div>
-          ))} */}
+        <h2 className="text-[#D4A373] text-2xl md:text-3xl lg:text-4xl font-light">
+          Featured Products
+        </h2>
       </div>
+      <Swiper
+        modules={[Navigation, Autoplay]}
+        autoplay={{ delay: 3000, disableOnInteraction: false }}
+        loop={true}
+        spaceBetween={20}
+        slidesPerView={1}
+        breakpoints={{
+          640: { slidesPerView: 2 },
+          768: { slidesPerView: 3 },
+          1024: { slidesPerView: 4 },
+          1280: { slidesPerView: 5 },
+        }}
+      >
+        {featuredProducts?.data?.result?.map((product: TProduct) => {
+          const { slug, name, thumbnailImage, backViewImage, price, discountType, discount } = product;
+
+          return (
+            <SwiperSlide key={product._id}>
+              <div className=" bg-white border border-gray-100 rounded-md">
+                <Link
+                  href={`product/${slug}`}
+                  className="group relative  text-center shadow-md shadow-gray-200 overflow-hidden"
+                >
+                  <div className="relative h-[250px] md:h-[200px] 2xl:h-[300px]">
+                    {/* Thumbnail Image */}
+                    <Image
+                      src={`${apiBaseUrl}${thumbnailImage}`}
+                      alt={name}
+                      fill
+                      className="rounded-md object-cover transition-opacity duration-500 group-hover:opacity-0"
+                    />
+
+                    {/* Back View Image */}
+                    {backViewImage && (
+                      <Image
+                        src={`${apiBaseUrl}${backViewImage}`}
+                        alt={`${name} Back`}
+                        fill
+                        className="rounded-md object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                      />
+                    )}
+
+                    {/* Discount Circle */}
+                    {discountType && discount && (
+                      <div className="absolute bottom-3 right-3 w-14 h-14 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg z-10">
+                        {discountType === "percent" ? `${discount}%` : `৳ ${discount}`}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Product Info */}
+                  <div className=" text-xl font-medium text-secondaryt px-4 py-4">
+                    <h3 className="text-left mt-3 text-md text-gray-800">{name}</h3>
+                    <p className="text-left mt-3" style={{ fontVariantNumeric: "lining-nums" }}>
+                      ৳ {price}
+                    </p>
+                  </div>
+                </Link>
+              </div>
+            </SwiperSlide>
+          );
+        })}
+
+      </Swiper>
     </section>
   );
 }

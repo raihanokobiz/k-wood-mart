@@ -52,9 +52,7 @@ class SubCategoryController {
   // Three for furniture
   getThreeForFurniture = catchError(async (req, res, next) => {
     const data = await SubCategoryService.getThreeForFurniture();
-    // Get last 3 items from the array
-    const lastThree = data.slice(0, 3);
-    const resDoc = responseHandler(200, "Get Three for furniture", lastThree);
+    const resDoc = responseHandler(200, "Get Three for furniture", data);
     res.status(resDoc.statusCode).json(resDoc);
   });
 

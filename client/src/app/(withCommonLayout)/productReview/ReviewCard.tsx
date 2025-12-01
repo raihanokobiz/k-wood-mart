@@ -18,19 +18,19 @@ export default function ReviewsCard({ review } : ReviewsCardProps) {
     <>
       <div
         key={review._id}
-        className="bg-white rounded-lg shadow-md  hover:shadow-lg transition"
+        className="bg-white"
       >
-        <div className=" w-full h-auto relative">
+        <div className=" w-full h-full relative">
           <YouTubeModal url={review.youtubeUrl} />
         </div>
-        <div className="flex justify-between p-4">
+        {/* <div className="flex justify-between p-4">
           <h3 className="font-semibold text-lg mb-1">
             {review.name}
           </h3>
           <p className="text-sm text-gray-500 mb-3">
             {review.district}
-          </p>
-        </div>
+          </p> */}
+        {/* </div> */}
       </div>
     </>
   );

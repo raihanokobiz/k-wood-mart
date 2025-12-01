@@ -3,151 +3,107 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TProduct } from "@/types";
 import { apiBaseUrl } from "@/config/config";
+import Image from "next/image";
+import Link from "next/link";
 
-interface FurnitureItem {
-  id: number;
-  name: string;
-  image: string;
-  price: string;
+interface SpecialFurnitureProps {
+  specialProducts: {
+    data: {
+      result: {
+        products: TProduct[];
+      };
+    };
+  };
 }
 
-const SpecialFurniture = ({ specialProducts }: TProduct) => {
+
+const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  console.log(specialProducts, "ok");
-
-  const furnitureItems: FurnitureItem[] = [
-    {
-      id: 1,
-      name: "Andaman-184",
-      image:
-        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop",
-      price: "BDT 36,100",
-    },
-    {
-      id: 2,
-      name: "Andaman-279",
-      image:
-        "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=400&h=400&fit=crop",
-      price: "BDT 39,150",
-    },
-    {
-      id: 3,
-      name: "Lucam-308",
-      image:
-        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop",
-      price: "BDT 18,468",
-    },
-    {
-      id: 4,
-      name: "Kennett-313",
-      image:
-        "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400&h=400&fit=crop",
-      price: "BDT 32,250",
-    },
-    {
-      id: 5,
-      name: "Modern-405",
-      image:
-        "https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=400&h=400&fit=crop",
-      price: "BDT 28,900",
-    },
-  ];
-
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % furnitureItems.length);
+    setCurrentIndex((prev) => (prev + 1) % specialProducts.data.result.products.length);
   };
 
   const prevSlide = () => {
-    setCurrentIndex(
-      (prev) => (prev - 1 + furnitureItems.length) % furnitureItems.length
+    setCurrentIndex((prev) =>
+      (prev - 1 + specialProducts.data.result.products.length) %
+      specialProducts.data.result.products.length
     );
   };
 
-  const getVisibleItems = () => {
-    const items = [];
-    for (let i = 0; i < 4; i++) {
-      items.push(furnitureItems[(currentIndex + i) % furnitureItems.length]);
-    }
-    return items;
-  };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 md:px-8 lg:px-16">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+    <div className="Container">
+      <div className=" bg-gray-100 py-12 px-4 md:px-8 lg:px-16">
+        <div className=" grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
           {/* Left Side - Text Content */}
-          <div className="text-center lg:text-left space-y-6">
+          <div className="lg:col-span-4 text-center lg:text-right space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-              Choose what resonates with your uniqueness
+              Discover Your Perfect  Style
             </h1>
             <p className="text-gray-600 text-lg md:text-xl">
-              Organize every space with our timeless furniture collections
+              Transform every corner of your home with our exclusive collections
             </p>
-            <div>
-              <button className="inline-flex items-center gap-2 text-gray-900 font-medium text-lg border-b-2 border-gray-900 pb-1 hover:border-amber-900 hover:text-amber-900 transition-colors">
-                Explore Now
-              </button>
-            </div>
+            {/* <div>
+              <Link href="/special/furniture">
+                <button className="inline-flex items-center gap-2 text-gray-900 font-medium text-lg border-b-2 border-gray-900 pb-1 hover:border-amber-900 hover:text-amber-900 transition-colors">
+                  Explore Now
+                </button>
+              </Link>
+            </div> */}
           </div>
-
           {/* Right Side - Featured Image */}
-          <div className="relative">
-            <div className="bg-white rounded-lg shadow-xl p-8 md:p-12">
-              <img
-                src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=500&fit=crop"
-                alt="Featured Furniture"
-                className="w-full h-auto object-cover rounded-lg"
+          <div className="lg:col-span-8 space-y-8">
+            {/* Featured Image */}
+            <div className="relative bg-white rounded shadow-lg overflow-hidden w-[600px] h-[500px] mx-auto aspect-square">
+              <Image
+                src={`${apiBaseUrl}${specialProducts?.data?.result?.childCategory?.image}`}
+                alt={specialProducts.data.result.products[currentIndex].name}
+                fill
+                className="object-cover"
               />
             </div>
-          </div>
-        </div>
+            {/* Carousel */}
+            <div className="flex items-center justify-center gap-3">
+              {/* Previous Button */}
+              <button
+                onClick={prevSlide}
+                className="w-10 h-10 rounded-full bg-white shadow hover:shadow-md flex items-center justify-center transition-all"
+                aria-label="Previous"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-700" />
+              </button>
 
-        {/* Bottom Carousel */}
-        <div className="mt-16 relative">
-          <div className="flex items-center justify-center gap-4">
-            {/* Previous Button */}
-            <button
-              onClick={prevSlide}
-              className="flex-shrink-0 w-10 h-10 rounded-full bg-white shadow-md hover:shadow-lg flex items-center justify-center transition-shadow"
-              aria-label="Previous"
-            >
-              <ChevronLeft className="w-6 h-6 text-gray-700" />
-            </button>
+              {/* Carousel Items */}
+              <div className="flex gap-3 overflow-hidden">
+                {specialProducts?.data?.result?.products.slice(0, 4).map((item, index) => (
+                  <div
+                    key={`${item.id}-${index}`}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`bg-white rounded-lg shadow hover:shadow-md transition-all cursor-pointer ${currentIndex === index ? 'ring-2 ring-amber-900' : ''
+                      }`}
+                  >
+                    <div className="relative w-[250px] h-[250px] rounded">
+                      <Image
+                        src={`${apiBaseUrl}${item?.thumbnailImage}`}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-            {/* Carousel Items */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1 max-w-5xl">
-              {specialProducts?.data?.result?.products.map((item, index) => (
-                <div
-                  key={`${item.id}-${index}`}
-                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden group cursor-pointer"
-                >
-                  <div className="aspect-square overflow-hidden">
-                    <img
-                      src={`${apiBaseUrl}${item?.thumbnailImage}`}
-                      alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="p-4 text-center">
-                    <p className="text-sm text-gray-600 mb-1">{item.name}</p>
-                    <p className="text-sm font-semibold text-gray-900">
-                      Starts from{" "}
-                      <span className="text-amber-900">{item.price}</span>
-                    </p>
-                  </div>
-                </div>
-              ))}
+              {/* Next Button */}
+              <button
+                onClick={nextSlide}
+                className="w-10 h-10 rounded-full bg-white shadow hover:shadow-md flex items-center justify-center transition-all"
+                aria-label="Next"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-700" />
+              </button>
             </div>
-
-            {/* Next Button */}
-            <button
-              onClick={nextSlide}
-              className="flex-shrink-0 w-10 h-10 rounded-full bg-white shadow-md hover:shadow-lg flex items-center justify-center transition-shadow"
-              aria-label="Next"
-            >
-              <ChevronRight className="w-6 h-6 text-gray-700" />
-            </button>
           </div>
         </div>
       </div>

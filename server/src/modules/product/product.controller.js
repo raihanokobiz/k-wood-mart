@@ -4,6 +4,21 @@ const withTransaction = require("../../middleware/transactions/withTransaction.j
 const ProductService = require("./product.service.js");
 const { ensureNullIfUndefined } = require("../../utils/helpers.js");
 
+// Helper: safely parse a field that may be either a JSON string or already an object/array
+function parseMaybeJSON(value) {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      // If it isn't valid JSON, return the original string
+      return value;
+    }
+  }
+  // If it's already an object/array, return as-is
+  return value;
+}
+
 class ProductController {
   createProduct = withTransaction(async (req, res, next, session) => {
     const payloadFiles = {
@@ -29,18 +44,16 @@ class ProductController {
       inventoryType: req.body.inventoryType,
       inventory: req?.body?.inventory,
       // inventoryArray: JSON.parse(req.body.inventory),
-      inventoryArray: req?.body?.inventoryArray
-        ? JSON.parse(req?.body?.inventoryArray)
-        : [],
+      inventoryArray: parseMaybeJSON(req?.body?.inventoryArray) || [],
       slug: req.body.slug,
       barcode: req.body.barcode,
       featured: req.body.featured === "true",
       // 🆕 NEW FIELDS
       material: req.body.material || null,
-      fabrics: req.body.fabrics ? JSON.parse(req.body.fabrics) : [],
-      colors: req.body.colors ? JSON.parse(req.body.colors) : [],
-      sizes: req.body.sizes ? JSON.parse(req.body.sizes) : [],
-      set: req.body.set ? JSON.parse(req.body.set) : [],
+      fabrics: parseMaybeJSON(req.body.fabrics) || [],
+      colors: parseMaybeJSON(req.body.colors) || [],
+      sizes: parseMaybeJSON(req.body.sizes) || [],
+      set: parseMaybeJSON(req.body.set) || [],
     };
 
     // console.log("$#%$#%#$ payload from controller:", payload);
@@ -333,16 +346,15 @@ class ProductController {
         ),
         inventoryType: req.body.inventoryType,
         inventory: req?.body?.inventory,
-        inventoryArray: req?.body?.inventoryArray
-          ? JSON.parse(req?.body?.inventoryArray)
-          : [],
+        inventoryArray: parseMaybeJSON(req?.body?.inventoryArray) || [],
         slug: req.body.slug,
         barcode: req.body.barcode,
         // 🆕 NEW FIELDS for update
         material: req.body.material || null,
-        fabrics: req.body.fabrics ? JSON.parse(req.body.fabrics) : [],
-        colors: req.body.colors ? JSON.parse(req.body.colors) : [],
-        sizes: req.body.sizes ? JSON.parse(req.body.sizes) : [],
+        fabrics: parseMaybeJSON(req.body.fabrics) || [],
+        colors: parseMaybeJSON(req.body.colors) || [],
+        sizes: parseMaybeJSON(req.body.sizes) || [],
+        set: parseMaybeJSON(req.body.set) || [],
       };
 
       await ProductService.updateProduct(id, payloadFiles, payload, session);
@@ -359,10 +371,10 @@ class ProductController {
     }
   });
 
-  updateProductStatus = catchError(async (req, res) => {
+  updateProductStatusisNewArrival = catchError(async (req, res) => {
     const id = req.params.id;
     const status = req.query.status;
-    await ProductService.updateProductStatus(id, status);
+    await ProductService.updateProductStatusisNewArrival(id, status);
     const resDoc = responseHandler(201, "Product Status Update successfully");
     res.status(resDoc.statusCode).json(resDoc);
   });
