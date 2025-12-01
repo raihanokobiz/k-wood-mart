@@ -20,7 +20,7 @@ export default function ReviewsCard({ review } : ReviewsCardProps) {
         key={review._id}
         className="bg-white"
       >
-        <div className=" w-full h-full relative">
+        <div className="w-full h-full relative">
           <YouTubeModal url={review.youtubeUrl} />
         </div>
         {/* <div className="flex justify-between p-4">

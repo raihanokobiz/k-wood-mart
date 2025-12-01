@@ -8,7 +8,7 @@ body {
 
 @layer base {
   .Container {
-    @apply py-6 md:py-8 2xl:py-12 px-4 md:px-6 lg:px-8 2xl:px-12;
+    @apply py-6 md:py-8 px-4 md:px-6 lg:px-8 2xl:px-12;
   }
 
   .text-primary {

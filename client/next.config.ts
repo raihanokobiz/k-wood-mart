@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
         hostname: "k-wood-mart-server.vercel.app",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
     ],
   },
 };

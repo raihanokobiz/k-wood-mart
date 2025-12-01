@@ -4,6 +4,7 @@ import { getCartProducts } from "@/services/cart";
 import { getUser } from "@/services/auth";
 import Image from "next/image";
 import ReviewsCard from "./ReviewCard";
+import R1 from "../../../assets/review/R1.jpg"
 
 export default async function ProductReviewsPage() {
   const user = await getUser();
@@ -20,7 +21,7 @@ export default async function ProductReviewsPage() {
         <div className="relative overflow-hidden h-64 md:h-80 lg:h-[450px]">
           <div className="relative w-full h-full">
             <Image
-              src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1920&q=80"
+              src={R1}
               alt="Premium Furniture Collection"
               fill
               className="object-cover"
@@ -45,7 +46,7 @@ export default async function ProductReviewsPage() {
         </div>
         {/* Reviews Content Section */}
         <div className="py-6 md:py-8 2xl:py-12 px-4 md:px-6 lg:px-8 2xl:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-6">
             {data?.result?.map((review: any) => (
                <ReviewsCard key={review._id} review={review} />
             ))}
