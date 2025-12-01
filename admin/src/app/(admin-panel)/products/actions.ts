@@ -9,6 +9,10 @@ import {
 import { revalidatePath } from "next/cache";
 
 export async function createFormAction(data: FormData) {
+
+  console.log(FormData, "form data in action ts........");
+  
+
   try {
     const inventoryType = data.get("inventoryType");
     const inventoryEntries = data.getAll("inventories") as string[];
@@ -132,23 +136,18 @@ export async function createFormAction(data: FormData) {
     );
 
     colorIndices.forEach((index) => {
-      const colorCode = data.get(`colors[${index}][colorCode]`) as string;
       const colorName = data.get(`colors[${index}][colorName]`) as string;
       const images = data.getAll(`colors[${index}][images]`);
 
       colorData.push({
-        colorCode,
         colorName,
         images: images.length > 0 ? images : [],
       });
-
-      data.delete(`colors[${index}][colorCode]`);
       data.delete(`colors[${index}][colorName]`);
       data.delete(`colors[${index}][images]`);
     });
 
     const colorsPayload = colorData.map((c) => ({
-      colorCode: c.colorCode,
       colorName: c.colorName,
       images: [],
     }));
@@ -178,24 +177,20 @@ export async function createFormAction(data: FormData) {
     );
 
     sizeIndices.forEach((index) => {
-      const colorCode = data.get(`sizes[${index}][colorCode]`) as string;
-      const colorName = data.get(`sizes[${index}][colorName]`) as string;
+      const sizeName = data.get(`sizes[${index}][sizeName]`) as string;
       const images = data.getAll(`sizes[${index}][images]`);
 
       sizeData.push({
-        colorCode,
-        colorName,
+         sizeName,
         images: images.length > 0 ? images : [],
       });
 
-      data.delete(`sizes[${index}][colorCode]`);
-      data.delete(`sizes[${index}][colorName]`);
+      data.delete(`sizes[${index}][sizeName]`);
       data.delete(`sizes[${index}][images]`);
     });
 
     const sizesPayload = sizeData.map((s) => ({
-      colorCode: s.colorCode,
-      colorName: s.colorName,
+      sizeName: s.sizeName,
       images: [],
     }));
     data.set("sizes", JSON.stringify(sizesPayload));
@@ -361,17 +356,15 @@ export async function updateFormAction(id: string, data: FormData) {
     );
 
     colorIndices.forEach((index) => {
-      const colorCode = data.get(`colors[${index}][colorCode]`) as string;
       const colorName = data.get(`colors[${index}][colorName]`) as string;
       const images = data.getAll(`colors[${index}][images]`);
 
       colorData.push({
-        colorCode,
         colorName,
         images: images.length > 0 ? images : [],
       });
     });
-    
+
     // Sizes data processing
     const sizeData: any[] = [];
     const sizeKeys = Array.from(data.keys()).filter((key) =>
@@ -388,12 +381,10 @@ export async function updateFormAction(id: string, data: FormData) {
     );
 
     sizeIndices.forEach((index) => {
-      const colorCode = data.get(`sizes[${index}][colorCode]`) as string;
       const colorName = data.get(`sizes[${index}][colorName]`) as string;
       const images = data.getAll(`sizes[${index}][images]`);
 
       sizeData.push({
-        colorCode,
         colorName,
         images: images.length > 0 ? images : [],
       });

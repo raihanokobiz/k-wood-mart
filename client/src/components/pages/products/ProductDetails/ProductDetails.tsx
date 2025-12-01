@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { getUser } from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useAnimation } from "framer-motion";
+import Link from "next/link";
 
 interface Props {
   product: TProduct;
@@ -34,6 +35,9 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const controls = useAnimation();
+
+
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
 
   const {
     name,
@@ -386,6 +390,30 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               name={name}
               videoUrl={product.videoUrl}
             />
+            {/* Description */}
+            <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden mt-6">
+              <button
+                onClick={() => setIsDescriptionOpen(!isDescriptionOpen)}
+                className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
+                    <span className="text-lg">📋</span>
+                  </div>
+                  <h3 className={`text-lg font-bold text-[#262626] ${rajdhani.className}`}>
+                    Product Details
+                  </h3>
+                </div>
+                <svg className={`w-5 h-5 transition-transform duration-300 ${isDescriptionOpen ? "rotate-180" : ""}`}>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isDescriptionOpen && (
+                <div className="px-6 pb-6 border-t border-gray-200 pt-4">
+                  <div dangerouslySetInnerHTML={{ __html: description }} />
+                </div>
+              )}
+            </div>
           </div>
           <div className="space-y-6 lg:col-span-4 bg-gray-100 rounded-md p-6">
             {/* Product Title & Price */}
@@ -596,10 +624,6 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                                 : "border-gray-200 hover:border-[#D4A373]/50"
                                 }`}
                             >
-                              <div
-                                className="w-10 h-10 rounded-md border-2 border-white shadow"
-                                style={{ backgroundColor: color.colorCode }}
-                              />
                               <span className="font-medium text-sm">
                                 {color.colorName}
                               </span>
@@ -661,12 +685,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                                 : "border-gray-200 hover:border-[#D4A373]/50"
                                 }`}
                             >
-                              <div
-                                className="w-10 h-10 rounded-md border-2 border-white shadow"
-                                style={{ backgroundColor: size.colorCode }}
-                              />
-                              <span className="font-medium text-sm">
-                                {size.colorName}
+                              <span className="font-medium text-sm text-gray-600">
+                                {size.sizeName}
                               </span>
                             </button>
                           ))}
@@ -839,6 +859,65 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                 </div>
               )}
 
+
+            {/* Quantity & Actions */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                {/* Quantity Counter */}
+                <div className="flex items-center bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    onClick={handleDecrement}
+                    className="px-8 py-3 hover:bg-gray-100 transition-colors duration-200 font-bold text-lg"
+                  >
+                    <FiMinus />
+                  </button>
+                  <span className="px-8 py-3 font-bold text-lg border-x-2 border-gray-300 min-w-[60px] text-center">
+                    {count}
+                  </span>
+                  <button
+                    onClick={handleIncrement}
+                    className="px-8 py-3 hover:bg-gray-100 transition-colors duration-200 font-bold text-lg"
+                  >
+                    <FiPlus />
+                  </button>
+                </div>
+
+                {/* Action Buttons */}
+                {/* <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={loading}
+                    className="cursor-pointer flex-1 bg-[#D4A373] hover:bg-[#CCD5AE] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    <FiPlus className="text-xl" />
+                    <span>{loading ? "Adding..." : "Add To Cart"}</span>
+                  </button>
+
+                  <button
+                    onClick={handleBuyNow}
+                    disabled={loading}
+                    className="cursor-pointer flex-1 bg-[#262626] hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    {loading ? "Processing..." : "Buy Now"}
+                  </button>
+                </div> */}
+                <Link href="/contact" className="flex-1 w-full">
+                  <button
+                    className="flex-1 w-full bg-gradient-to-r from-[#D4A373] to-[#CCD5AE] hover:from-[#CCD5AE] hover:to-[#D4A373] transition-all duration-500 px-8 py-4 font-bold text-lg rounded-lg text-white shadow-lg hover:shadow-md  flex items-center justify-center gap-3 group cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Get a Quote</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </Link>
+
+              </div>
+            </div>
+
             {/* EMI Plan */}
             <div className="bg-gradient-to-br from-[#D4A373]/10 via-[#D4A373]/5 to-transparent rounded-xl p-6 border-2 border-[#D4A373]/30">
               <div className="flex items-center gap-3 mb-4">
@@ -934,52 +1013,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               )}
             </div>
 
-            {/* Quantity & Actions */}
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row items-center gap-3">
-                {/* Quantity Counter */}
-                <div className="flex items-center bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
-                  <button
-                    onClick={handleDecrement}
-                    className="px-5 py-3 hover:bg-gray-100 transition-colors duration-200 font-bold text-lg"
-                  >
-                    <FiMinus />
-                  </button>
-                  <span className="px-6 py-3 font-bold text-lg border-x-2 border-gray-300 min-w-[60px] text-center">
-                    {count}
-                  </span>
-                  <button
-                    onClick={handleIncrement}
-                    className="px-5 py-3 hover:bg-gray-100 transition-colors duration-200 font-bold text-lg"
-                  >
-                    <FiPlus />
-                  </button>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={loading}
-                    className="cursor-pointer flex-1 bg-[#D4A373] hover:bg-[#CCD5AE] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                  >
-                    <FiPlus className="text-xl" />
-                    <span>{loading ? "Adding..." : "Add To Cart"}</span>
-                  </button>
-
-                  <button
-                    onClick={handleBuyNow}
-                    disabled={loading}
-                    className="cursor-pointer flex-1 bg-[#262626] hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                  >
-                    {loading ? "Processing..." : "Buy Now"}
-                  </button>
-                </div>
-              </div>
-            </div>
-
             {/* Description */}
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 lg:hidden">
               <h3
                 className={`text-lg font-bold text-[#262626] mb-3 ${rajdhani.className}`}
               >

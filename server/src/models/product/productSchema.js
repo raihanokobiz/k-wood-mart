@@ -139,7 +139,6 @@ const Productschema = new Schema(
     colors: {
       type: [
         {
-          colorCode: { type: String },
           colorName: { type: String },
           images: { type: [String], default: [] },
         },
@@ -149,8 +148,7 @@ const Productschema = new Schema(
     sizes: {
       type: [
         {
-          colorCode: { type: String },
-          colorName: { type: String },
+          sizeName: { type: String },
           images: { type: [String], default: [] },
         },
       ],

@@ -65,7 +65,6 @@ export function makeFormData(data: Record<string, any>) {
     // Handle colors array with nested images
     else if (key === "colors" && Array.isArray(value)) {
       value.forEach((color, index) => {
-        formData.append(`colors[${index}][colorCode]`, color.colorCode || "");
         formData.append(`colors[${index}][colorName]`, color.colorName || "");
 
         // Handle color images
@@ -84,8 +83,7 @@ export function makeFormData(data: Record<string, any>) {
     // Handle sizes array with nested images
     else if (key === "sizes" && Array.isArray(value)) {
       value.forEach((size, index) => {
-        formData.append(`sizes[${index}][colorCode]`, size.colorCode || "");
-        formData.append(`sizes[${index}][colorName]`, size.colorName || "");
+        formData.append(`sizes[${index}][sizeName]`, size.sizeName || "");
 
         // Handle size images
         if (Array.isArray(size.images) && size.images.length > 0) {

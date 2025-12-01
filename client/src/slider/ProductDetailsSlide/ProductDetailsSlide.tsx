@@ -119,7 +119,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
         </div>
       </div>
       {/* Main Preview Area */}
-      <div className=" relative order-1 lg:order-2 w-full h-[300px] sm:min-h-[420px] md:min-h-[500px] lg:min-h-[650px] rounded-md overflow-hidden shadow-md bg-gray-100">
+      <div className=" relative order-1 lg:order-2 w-full h-[300px] sm:min-h-[420px] md:min-h-[500px] lg:min-h-[80vh] rounded-md overflow-hidden shadow-md bg-gray-100">
         <AnimatePresence mode="wait">
           {isVideo ? (
             <motion.div
@@ -150,7 +150,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
                 src={selectedItem}
                 alt={`${name} - View ${selectedIndex + 1}`}
                 fill
-                className="object-cover p-4 w-full h-full rounded-md"
+                className="object-cover p-4 w-full h-full rounded-md max-h-screen"
                 priority={selectedIndex === 0}
               />
 
