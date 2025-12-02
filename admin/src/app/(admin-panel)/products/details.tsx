@@ -20,7 +20,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileUp, MoreHorizontal, Paperclip, Plus, Trash } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { deleteProductAction, updateFormAction } from "./actions";
@@ -72,15 +72,13 @@ type InventoryForm = {
   quantity?: number;
 };
 
-
-export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
- 
+export const ProductDetailsSheet: FC<Props> = ({ product }) => {
   const { toast } = useToast();
 
-  const [sheetOpen, setSheetOpen] = React.useState(false);
-  const [updating, setUpdating] = React.useState(false);
-  const [deleting, setDeleting] = React.useState(false);
-  const [imageFileList, setImageFileList] = React.useState<UploadFile<any>[]>(
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [imageFileList, setImageFileList] = useState<UploadFile<any>[]>(
     product.images?.map((item, index) => ({
       uid: `-${index + 1}`,
       name: String(item).split("/").pop() || `image-${index + 1}`,
@@ -88,46 +86,33 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
       url: fileUrlGenerator(item),
     })) || []
   );
+
   // pabric
-  const [fabricImageFileLists, setFabricImageFileLists] = React.useState<
+  const [fabricImageFileLists, setFabricImageFileLists] = useState<
     Record<number, any[]>
   >({});
-  const [colorImageFileLists, setColorImageFileLists] = React.useState<
+  const [colorImageFileLists, setColorImageFileLists] = useState<
     Record<number, any[]>
   >({});
-  const [sizeImageFileLists, setSizeImageFileLists] = React.useState<
+  const [sizeImageFileLists, setSizeImageFileLists] = useState<
     Record<number, any[]>
   >({});
-  const [setImageFileLists, setSetImageFileLists] = React.useState<
+  const [setImageFileLists, setSetImageFileLists] = useState<
     Record<number, any[]>
   >({});
 
-  const imagesDemo = product.images?.map((data) => { });
-  // console.log(
-  //   imagesDemo,
-  //   "mapped images from product details 22222222222222222222222222222"
-  // );
+  const [thumbnailFileList, setThumbnailFileList] = useState<UploadFile<any>[]>(
+    [
+      {
+        uid: "-1",
+        name: String(product.thumbnailImage).split("/").pop() || "",
+        status: "done",
+        url: fileUrlGenerator(product.thumbnailImage || ""),
+      },
+    ]
+  );
 
-  // console.log(imageFileList, "image filelist from details 3333333333333333333");
-
-  const [thumbnailFileList, setThumbnailFileList] = React.useState<
-    UploadFile<any>[]
-  >([
-    {
-      uid: "-1",
-      name: String(product.thumbnailImage).split("/").pop() || "",
-      status: "done",
-      url: fileUrlGenerator(product.thumbnailImage || ""),
-    },
-  ]);
-  // console.log(
-  //   thumbnailFileList,
-  //   "thumbnail file list from details 44444444444444444444444"
-  // );
-
-  const [backViewFileList, setBackViewFileList] = React.useState<
-    UploadFile<any>[]
-  >([
+  const [backViewFileList, setBackViewFileList] = useState<UploadFile<any>[]>([
     {
       uid: "-1",
       name: String(product.backViewImage).split("/").pop() || "",
@@ -136,25 +121,21 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
     },
   ]);
 
-  const [sizeChartFileList, setSizeChartFileList] = React.useState<
-    UploadFile<any>[]
-  >([
-    {
-      uid: "-1",
-      name: String(product.sizeChartImage).split("/").pop() || "",
-      status: "done",
-      url: fileUrlGenerator(product.sizeChartImage || ""),
-    },
-  ]);
+  const [sizeChartFileList, setSizeChartFileList] = useState<UploadFile<any>[]>(
+    [
+      {
+        uid: "-1",
+        name: String(product.sizeChartImage).split("/").pop() || "",
+        status: "done",
+        url: fileUrlGenerator(product.sizeChartImage || ""),
+      },
+    ]
+  );
 
-
-  const [brands, setBrands] = React.useState<TBrand[]>([]);
-  const [categories, setCategories] = React.useState<TCategory[]>([]);
-  const [subCategories, setSubCategories] = React.useState<TSubCategory[]>([]);
-  const [childCategories, setChildCategories] = React.useState<
-    TChildCategory[]
-  >([]);
-
+  const [brands, setBrands] = useState<TBrand[]>([]);
+  const [categories, setCategories] = useState<TCategory[]>([]);
+  const [subCategories, setSubCategories] = useState<TSubCategory[]>([]);
+  const [childCategories, setChildCategories] = useState<TChildCategory[]>([]);
 
   const form = useForm<z.infer<typeof productFormSchema>>({
     resolver: zodResolver(productFormSchema),
@@ -178,8 +159,6 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
     },
   });
 
-
-
   // ✅ Step 2: Product আসলে form reset করুন
   useEffect(() => {
     if (product) {
@@ -201,71 +180,73 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
         sizeChartImage: [],
         inventories: product.inventoryRef?.length
           ? product.inventoryRef.map((item: any) => ({
-            quantity: String(item.quantity),
-            ...(item._id && { id: item._id || '' }),
-            ...(item.color && { color: item.color }),
-            ...(item.name && { colorName: upperFirst(item.name) }),
-            ...(item.level && { size: upperCase(item.level) }),
-            ...(item.price && { price: upperCase(item.price) }),
-            ...(item.mrpPrice && { mrpPrice: upperCase(item.mrpPrice) }),
-          }))
+              quantity: String(item.quantity),
+              ...(item._id && { id: item._id || "" }),
+              ...(item.color && { color: item.color }),
+              ...(item.name && { colorName: upperFirst(item.name) }),
+              ...(item.level && { size: upperCase(item.level) }),
+              ...(item.price && { price: upperCase(item.price) }),
+              ...(item.mrpPrice && { mrpPrice: upperCase(item.mrpPrice) }),
+            }))
           : [{ quantity: product.mainInventory }],
-        // ......
         videoUrl: product.videoUrl || "",
         material: product.material || "",
-        fabrics: product.fabrics?.length ? product.fabrics : [{ colorCode: "#1677ff", colorName: "", images: [] }],
-        colors: product.colors?.length ? product.colors : [{ colorCode: "#1677ff", colorName: "", images: [] }],
-        sizes: product.sizes?.length ? product.sizes : [{ colorCode: "#1677ff", colorName: "", images: [] }],
-        set: product.set?.length ? product.set : [{ setName: "", images: [] }],
-      });
-      // ✅ এই part টা যোগ করুন - manually field arrays reset করার জন্য
 
-      // Reset fabrics if they exist
+        // ❌ এখানে fabrics, colors, sizes, set দেবেন না
+      });
+
+      // ✅ Manually handle Fabrics
+      // প্রথমে সব clear করুন
+      while (fabricFields.length > 0) {
+        removeFabric(0);
+      }
+      // তারপর product থেকে add করুন
       if (product.fabrics?.length) {
-        // Clear existing fields first
-        while (fabricFields.length > 0) {
-          removeFabric(0);
-        }
-        // Add product fabrics
         product.fabrics.forEach((fabric: any) => {
           appendFabric(fabric);
         });
+      } else {
+        // যদি product এ না থাকে, default 1টা রাখুন
+        appendFabric({ colorCode: "#1677ff", colorName: "", images: [] });
       }
 
-      // Reset colors if they exist
+      // ✅ Manually handle Colors
+      while (colorFields.length > 0) {
+        removeColor(0);
+      }
       if (product.colors?.length) {
-        while (colorFields.length > 0) {
-          removeColor(0);
-        }
         product.colors.forEach((color: any) => {
           appendColor(color);
         });
+      } else {
+        appendColor({ colorCode: "#1677ff", colorName: "", images: [] });
       }
 
-      // Reset sizes if they exist
+      // ✅ Manually handle Sizes
+      while (sizeFields.length > 0) {
+        removeSize(0);
+      }
       if (product.sizes?.length) {
-        while (sizeFields.length > 0) {
-          removeSize(0);
-        }
         product.sizes.forEach((size: any) => {
           appendSize(size);
         });
+      } else {
+        appendSize({ colorCode: "#1677ff", colorName: "", images: [] });
       }
 
-      // Reset sets if they exist
+      // ✅ Manually handle Set
+      while (setFields.length > 0) {
+        removeSet(0);
+      }
       if (product.set?.length) {
-        while (setFields.length > 0) {
-          removeSet(0);
-        }
         product.set.forEach((setItem: any) => {
           appendSet(setItem);
         });
+      } else {
+        appendSet({ setName: "", images: [] });
       }
-
     }
   }, [product]);
-
-
 
   const selectedCategoryId = form.watch("categoryRef");
   const selectedSubCategoryId = form.watch("subCategoryRef");
@@ -328,35 +309,35 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
 
   const selectedColor = form.watch("color");
 
-  React.useEffect(() => {
+  useEffect(() => {
     getAllBrand().then((data) => setBrands(data.data));
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getAllCategory().then((data) => setCategories(data.data));
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getAllSubCategory().then((data) => setSubCategories(data.data));
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getAllChildCategory().then((data) => setChildCategories(data.data));
   }, []);
 
-  const filteredSubCategories = React.useMemo(() => {
+  const filteredSubCategories = useMemo(() => {
     return subCategories.filter(
       (subCat) => subCat?.categoryRef?._id === selectedCategoryId
     );
   }, [subCategories, selectedCategoryId]);
 
-  const filteredChildCategories = React.useMemo(() => {
+  const filteredChildCategories = useMemo(() => {
     return childCategories.filter(
       (childCat) => childCat?.subCategoryRef?._id === selectedSubCategoryId
     );
   }, [subCategories, selectedSubCategoryId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (product.thumbnailImage) {
       const fetchExistingThumbnail = async () => {
         const response = await fetch(fileUrlGenerator(product.thumbnailImage));
@@ -380,21 +361,39 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
     }
   }, [product.thumbnailImage]);
 
-
   // Load existing fabric images
   React.useEffect(() => {
     if (product.fabrics && product.fabrics.length > 0) {
       const fabricLists: Record<number, any[]> = {};
-      product.fabrics.forEach((fabric: any, index: number) => {
+
+      product.fabrics.forEach(async (fabric: any, index: number) => {
         if (fabric.images && fabric.images.length > 0) {
-          fabricLists[index] = fabric.images.map((img: string, imgIndex: number) => ({
-            uid: `fabric-${index}-${imgIndex}`,
-            name: String(img).split("/").pop() || `fabric-${index}-${imgIndex}`,
-            status: "done",
-            url: fileUrlGenerator(img),
-          }));
+          // Preview এর জন্য fileList
+          fabricLists[index] = fabric.images.map(
+            (img: string, imgIndex: number) => ({
+              uid: `fabric-${index}-${imgIndex}`,
+              name:
+                String(img).split("/").pop() || `fabric-${index}-${imgIndex}`,
+              status: "done",
+              url: fileUrlGenerator(img),
+            })
+          );
+
+          // ✅ Form value এর জন্য File objects তৈরি করুন
+          const fileObjects = await Promise.all(
+            fabric.images.map(async (img: string) => {
+              const response = await fetch(fileUrlGenerator(img));
+              const blob = await response.blob();
+              return new File([blob], String(img).split("/").pop() || "image", {
+                type: blob.type,
+              });
+            })
+          );
+
+          form.setValue(`fabrics.${index}.images`, fileObjects);
         }
       });
+
       setFabricImageFileLists(fabricLists);
     }
   }, [product.fabrics]);
@@ -403,16 +402,34 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
   React.useEffect(() => {
     if (product.colors && product.colors.length > 0) {
       const colorLists: Record<number, any[]> = {};
-      product.colors.forEach((color: any, index: number) => {
+
+      product.colors.forEach(async (color: any, index: number) => {
         if (color.images && color.images.length > 0) {
-          colorLists[index] = color.images.map((img: string, imgIndex: number) => ({
-            uid: `color-${index}-${imgIndex}`,
-            name: String(img).split("/").pop() || `color-${index}-${imgIndex}`,
-            status: "done",
-            url: fileUrlGenerator(img),
-          }));
+          colorLists[index] = color.images.map(
+            (img: string, imgIndex: number) => ({
+              uid: `color-${index}-${imgIndex}`,
+              name:
+                String(img).split("/").pop() || `color-${index}-${imgIndex}`,
+              status: "done",
+              url: fileUrlGenerator(img),
+            })
+          );
+
+          // ✅ File objects
+          const fileObjects = await Promise.all(
+            color.images.map(async (img: string) => {
+              const response = await fetch(fileUrlGenerator(img));
+              const blob = await response.blob();
+              return new File([blob], String(img).split("/").pop() || "image", {
+                type: blob.type,
+              });
+            })
+          );
+
+          form.setValue(`colors.${index}.images`, fileObjects);
         }
       });
+
       setColorImageFileLists(colorLists);
     }
   }, [product.colors]);
@@ -421,16 +438,33 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
   React.useEffect(() => {
     if (product.sizes && product.sizes.length > 0) {
       const sizeLists: Record<number, any[]> = {};
-      product.sizes.forEach((size: any, index: number) => {
+
+      product.sizes.forEach(async (size: any, index: number) => {
         if (size.images && size.images.length > 0) {
-          sizeLists[index] = size.images.map((img: string, imgIndex: number) => ({
-            uid: `size-${index}-${imgIndex}`,
-            name: String(img).split("/").pop() || `size-${index}-${imgIndex}`,
-            status: "done",
-            url: fileUrlGenerator(img),
-          }));
+          sizeLists[index] = size.images.map(
+            (img: string, imgIndex: number) => ({
+              uid: `size-${index}-${imgIndex}`,
+              name: String(img).split("/").pop() || `size-${index}-${imgIndex}`,
+              status: "done",
+              url: fileUrlGenerator(img),
+            })
+          );
+
+          // ✅ File objects তৈরি করুন
+          const fileObjects = await Promise.all(
+            size.images.map(async (img: string) => {
+              const response = await fetch(fileUrlGenerator(img));
+              const blob = await response.blob();
+              return new File([blob], String(img).split("/").pop() || "image", {
+                type: blob.type,
+              });
+            })
+          );
+
+          form.setValue(`sizes.${index}.images`, fileObjects);
         }
       });
+
       setSizeImageFileLists(sizeLists);
     }
   }, [product.sizes]);
@@ -439,16 +473,33 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
   React.useEffect(() => {
     if (product.set && product.set.length > 0) {
       const setLists: Record<number, any[]> = {};
-      product.set.forEach((setItem: any, index: number) => {
+
+      product.set.forEach(async (setItem: any, index: number) => {
         if (setItem.images && setItem.images.length > 0) {
-          setLists[index] = setItem.images.map((img: string, imgIndex: number) => ({
-            uid: `set-${index}-${imgIndex}`,
-            name: String(img).split("/").pop() || `set-${index}-${imgIndex}`,
-            status: "done",
-            url: fileUrlGenerator(img),
-          }));
+          setLists[index] = setItem.images.map(
+            (img: string, imgIndex: number) => ({
+              uid: `set-${index}-${imgIndex}`,
+              name: String(img).split("/").pop() || `set-${index}-${imgIndex}`,
+              status: "done",
+              url: fileUrlGenerator(img),
+            })
+          );
+
+          // ✅ File objects তৈরি করুন
+          const fileObjects = await Promise.all(
+            setItem.images.map(async (img: string) => {
+              const response = await fetch(fileUrlGenerator(img));
+              const blob = await response.blob();
+              return new File([blob], String(img).split("/").pop() || "image", {
+                type: blob.type,
+              });
+            })
+          );
+
+          form.setValue(`set.${index}.images`, fileObjects);
         }
       });
+
       setSetImageFileLists(setLists);
     }
   }, [product.set]);
@@ -592,7 +643,7 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
   const onSubmitUpdate = async (values: z.infer<typeof productFormSchema>) => {
     setUpdating(true);
     const data = makeFormData(values);
-    console.log('data---', data)
+    console.log("data---", data);
     try {
       await updateFormAction(String(product._id), data);
       toast({
@@ -1093,33 +1144,6 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                     className="border p-4 mb-1 rounded-md relative"
                   >
                     <div className="grid grid-cols-3 gap-2 mb-2">
-                      {/* Color Code Picker */}
-                      <Controller
-                        control={control}
-                        name={`colors.${index}.colorCode`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <FormLabel>Color Code</FormLabel>
-                            <FormControl>
-                              <ColorPicker
-                                value={field.value || "#1677ff"}
-                                showText
-                                allowClear
-                                onChange={(color) =>
-                                  field.onChange(color.toHexString())
-                                }
-                              />
-                            </FormControl>
-                            <FormDescription className="text-red-400 text-xs min-h-4">
-                              {
-                                formState.errors?.colors?.[index]?.colorCode
-                                  ?.message
-                              }
-                            </FormDescription>
-                          </FormItem>
-                        )}
-                      />
-
                       {/* Color Name */}
                       <FormItem>
                         <FormLabel>Color Name</FormLabel>
@@ -1188,7 +1212,6 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                   type="button"
                   onClick={() =>
                     appendColor({
-                      colorCode: "#1677ff",
                       colorName: "",
                       images: [],
                     })
@@ -1211,33 +1234,6 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                     className="border p-4 mb-1 rounded-md relative"
                   >
                     <div className="grid grid-cols-3 gap-2 mb-2">
-                      {/* Color Code Picker */}
-                      <Controller
-                        control={control}
-                        name={`sizes.${index}.colorCode`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <FormLabel>Color Code</FormLabel>
-                            <FormControl>
-                              <ColorPicker
-                                value={field.value || "#1677ff"}
-                                showText
-                                allowClear
-                                onChange={(color) =>
-                                  field.onChange(color.toHexString())
-                                }
-                              />
-                            </FormControl>
-                            <FormDescription className="text-red-400 text-xs min-h-4">
-                              {
-                                formState.errors?.sizes?.[index]?.colorCode
-                                  ?.message
-                              }
-                            </FormDescription>
-                          </FormItem>
-                        )}
-                      />
-
                       {/* Color Name */}
                       <FormItem>
                         <FormLabel>Size Name</FormLabel>
@@ -1303,7 +1299,6 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                   type="button"
                   onClick={() =>
                     appendSize({
-                      colorCode: "#1677ff",
                       colorName: "",
                       images: [],
                     })
@@ -1407,74 +1402,80 @@ export const ProductDetailsSheet: React.FC<Props> = ({ product }) => {
                   >
                     {(selectedInventoryType === "colorInventory" ||
                       selectedInventoryType === "colorLevelInventory") && (
-                        <Controller
-                          control={control}
-                          name={`inventories.${index}.color`}
-                          render={({ field }) => {
-                            const [colorPickerOpen, setColorPickerOpen] = React.useState(false);
-                            return (
-                              <FormItem className="flex flex-col">
-                                <FormLabel>Color</FormLabel>
-                                <FormControl>
-                                  <ColorPicker
-                                    value={field.value || "#1677ff"}
-                                    showText
-                                    allowClear
-                                    open={colorPickerOpen}
-                                    onOpenChange={setColorPickerOpen}
-                                    getPopupContainer={(trigger) => trigger.parentNode as HTMLElement || document.body} // Prevents portal jumpiness
-                                    onChange={(color) => field.onChange(color.toHexString())}
-                                  />
-                                </FormControl>
-                                <FormDescription className="text-red-400 text-xs min-h-4">
-                                  {
-                                    formState.errors?.inventories?.[index]?.color?.message
+                      <Controller
+                        control={control}
+                        name={`inventories.${index}.color`}
+                        render={({ field }) => {
+                          const [colorPickerOpen, setColorPickerOpen] =
+                            useState(false);
+                          return (
+                            <FormItem className="flex flex-col">
+                              <FormLabel>Color</FormLabel>
+                              <FormControl>
+                                <ColorPicker
+                                  value={field.value || "#1677ff"}
+                                  showText
+                                  allowClear
+                                  open={colorPickerOpen}
+                                  onOpenChange={setColorPickerOpen}
+                                  getPopupContainer={(trigger) =>
+                                    (trigger.parentNode as HTMLElement) ||
+                                    document.body
+                                  } // Prevents portal jumpiness
+                                  onChange={(color) =>
+                                    field.onChange(color.toHexString())
                                   }
-                                </FormDescription>
-                              </FormItem>
-                            );
-                          }}
-                        />
-
-                      )}
+                                />
+                              </FormControl>
+                              <FormDescription className="text-red-400 text-xs min-h-4">
+                                {
+                                  formState.errors?.inventories?.[index]?.color
+                                    ?.message
+                                }
+                              </FormDescription>
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    )}
 
                     {(selectedInventoryType === "colorInventory" ||
                       selectedInventoryType === "colorLevelInventory") && (
-                        <FormItem>
-                          <FormLabel>Color Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter color name"
-                              {...register(`inventories.${index}.colorName`)}
-                            />
-                          </FormControl>
-                          <FormDescription className="text-red-400 text-xs min-h-4">
-                            {
-                              formState.errors?.inventories?.[index]?.colorName
-                                ?.message
-                            }
-                          </FormDescription>
-                        </FormItem>
-                      )}
+                      <FormItem>
+                        <FormLabel>Color Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter color name"
+                            {...register(`inventories.${index}.colorName`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {
+                            formState.errors?.inventories?.[index]?.colorName
+                              ?.message
+                          }
+                        </FormDescription>
+                      </FormItem>
+                    )}
 
                     {(selectedInventoryType === "levelInventory" ||
                       selectedInventoryType === "colorLevelInventory") && (
-                        <FormItem>
-                          <FormLabel>Size</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter size"
-                              {...register(`inventories.${index}.size`)}
-                            />
-                          </FormControl>
-                          <FormDescription className="text-red-400 text-xs min-h-4">
-                            {
-                              formState.errors?.inventories?.[index]?.size
-                                ?.message
-                            }
-                          </FormDescription>
-                        </FormItem>
-                      )}
+                      <FormItem>
+                        <FormLabel>Size</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter size"
+                            {...register(`inventories.${index}.size`)}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {
+                            formState.errors?.inventories?.[index]?.size
+                              ?.message
+                          }
+                        </FormDescription>
+                      </FormItem>
+                    )}
 
                     {selectedInventoryType !== "" && (
                       <>
