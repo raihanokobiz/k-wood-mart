@@ -180,14 +180,14 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
         sizeChartImage: [],
         inventories: product.inventoryRef?.length
           ? product.inventoryRef.map((item: any) => ({
-              quantity: String(item.quantity),
-              ...(item._id && { id: item._id || "" }),
-              ...(item.color && { color: item.color }),
-              ...(item.name && { colorName: upperFirst(item.name) }),
-              ...(item.level && { size: upperCase(item.level) }),
-              ...(item.price && { price: upperCase(item.price) }),
-              ...(item.mrpPrice && { mrpPrice: upperCase(item.mrpPrice) }),
-            }))
+            quantity: String(item.quantity),
+            ...(item._id && { id: item._id || "" }),
+            ...(item.color && { color: item.color }),
+            ...(item.name && { colorName: upperFirst(item.name) }),
+            ...(item.level && { size: upperCase(item.level) }),
+            ...(item.price && { price: upperCase(item.price) }),
+            ...(item.mrpPrice && { mrpPrice: upperCase(item.mrpPrice) }),
+          }))
           : [{ quantity: product.mainInventory }],
         videoUrl: product.videoUrl || "",
         material: product.material || "",
@@ -1026,30 +1026,33 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
                   >
                     <div className="grid grid-cols-3 gap-2 mb-2">
                       {/* Color Code Picker */}
+                    // Fabrics ColorPicker এর জন্য
                       <Controller
                         control={control}
                         name={`fabrics.${index}.colorCode`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <FormLabel>Color Code</FormLabel>
-                            <FormControl>
-                              <ColorPicker
-                                value={field.value || "#1677ff"}
-                                showText
-                                allowClear
-                                onChange={(color) =>
-                                  field.onChange(color.toHexString())
-                                }
-                              />
-                            </FormControl>
-                            <FormDescription className="text-red-400 text-xs min-h-4">
-                              {
-                                formState.errors?.fabrics?.[index]?.colorCode
-                                  ?.message
-                              }
-                            </FormDescription>
-                          </FormItem>
-                        )}
+                        render={({ field }) => {
+                          const [colorPickerOpen, setColorPickerOpen] = useState(false);
+                          return (
+                            <FormItem className="flex flex-col">
+                              <FormLabel>Color Code</FormLabel>
+                              <FormControl>
+                                <ColorPicker
+                                  value={field.value || "#1677ff"}
+                                  showText
+                                  allowClear
+                                  open={colorPickerOpen}
+                                  onOpenChange={setColorPickerOpen}
+                                  onChange={(color, hex) => {
+                                    field.onChange(hex); // Direct hex string
+                                  }}
+                                  getPopupContainer={(trigger) =>
+                                    trigger.parentNode as HTMLElement
+                                  }
+                                />
+                              </FormControl>
+                            </FormItem>
+                          );
+                        }}
                       />
 
                       {/* Color Name */}
@@ -1402,80 +1405,80 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
                   >
                     {(selectedInventoryType === "colorInventory" ||
                       selectedInventoryType === "colorLevelInventory") && (
-                      <Controller
-                        control={control}
-                        name={`inventories.${index}.color`}
-                        render={({ field }) => {
-                          const [colorPickerOpen, setColorPickerOpen] =
-                            useState(false);
-                          return (
-                            <FormItem className="flex flex-col">
-                              <FormLabel>Color</FormLabel>
-                              <FormControl>
-                                <ColorPicker
-                                  value={field.value || "#1677ff"}
-                                  showText
-                                  allowClear
-                                  open={colorPickerOpen}
-                                  onOpenChange={setColorPickerOpen}
-                                  getPopupContainer={(trigger) =>
-                                    (trigger.parentNode as HTMLElement) ||
-                                    document.body
-                                  } // Prevents portal jumpiness
-                                  onChange={(color) =>
-                                    field.onChange(color.toHexString())
+                        <Controller
+                          control={control}
+                          name={`inventories.${index}.color`}
+                          render={({ field }) => {
+                            const [colorPickerOpen, setColorPickerOpen] =
+                              useState(false);
+                            return (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Color</FormLabel>
+                                <FormControl>
+                                  <ColorPicker
+                                    value={field.value || "#1677ff"}
+                                    showText
+                                    allowClear
+                                    open={colorPickerOpen}
+                                    onOpenChange={setColorPickerOpen}
+                                    getPopupContainer={(trigger) =>
+                                      (trigger.parentNode as HTMLElement) ||
+                                      document.body
+                                    } // Prevents portal jumpiness
+                                    onChange={(color) =>
+                                      field.onChange(color.toHexString())
+                                    }
+                                  />
+                                </FormControl>
+                                <FormDescription className="text-red-400 text-xs min-h-4">
+                                  {
+                                    formState.errors?.inventories?.[index]?.color
+                                      ?.message
                                   }
-                                />
-                              </FormControl>
-                              <FormDescription className="text-red-400 text-xs min-h-4">
-                                {
-                                  formState.errors?.inventories?.[index]?.color
-                                    ?.message
-                                }
-                              </FormDescription>
-                            </FormItem>
-                          );
-                        }}
-                      />
-                    )}
+                                </FormDescription>
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      )}
 
                     {(selectedInventoryType === "colorInventory" ||
                       selectedInventoryType === "colorLevelInventory") && (
-                      <FormItem>
-                        <FormLabel>Color Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter color name"
-                            {...register(`inventories.${index}.colorName`)}
-                          />
-                        </FormControl>
-                        <FormDescription className="text-red-400 text-xs min-h-4">
-                          {
-                            formState.errors?.inventories?.[index]?.colorName
-                              ?.message
-                          }
-                        </FormDescription>
-                      </FormItem>
-                    )}
+                        <FormItem>
+                          <FormLabel>Color Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter color name"
+                              {...register(`inventories.${index}.colorName`)}
+                            />
+                          </FormControl>
+                          <FormDescription className="text-red-400 text-xs min-h-4">
+                            {
+                              formState.errors?.inventories?.[index]?.colorName
+                                ?.message
+                            }
+                          </FormDescription>
+                        </FormItem>
+                      )}
 
                     {(selectedInventoryType === "levelInventory" ||
                       selectedInventoryType === "colorLevelInventory") && (
-                      <FormItem>
-                        <FormLabel>Size</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter size"
-                            {...register(`inventories.${index}.size`)}
-                          />
-                        </FormControl>
-                        <FormDescription className="text-red-400 text-xs min-h-4">
-                          {
-                            formState.errors?.inventories?.[index]?.size
-                              ?.message
-                          }
-                        </FormDescription>
-                      </FormItem>
-                    )}
+                        <FormItem>
+                          <FormLabel>Size</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter size"
+                              {...register(`inventories.${index}.size`)}
+                            />
+                          </FormControl>
+                          <FormDescription className="text-red-400 text-xs min-h-4">
+                            {
+                              formState.errors?.inventories?.[index]?.size
+                                ?.message
+                            }
+                          </FormDescription>
+                        </FormItem>
+                      )}
 
                     {selectedInventoryType !== "" && (
                       <>

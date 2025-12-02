@@ -10,9 +10,9 @@ export default async function ReviewSection() {
 
     return (
         <div className="Container">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-16 xl:gap-28">
                 {/* Left Section - Header & Button */}
-                <div className='col-span-12 lg:col-span-5 flex items-center justify-center lg:justify-end'>
+                <div className='col-span-12 lg:col-span-5 flex items-center justify-center lg:justify-end mb-6 md:mb-10'>
                     <div className="text-center lg:text-left space-y-4">
                         {/* Heading */}
                         <div>
@@ -31,9 +31,9 @@ export default async function ReviewSection() {
                         </div>
 
                         {/* Description */}
-                        <p className="text-gray-600 text-sm md:text-base max-w-md mx-auto lg:mx-0">
+                        {/* <p className="text-gray-600 text-sm md:text-base max-w-md mx-auto lg:mx-0">
                             Don't just take our word for it. Hear from our satisfied customers about their experience.
-                        </p>
+                        </p> */}
 
                         {/* Button */}
                         <div className="flex justify-center lg:justify-start">

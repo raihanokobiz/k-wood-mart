@@ -12,7 +12,7 @@ import { apiBaseUrl } from "@/config/config";
 
 export default function FeaturedProducts({ featuredProducts }) {
   return (
-    <section className="Container py-12">
+    <section className="Container">
       <div className="flex items-center mb-8">
         <div className="flex items-center gap-2 text-[#D4A373]">
           <svg
@@ -37,13 +37,13 @@ export default function FeaturedProducts({ featuredProducts }) {
         modules={[Navigation, Autoplay]}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         loop={true}
-        spaceBetween={20}
-        slidesPerView={1}
+        spaceBetween={8}
+        slidesPerView={2}
         breakpoints={{
-          640: { slidesPerView: 2 },
-          768: { slidesPerView: 3 },
-          1024: { slidesPerView: 4 },
-          1280: { slidesPerView: 5 },
+          640: { slidesPerView: 2, spaceBetween: 8 },
+          768: { slidesPerView: 3, spaceBetween: 12 },
+          1024: { slidesPerView: 4, spaceBetween: 16 },
+          1280: { slidesPerView: 5, spaceBetween: 20 },
         }}
       >
         {featuredProducts?.data?.result?.map((product: TProduct) => {
@@ -56,7 +56,7 @@ export default function FeaturedProducts({ featuredProducts }) {
                   href={`product/${slug}`}
                   className="group relative  text-center shadow-md shadow-gray-200 overflow-hidden"
                 >
-                  <div className="relative h-[250px] md:h-[200px] 2xl:h-[300px]">
+                  <div className="relative h-[150px] md:h-[200px] 2xl:h-[300px]">
                     {/* Thumbnail Image */}
                     <Image
                       src={`${apiBaseUrl}${thumbnailImage}`}
@@ -84,9 +84,9 @@ export default function FeaturedProducts({ featuredProducts }) {
                   </div>
 
                   {/* Product Info */}
-                  <div className=" text-xl font-medium text-secondaryt px-4 py-4">
-                    <h3 className="text-left mt-3 text-md text-gray-800">{name}</h3>
-                    <p className="text-left mt-3" style={{ fontVariantNumeric: "lining-nums" }}>
+                  <div className=" text-xl font-medium text-secondaryt p-2">
+                    <h3 className="text-left mt-3 text-[16px] md:text-md text-gray-800">{name}</h3>
+                    <p className="text-left mt-3 text-[14px] md:text-[16px] " style={{ fontVariantNumeric: "lining-nums" }}>
                       ৳ {price}
                     </p>
                   </div>

@@ -29,7 +29,7 @@ export default function WhyChooseSection() {
   ];
 
   return (
-    <div className="my-6 md:my-8 2xl:my-12 relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+    <div className="my-6 md:my-8 2xl:my-12 relative flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -51,11 +51,11 @@ export default function WhyChooseSection() {
         </div>
 
         {/* Reasons Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
           {reasons.map((reason, idx) => (
             <div
               key={idx}
-              className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-8 
+              className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-8 
                          hover:bg-white/20 transition-all duration-300 
                          border border-white/20 hover:border-amber-500/50
                          hover:shadow-2xl hover:shadow-amber-500/20
@@ -74,14 +74,14 @@ export default function WhyChooseSection() {
 
               {/* Title */}
               <h3
-                className="text-2xl font-bold text-white text-center mb-4 
+                className=" text-md lg:text-2xl font-bold text-white text-center mb-4 
                            group-hover:text-amber-400 transition-colors duration-300"
               >
                 {reason.title}
               </h3>
 
               {/* Description */}
-              <p className="text-gray-300 text-center leading-relaxed">
+              <p className=" hidden md:block text-md lg:text-2xl text-gray-300 text-center leading-relaxed">
                 {reason.description}
               </p>
 

@@ -40,7 +40,7 @@ export default function ProductCardForFurniture({ product }: TProps) {
           src={`${apiBaseUrl}${thumbnailImage}`}
           alt={name}
           fill
-          className="rounded-md object-cover transition-opacity duration-500 group-hover:opacity-0"
+          className={`rounded-md object-cover transition-opacity duration-500 ${backViewImage ? "group-hover:opacity-0" : ""}`}
         />
 
         {/* Back View Image */}

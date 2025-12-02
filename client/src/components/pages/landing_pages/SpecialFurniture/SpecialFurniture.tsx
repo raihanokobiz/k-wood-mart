@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TProduct } from "@/types";
 import { apiBaseUrl } from "@/config/config";
 import Image from "next/image";
-import Link from "next/link";
 
 interface SpecialFurnitureProps {
   specialProducts: {
@@ -15,7 +14,6 @@ interface SpecialFurnitureProps {
     };
   };
 }
-
 
 const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -31,14 +29,13 @@ const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
     );
   };
 
-
   return (
     <div className="Container">
-      <div className=" bg-gray-100 py-12 px-4 md:px-8 lg:px-16">
+      <div className=" bg-gray-100 py-6 md:py-12 px-4 md:px-8 lg:px-16">
         <div className=" grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
           {/* Left Side - Text Content */}
-          <div className="lg:col-span-4 text-center lg:text-right space-y-6">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+          <div className="lg:col-span-4 text-center lg:text-right space-y-3 md:space-y-6">
+            <h1 className=" text-2xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
               Discover Your Perfect  Style
             </h1>
             <p className="text-gray-600 text-lg md:text-xl">
@@ -55,7 +52,7 @@ const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
           {/* Right Side - Featured Image */}
           <div className="lg:col-span-8 space-y-8">
             {/* Featured Image */}
-            <div className="relative bg-white rounded shadow-lg overflow-hidden w-[600px] h-[500px] mx-auto aspect-square">
+            <div className="relative bg-white rounded shadow-lg overflow-hidden w-[300px] sm:w-[350px] md:w-[500px] lg:w-[700px] h-[300px] md:h-[400px] lg:h-[500px] mx-auto aspect-square">
               <Image
                 src={`${apiBaseUrl}${specialProducts?.data?.result?.childCategory?.image}`}
                 alt={specialProducts.data.result.products[currentIndex].name}
@@ -75,26 +72,33 @@ const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
               </button>
 
               {/* Carousel Items */}
-              <div className="flex gap-3 overflow-hidden">
+              <div className="flex gap-3 overflow-hidden rounded-md">
                 {specialProducts?.data?.result?.products.slice(0, 4).map((item, index) => (
                   <div
                     key={`${item.id}-${index}`}
                     onClick={() => setCurrentIndex(index)}
-                    className={`bg-white rounded-lg shadow hover:shadow-md transition-all cursor-pointer ${currentIndex === index ? 'ring-2 ring-amber-900' : ''
+                    className={`bg-white w-[200px] h-[200px] md:w-[200px] md:h-[230px] rounded-md overflow-hidden cursor-pointer transition-all ${currentIndex === index ? '' : ''
                       }`}
                   >
-                    <div className="relative w-[250px] h-[250px] rounded">
+                    <div className="relative w-[200px] h-[200px] md:w-[200px] md:h-[170px]">
                       <Image
                         src={`${apiBaseUrl}${item?.thumbnailImage}`}
                         alt={item.name}
                         fill
-                        className="object-cover rounded-lg"
+                        className="object-cover rounded-md"
                       />
+                    </div>
+                    <div className="p-3 text-center mt-1">
+                      {item.setName && (
+                        <p className="text-sm text-gray-500 truncate">{item.setName}</p>
+                      )}
+                      <p className="text-base font-semibold text-gray-900 truncate">
+                        {item.name}
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
-
               {/* Next Button */}
               <button
                 onClick={nextSlide}

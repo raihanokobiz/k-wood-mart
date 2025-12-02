@@ -15,7 +15,7 @@ export default function NewArrivals({ newArrivalsProducts }: { newArrivalsProduc
 
   return (
     <section className="Container">
-      <div className="flex items-center mb-8">
+      <div className="flex items-center mb-2 md:mb-8">
         <div className="flex items-center gap-2 text-[#D4A373]">
           <svg
             className="w-16 h-16 md:w-10 md:h-10 font-bold"
@@ -41,7 +41,7 @@ export default function NewArrivals({ newArrivalsProducts }: { newArrivalsProduc
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         loop={true}
         spaceBetween={20}
-        slidesPerView={1}
+        slidesPerView={2}
         breakpoints={{
           640: { slidesPerView: 2 },
           768: { slidesPerView: 3 },
@@ -59,13 +59,15 @@ export default function NewArrivals({ newArrivalsProducts }: { newArrivalsProduc
                   href={`product/${slug}`}
                   className="group relative  text-center shadow-md shadow-gray-200 overflow-hidden"
                 >
-                  <div className="relative h-[250px] md:h-[200px] 2xl:h-[300px]">
+                  <div className="relative h-[200px] md:h-[200px] 2xl:h-[300px]">
                     {/* Thumbnail Image */}
                     <Image
                       src={`${apiBaseUrl}${thumbnailImage}`}
                       alt={name}
                       fill
-                      className="rounded-md object-cover transition-opacity duration-500 group-hover:opacity-0"
+                      className={`rounded-md object-cover absolute inset-0 transition-opacity duration-500
+                                ${backViewImage ? "group-hover:opacity-0" : ""}
+                               `}
                     />
 
                     {/* Back View Image */}
@@ -88,7 +90,7 @@ export default function NewArrivals({ newArrivalsProducts }: { newArrivalsProduc
 
                   {/* Product Info */}
                   <div className=" text-xl font-medium text-secondaryt px-4 py-4">
-                    <h3 className="text-left mt-3 text-md text-gray-800">{name}</h3>
+                    <h3 className="text-left mt-3 text-[16px] md:text-md text-gray-800 line-clamp-2">{name}</h3>
                     <p className="text-left mt-3" style={{ fontVariantNumeric: "lining-nums" }}>
                       ৳ {price}
                     </p>

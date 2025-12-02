@@ -22,7 +22,7 @@ export const YouTubeModal = ({ url }: Props) => {
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="relative group cursor-pointer w-full h-80"
+                className="relative group cursor-pointer  w-[200px] sm:w-[250px] md:w-[300px] xl:w-[300px] h-48 sm:h-64 md:h-80 lg:h-96 xl:h-80"
             >
                 <div className="relative w-full h-full">
                     <iframe

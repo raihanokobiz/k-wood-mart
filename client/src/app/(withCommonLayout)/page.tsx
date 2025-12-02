@@ -38,7 +38,7 @@ import FurnitureCurtainGallery from "@/components/pages/landing_pages/FurnitureC
 import ReviewSection from "@/components/pages/landing_pages/ReviewSection/ReviewSection";
 import EMI from "@/components/pages/landing_pages/EMI/EMI";
 import CategorySection from "@/components/pages/landing_pages/CategorySection/CategorySection";
-import { getTwoSubCategorys } from "@/services/subCategorys";
+import { getThreeSubCategorys, getTwoSubCategorys } from "@/services/subCategorys";
 import SpecialFurniture from "@/components/pages/landing_pages/SpecialFurniture/SpecialFurniture";
 import { getFeaturedProducts, getSpecialProducts } from "@/services/products";
 import { getNewArrivals } from "@/services/newArrivals/newArrivals";
@@ -72,6 +72,7 @@ const page = async () => {
     const newArrivalsProducts = await getNewArrivals();
   const specialProducts = await getSpecialProducts();
     const featuredProducts = await getFeaturedProducts();
+      const response = await getThreeSubCategorys();
 
   return (
     <>
@@ -80,7 +81,7 @@ const page = async () => {
         {/* <Banner banners={[]} /> */}
         <Banner2 />
         <SignatureCollections />
-        <FurnitureCurtainGallery />
+        <FurnitureCurtainGallery response={response} />
         {/* <Category /> */}
         {/* <CategorySection /> */}
         {/* <BeforeAfterSection /> */}
