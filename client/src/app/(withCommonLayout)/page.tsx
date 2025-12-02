@@ -33,11 +33,11 @@ import WhyChooseUs from "@/components/pages/landing_pages/whyChooseUs/WhyChooseU
 import NewArrivals from "@/components/pages/landing_pages/NewArrivals/NewArrivals";
 import FeaturedProducts from "@/components/pages/landing_pages/FeaturedProducts/FeaturedProducts";
 // import NewsUpdates from "@/components/pages/landing_pages/NewsUpdates/NewsUpdates";
-import FurnitureDemo from "@/components/pages/landing_pages/FurnitureDemo/FurnitureDemo";
+// import FurnitureDemo from "@/components/pages/landing_pages/FurnitureDemo/FurnitureDemo";
 import FurnitureCurtainGallery from "@/components/pages/landing_pages/FurnitureCurtainGallery/FurnitureCurtainGallery";
 import ReviewSection from "@/components/pages/landing_pages/ReviewSection/ReviewSection";
 import EMI from "@/components/pages/landing_pages/EMI/EMI";
-import CategorySection from "@/components/pages/landing_pages/CategorySection/CategorySection";
+// import CategorySection from "@/components/pages/landing_pages/CategorySection/CategorySection";
 import { getThreeSubCategorys, getTwoSubCategorys } from "@/services/subCategorys";
 import SpecialFurniture from "@/components/pages/landing_pages/SpecialFurniture/SpecialFurniture";
 import { getFeaturedProducts, getSpecialProducts } from "@/services/products";
@@ -68,7 +68,7 @@ const page = async () => {
   // const productWithDiscount = await getAllDiscountProduct();
   // const brands = await getAllBrands();
 
-  const twoData = await getTwoSubCategorys();
+  // const twoData = await getTwoSubCategorys();
     const newArrivalsProducts = await getNewArrivals();
   const specialProducts = await getSpecialProducts();
     const featuredProducts = await getFeaturedProducts();

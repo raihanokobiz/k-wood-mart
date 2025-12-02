@@ -32,7 +32,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
 
   const [levelError, setLevelError] = useState(false);
   const [colorError, setColorError] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [setLoading] = useState(false);
   const router = useRouter();
   const controls = useAnimation();
 
@@ -53,7 +53,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     inventoryRef,
     inventoryType,
     images,
-    _id,
+    // _id,
     productId,
     // ADD THESE
     material,
@@ -70,7 +70,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
   console.log(product, "ok");
 
 
-  // ✅ Calculate Discounted Price from MRP
+  //  Calculate Discounted Price from MRP
   const calculateDiscountedPrice = (
     mrpPrice: number,
     hasDiscount: boolean,
@@ -90,7 +90,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     return mrpPrice;
   };
 
-  // ✅ Get Current Price and MRP Data
+  //  Get Current Price and MRP Data
   const getCurrentPriceData = () => {
     let selectedItem: any = null;
 
@@ -133,7 +133,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     }
 
     // Get MRP (original price) and discount info
-    let itemMrpPrice = selectedItem?.mrpPrice
+    const itemMrpPrice = selectedItem?.mrpPrice
       ? Number(selectedItem.mrpPrice)
       : Number(mrpPrice || price) || 0;
     const itemDiscount = selectedItem?.discount ?? discount;
@@ -141,7 +141,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     const itemIsDiscounted = selectedItem?.isDiscounted ?? isDiscounted;
 
     // Calculate discounted price from MRP
-    let itemPrice = itemIsDiscounted
+    const itemPrice = itemIsDiscounted
       ? calculateDiscountedPrice(
         itemMrpPrice,
         itemIsDiscounted,
@@ -177,141 +177,141 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
       ? Math.round(((currentMrpPrice - currentPrice) / currentMrpPrice) * 100)
       : 0;
 
-  const handleBuyNow = async () => {
-    const user = await getUser();
-    setLoading(true);
-    if (!user) {
-      toast.error("Please login to proceed to checkout.");
-      router.push("/login");
-      return;
-    }
-    if (
-      (inventoryType === "levelInventory" ||
-        inventoryType === "colorLevelInventory") &&
-      !selectedLevel
-    ) {
-      setLevelError(true);
-      setLoading(false);
-      return;
-    }
+  // const handleBuyNow = async () => {
+  //   const user = await getUser();
+  //   setLoading(true);
+  //   if (!user) {
+  //     toast.error("Please login to proceed to checkout.");
+  //     router.push("/login");
+  //     return;
+  //   }
+  //   if (
+  //     (inventoryType === "levelInventory" ||
+  //       inventoryType === "colorLevelInventory") &&
+  //     !selectedLevel
+  //   ) {
+  //     setLevelError(true);
+  //     setLoading(false);
+  //     return;
+  //   }
 
-    if (
-      (inventoryType === "colorLevelInventory" ||
-        inventoryType === "colorInventory") &&
-      !selectedColor
-    ) {
-      setColorError(true);
-      setLoading(false);
-      return;
-    }
+  //   if (
+  //     (inventoryType === "colorLevelInventory" ||
+  //       inventoryType === "colorInventory") &&
+  //     !selectedColor
+  //   ) {
+  //     setColorError(true);
+  //     setLoading(false);
+  //     return;
+  //   }
 
-    try {
-      const productPayload: {
-        quantity: number;
-        productRef: string;
-        userRef: string | undefined;
-        inventoryRef?: string | null;
-      } = {
-        quantity: count,
-        productRef: _id,
-        userRef: user?.id,
-      };
+  //   try {
+  //     const productPayload: {
+  //       quantity: number;
+  //       productRef: string;
+  //       userRef: string | undefined;
+  //       inventoryRef?: string | null;
+  //     } = {
+  //       quantity: count,
+  //       productRef: _id,
+  //       userRef: user?.id,
+  //     };
 
-      if (inventoryType === "inventory") {
-        productPayload.inventoryRef = Array.isArray(inventoryRef)
-          ? inventoryRef[0]._id
-          : undefined;
-      } else if (inventoryType === "levelInventory") {
-        productPayload.inventoryRef = selectedLevel;
-      } else if (inventoryType === "colorInventory") {
-        productPayload.inventoryRef = selectedColor;
-      } else if (inventoryType === "colorLevelInventory") {
-        productPayload.inventoryRef = selectedColor;
-      }
+  //     if (inventoryType === "inventory") {
+  //       productPayload.inventoryRef = Array.isArray(inventoryRef)
+  //         ? inventoryRef[0]._id
+  //         : undefined;
+  //     } else if (inventoryType === "levelInventory") {
+  //       productPayload.inventoryRef = selectedLevel;
+  //     } else if (inventoryType === "colorInventory") {
+  //       productPayload.inventoryRef = selectedColor;
+  //     } else if (inventoryType === "colorLevelInventory") {
+  //       productPayload.inventoryRef = selectedColor;
+  //     }
 
-      await addToCart(productPayload);
-      router.push("/checkout");
-    } catch (err) {
-      console.error("Failed to proceed to checkout:", err);
-      toast.error("Failed to start checkout.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     await addToCart(productPayload);
+  //     router.push("/checkout");
+  //   } catch (err) {
+  //     console.error("Failed to proceed to checkout:", err);
+  //     toast.error("Failed to start checkout.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const handleAddToCart = async () => {
-    const user = await getUser();
-    setLoading(true);
-    if (!user) {
-      toast.error("Please login to add product to cart.");
-      router.push("/login");
-      return;
-    }
-    if (
-      (inventoryType === "levelInventory" ||
-        inventoryType === "colorLevelInventory") &&
-      !selectedLevel
-    ) {
-      setLevelError(true);
-      setLoading(false);
-      return;
-    }
+  // const handleAddToCart = async () => {
+  //   const user = await getUser();
+  //   setLoading(true);
+  //   if (!user) {
+  //     toast.error("Please login to add product to cart.");
+  //     router.push("/login");
+  //     return;
+  //   }
+  //   if (
+  //     (inventoryType === "levelInventory" ||
+  //       inventoryType === "colorLevelInventory") &&
+  //     !selectedLevel
+  //   ) {
+  //     setLevelError(true);
+  //     setLoading(false);
+  //     return;
+  //   }
 
-    if (
-      (inventoryType === "colorLevelInventory" ||
-        inventoryType === "colorInventory") &&
-      !selectedColor
-    ) {
-      setColorError(true);
-      setLoading(false);
-      return;
-    }
-    try {
-      controls.set({ x: 0, y: 0, scale: 1 });
-      const product: {
-        quantity: number;
-        productRef: string;
-        userRef: string | undefined;
-        inventoryRef?: string | null;
-      } = {
-        quantity: count,
-        productRef: _id,
-        userRef: user?.id,
-      };
+  //   if (
+  //     (inventoryType === "colorLevelInventory" ||
+  //       inventoryType === "colorInventory") &&
+  //     !selectedColor
+  //   ) {
+  //     setColorError(true);
+  //     setLoading(false);
+  //     return;
+  //   }
+  //   try {
+  //     controls.set({ x: 0, y: 0, scale: 1 });
+  //     const product: {
+  //       quantity: number;
+  //       productRef: string;
+  //       userRef: string | undefined;
+  //       inventoryRef?: string | null;
+  //     } = {
+  //       quantity: count,
+  //       productRef: _id,
+  //       userRef: user?.id,
+  //     };
 
-      if (inventoryType === "inventory") {
-        product.inventoryRef = Array.isArray(inventoryRef)
-          ? inventoryRef[0]._id
-          : undefined;
-      } else if (inventoryType === "levelInventory") {
-        product.inventoryRef = selectedLevel;
-      } else if (inventoryType === "colorInventory") {
-        product.inventoryRef = selectedColor;
-      } else if (inventoryType === "colorLevelInventory") {
-        product.inventoryRef = selectedColor;
-      }
+  //     if (inventoryType === "inventory") {
+  //       product.inventoryRef = Array.isArray(inventoryRef)
+  //         ? inventoryRef[0]._id
+  //         : undefined;
+  //     } else if (inventoryType === "levelInventory") {
+  //       product.inventoryRef = selectedLevel;
+  //     } else if (inventoryType === "colorInventory") {
+  //       product.inventoryRef = selectedColor;
+  //     } else if (inventoryType === "colorLevelInventory") {
+  //       product.inventoryRef = selectedColor;
+  //     }
 
-      await addToCart(product);
-      toast.success("Product added to cart!");
-      setLevelError(false);
-      setColorError(false);
-      controls.start({
-        scale: 0.01,
-        x: 1200,
-        y: -200,
-        transition: { duration: 0.6, ease: "easeInOut" },
-      });
+  //     await addToCart(product);
+  //     toast.success("Product added to cart!");
+  //     setLevelError(false);
+  //     setColorError(false);
+  //     controls.start({
+  //       scale: 0.01,
+  //       x: 1200,
+  //       y: -200,
+  //       transition: { duration: 0.6, ease: "easeInOut" },
+  //     });
 
-      setTimeout(() => {
-        controls.set({ x: 10, scale: 0 });
-      }, 1000);
-    } catch (err) {
-      console.error("Failed to add to cart:", err);
-      toast.error("Failed to add product to cart.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     setTimeout(() => {
+  //       controls.set({ x: 10, scale: 0 });
+  //     }, 1000);
+  //   } catch (err) {
+  //     console.error("Failed to add to cart:", err);
+  //     toast.error("Failed to add product to cart.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   //  FIXED IMAGE DISPLAY FUNCTION
   const getDisplayImages = () => {
@@ -383,8 +383,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
           <div className="lg:col-span-8">
             <ProductDetailsSlide
               controls={controls}
-              thumbnailImage={thumbnailImage}
-              backViewImage={backViewImage}
+              // thumbnailImage={thumbnailImage}
+              // backViewImage={backViewImage}
               // images={images}
               images={displayImages}
               name={name}
@@ -451,11 +451,10 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
             </div>
 
             {/* Fabric, Material, Color, Size, Set Accordion */}
-            {(material ||
-              fabrics?.length > 0 ||
-              colors?.length > 0 ||
-              sizes?.length > 0 ||
-              set?.length > 0) && (
+            {((fabrics?.length ?? 0) > 0 ||
+              (colors?.length ?? 0) > 0 ||
+              (sizes?.length ?? 0) > 0 ||
+              (set?.length ?? 0) > 0) && (
                 <div className="space-y-2">
                   {/* Material Accordion */}
                   {material && (
@@ -505,7 +504,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                   )}
 
                   {/* Fabric Accordion */}
-                  {fabrics?.length > 0 && (
+                  {(fabrics?.length ?? 0) > 0 && (
                     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                       <button
                         onClick={() =>
@@ -543,7 +542,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                       </button>
                       {accordionOpen === "fabric" && (
                         <div className="p-4 pt-0 border-t space-y-2">
-                          {fabrics.map((fabric: any, index: number) => (
+                          {fabrics?.map((fabric: any, index: number) => (
                             <button
                               key={index}
                               onClick={() => {
@@ -572,7 +571,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                   )}
 
                   {/* Colors Accordion */}
-                  {colors?.length > 0 && (
+                  {(colors?.length ?? 0) > 0 && (
                     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                       <button
                         onClick={() =>
@@ -610,7 +609,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                       </button>
                       {accordionOpen === "color" && (
                         <div className="p-4 pt-0 border-t space-y-2">
-                          {colors.map((color: any, index: number) => (
+                          {colors?.map((color: any, index: number) => (
                             <button
                               key={index}
                               onClick={() => {
@@ -635,7 +634,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                   )}
 
                   {/* Sizes Accordion */}
-                  {sizes?.length > 0 && (
+                  {(sizes?.length ?? 0) > 0 && (
                     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                       <button
                         onClick={() =>
@@ -671,7 +670,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                       </button>
                       {accordionOpen === "size" && (
                         <div className="p-4 pt-0 border-t space-y-2">
-                          {sizes.map((size: any, index: number) => (
+                          {sizes?.map((size: any, index: number) => (
                             <button
                               key={index}
                               onClick={() => {
@@ -696,7 +695,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                   )}
 
                   {/* Set Accordion */}
-                  {set?.length > 0 && (
+                  {(set?.length ?? 0) > 0 && (
                     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                       <button
                         onClick={() =>
@@ -730,7 +729,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                       </button>
                       {accordionOpen === "set" && (
                         <div className="p-4 pt-0 border-t space-y-2">
-                          {set.map((setItem: any, index: number) => (
+                          {set?.map((setItem: any, index: number) => (
                             <button
                               key={index}
                               onClick={() => {
@@ -827,7 +826,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                           : [];
                       }
 
-                      return colorItems.map((colorItem) => (
+                      return colorItems?.map((colorItem) => (
                         <button
                           key={colorItem._id}
                           onClick={() => {

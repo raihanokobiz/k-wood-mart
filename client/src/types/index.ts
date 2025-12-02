@@ -98,6 +98,7 @@ export type TInventoryRef = {
   soldQuantity: number;
   holdQuantity: number;
   color: string;
+  colors?: string[]; 
   name: string;
   price: string;
   mrpPrice: string;
@@ -157,6 +158,29 @@ export type TProduct = {
   quantity?: number;
   couponDiscount?: number;
   __v: number;
+  isDiscounted?: boolean;
+  color: string;
+  material?: string;
+  fabrics?: {
+    colorCode?: string;
+    colorName?: string;
+    images?: string[];
+  }[];
+
+  colors?: {
+    colorName?: string;
+    images?: string[];
+  }[];
+
+  sizes?: {
+    sizeName?: string;
+    images?: string[];
+  }[];
+
+  set?: {
+    setName?: string;
+    images?: string[];
+  }[];
 };
 
 export type TBestSell = {

@@ -7,7 +7,6 @@ import { TProduct } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
 import { apiBaseUrl } from "@/config/config";
-import { ArrowRight } from "lucide-react";
 
 
 

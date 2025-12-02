@@ -1,16 +1,24 @@
 "use client";
-import ProductCard from "../../products/ProductCard/ProductCard";
 import { TProduct } from "@/types";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Navigation, Autoplay, Pagination } from "swiper/modules";
+import { Navigation, Autoplay } from "swiper/modules";
 import Link from "next/link";
 import Image from "next/image";
 import { apiBaseUrl } from "@/config/config";
 
-export default function FeaturedProducts({ featuredProducts }) {
+interface FeaturedProductsProps {
+  featuredProducts: {
+    data: {
+      result: TProduct[];
+    };
+  };
+}
+
+
+export default function FeaturedProducts({ featuredProducts }: FeaturedProductsProps) {
   return (
     <section className="Container">
       <div className="flex items-center mb-8">
