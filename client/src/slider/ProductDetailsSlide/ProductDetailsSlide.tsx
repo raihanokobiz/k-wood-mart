@@ -44,11 +44,10 @@ const ProductDetailsSlide: React.FC<Props> = ({
     <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
       {/* Thumbnail Gallery - Vertical on large screens */}
       <div className="bg-gray-100 p-4 rounded-md order-2 lg:order-1">
-        <div className=" w-[360px] md:w-full flex lg:flex-col flex-row gap-3 lg:max-h-[550px] overflow-x-auto lg:overflow-y-auto scrollbar-hide">
+        <div className=" w-[330px] md:w-full flex lg:flex-col flex-row gap-3 lg:max-h-[550px] overflow-x-auto lg:overflow-y-auto scrollbar-hide">
           {allMedia.map((item, index) => {
             const isVideoThumb = item.includes("youtube.com");
             const isSelected = index === selectedIndex;
-
             return (
               <motion.div
                 key={index}
