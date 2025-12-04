@@ -91,7 +91,11 @@ export default function NewArrivals({ newArrivalsProducts }: { newArrivalsProduc
                   <div className=" text-xl font-medium text-secondaryt px-4 py-4">
                     <h3 className="text-left mt-3 text-[16px] md:text-md text-gray-800 line-clamp-2">{name}</h3>
                     <p className="text-left mt-3" style={{ fontVariantNumeric: "lining-nums" }}>
-                      ৳ {price}
+                      {price && (
+                        <span>
+                          ৳ {price}
+                        </span>
+                      )}
                     </p>
                   </div>
                 </Link>

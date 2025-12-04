@@ -31,7 +31,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
     // ...(backViewImage ? [apiBaseUrl + backViewImage] : []),
     // ...images.map((img) => apiBaseUrl + img),
     // ...(videoUrl ? [videoUrl] : []), // Add video as last item
-     ...images,  // ✅ এভাবে লেখো
+     ...images, 
   ...(videoUrl ? [videoUrl] : []),
   ];
 
@@ -44,7 +44,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
     <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
       {/* Thumbnail Gallery - Vertical on large screens */}
       <div className="bg-gray-100 p-4 rounded-md order-2 lg:order-1">
-        <div className="flex lg:flex-col flex-row gap-3 lg:max-h-[550px] overflow-x-auto lg:overflow-y-auto scrollbar-hide">
+        <div className=" w-[360px] md:w-full flex lg:flex-col flex-row gap-3 lg:max-h-[550px] overflow-x-auto lg:overflow-y-auto scrollbar-hide">
           {allMedia.map((item, index) => {
             const isVideoThumb = item.includes("youtube.com");
             const isSelected = index === selectedIndex;
@@ -119,7 +119,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
         </div>
       </div>
       {/* Main Preview Area */}
-      <div className=" relative order-1 lg:order-2 w-full h-[300px] sm:min-h-[420px] md:min-h-[500px] lg:min-h-[80vh] rounded-md overflow-hidden shadow-md bg-gray-100">
+      <div className=" relative order-1 lg:order-2 w-[360px] md:w-full h-[300px] sm:min-h-[420px] md:min-h-[500px] lg:min-h-[80vh] rounded-md overflow-hidden shadow-md bg-gray-100">
         <AnimatePresence mode="wait">
           {isVideo ? (
             <motion.div

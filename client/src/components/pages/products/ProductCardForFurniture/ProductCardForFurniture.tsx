@@ -34,7 +34,7 @@ export default function ProductCardForFurniture({ product }: TProps) {
       href={`product/${slug}`}
       className="group relative bg-white border border-gray-100 rounded-md text-center shadow-md shadow-gray-200 overflow-hidden"
     >
-      <div className="relative h-[250px] md:h-[300px]">
+      <div className="relative h-[180px] md:h-[300px] lg:h-[220px] 2xl:h-[270px] w-full">
         {/* Thumbnail Image */}
         <Image
           src={`${apiBaseUrl}${thumbnailImage}`}
@@ -64,8 +64,13 @@ export default function ProductCardForFurniture({ product }: TProps) {
       {/* Product Info */}
       <div className="text-xl font-medium text-secondaryt px-4 py-4">
         <h3 className="text-left text-gray-800">{name}</h3>
+
         <p className="text-left mt-4" style={{ fontVariantNumeric: "lining-nums" }}>
-          ৳ {price}
+          {price && (
+            <span>
+              ৳ {price}
+            </span>
+          )}
         </p>
       </div>
     </Link>

@@ -412,7 +412,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               )}
             </div>
           </div>
-          <div className="space-y-6 lg:col-span-4 bg-gray-100 rounded-md p-6">
+          <div className="space-y-6 lg:col-span-4 bg-gray-100 rounded-md p-6 w-[360px] md:w-full">
             {/* Product Title & Price */}
             <div className="space-y-2">
               <h2
@@ -427,8 +427,12 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               <div className="flex items-center gap-3 flex-wrap">
                 {/* Discounted Price */}
                 <p className="flex items-center gap-1 font-bold text-3xl text-[#D4A373]">
-                  <span className="text-xl">৳</span>
-                  <span>{currentPrice.toFixed(2)}</span>
+                  {price && (
+                    <>
+                      <span className="text-xl">৳</span>
+                      <span>{currentPrice.toFixed(2)}</span>
+                    </>
+                  )}
                 </p>
 
                 {/* Show MRP and discount badge only if there's a discount */}
@@ -452,10 +456,10 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               (colors?.length ?? 0) > 0 ||
               (sizes?.length ?? 0) > 0 ||
               (set?.length ?? 0) > 0) && (
-                <div className="space-y-2">
+                <div className="space-y-2 ">
                   {/* Material Accordion */}
                   {material && (
-                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <div className=" bg-white rounded-lg border border-gray-200 overflow-hidden">
                       <button
                         onClick={() =>
                           setAccordionOpen(
@@ -817,7 +821,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                           )
                           : undefined;
                         colorItems = levelItem?.colors?.map((color, index) => ({
-                          _id: `${levelItem._id}-${index}`, 
+                          _id: `${levelItem._id}-${index}`,
                           color: color,
                           name: levelItem.name,
                         })) || [];

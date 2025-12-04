@@ -95,7 +95,11 @@ export default function FeaturedProducts({ featuredProducts }: FeaturedProductsP
                   <div className=" text-xl font-medium text-secondaryt p-2">
                     <h3 className="text-left mt-3 text-[16px] md:text-md text-gray-800">{name}</h3>
                     <p className="text-left mt-3 text-[14px] md:text-[16px] " style={{ fontVariantNumeric: "lining-nums" }}>
-                      ৳ {price}
+                      {price && (
+                        <span>
+                          ৳ {price}
+                        </span>
+                      )}
                     </p>
                   </div>
                 </Link>

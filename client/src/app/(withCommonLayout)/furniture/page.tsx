@@ -97,7 +97,7 @@ export default async function FurniturePage({
           </div>
         </div>
 
-        {/* নতুন Filter System */}
+        {/*  Filter System */}
         <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
           <FilterSystem
             shopSideBar={shopSideBar}
