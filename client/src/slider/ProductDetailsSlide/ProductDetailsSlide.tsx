@@ -118,7 +118,7 @@ const ProductDetailsSlide: React.FC<Props> = ({
         </div>
       </div>
       {/* Main Preview Area */}
-      <div className=" relative order-1 lg:order-2 w-[360px] md:w-full h-[300px] sm:min-h-[420px] md:min-h-[500px] lg:min-h-[80vh] rounded-md overflow-hidden shadow-md bg-gray-100">
+      <div className="relative order-1 lg:order-2 w-[360px] md:w-full h-[300px] sm:min-h-[420px] md:min-h-[500px] lg:min-h-[80vh] rounded-md overflow-hidden shadow-md bg-gray-100">
         <AnimatePresence mode="wait">
           {isVideo ? (
             <motion.div
