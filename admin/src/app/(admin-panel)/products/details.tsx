@@ -72,7 +72,7 @@ type InventoryForm = {
   quantity?: number;
 };
 
-export const ProductDetailsSheet: FC<Props> = ({ product }) => {
+export const ProductDetailsSheet = ({ product }: Props) => {
   const { toast } = useToast();
 
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -86,6 +86,7 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
       url: fileUrlGenerator(item),
     })) || []
   );
+
 
   // pabric
   const [fabricImageFileLists, setFabricImageFileLists] = useState<
@@ -159,7 +160,7 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
     },
   });
 
-  // ✅ Step 2: Product আসলে form reset করুন
+  //  Step 2: Product form reset 
   useEffect(() => {
     if (product) {
       form.reset({
@@ -192,25 +193,25 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
         videoUrl: product.videoUrl || "",
         material: product.material || "",
 
-        // ❌ এখানে fabrics, colors, sizes, set দেবেন না
+        // ❌ fabrics, colors, sizes, set 
       });
 
-      // ✅ Manually handle Fabrics
-      // প্রথমে সব clear করুন
+      //  Manually handle Fabrics
+      //  clear 
       while (fabricFields.length > 0) {
         removeFabric(0);
       }
-      // তারপর product থেকে add করুন
+      //  product 
       if (product.fabrics?.length) {
         product.fabrics.forEach((fabric: any) => {
           appendFabric(fabric);
         });
       } else {
-        // যদি product এ না থাকে, default 1টা রাখুন
+        //  product , default 
         appendFabric({ colorCode: "#1677ff", colorName: "", images: [] });
       }
 
-      // ✅ Manually handle Colors
+      // Manually handle Colors
       while (colorFields.length > 0) {
         removeColor(0);
       }
@@ -219,10 +220,10 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
           appendColor(color);
         });
       } else {
-        appendColor({ colorCode: "#1677ff", colorName: "", images: [] });
+        appendColor({ colorName: "", images: [] });
       }
 
-      // ✅ Manually handle Sizes
+      //  Manually handle Sizes
       while (sizeFields.length > 0) {
         removeSize(0);
       }
@@ -231,10 +232,10 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
           appendSize(size);
         });
       } else {
-        appendSize({ colorCode: "#1677ff", colorName: "", images: [] });
+        appendSize({ sizeName: "", images: [] });
       }
 
-      // ✅ Manually handle Set
+      // Manually handle Set
       while (setFields.length > 0) {
         removeSet(0);
       }
@@ -1017,7 +1018,7 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
               </div>
 
               {/* Fabrics - Dynamic with Color & Images */}
-              <div className="my-4 col-span-3">
+              <div className="my-4 col-span-3 border p-4 border-gray-300 rounded-md">
                 <FormLabel>Fabrics</FormLabel>
                 {fabricFields.map((field, index) => (
                   <div
@@ -1026,7 +1027,6 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
                   >
                     <div className="grid grid-cols-3 gap-2 mb-2">
                       {/* Color Code Picker */}
-                    // Fabrics ColorPicker এর জন্য
                       <Controller
                         control={control}
                         name={`fabrics.${index}.colorCode`}
@@ -1139,7 +1139,7 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
               </div>
 
               {/* Colors - Dynamic */}
-              <div className="my-4 col-span-3">
+              <div className="my-4 col-span-3 border p-4 border-gray-300 rounded-md">
                 <FormLabel>Colors</FormLabel>
                 {colorFields.map((field, index) => (
                   <div
@@ -1229,7 +1229,7 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
               </div>
 
               {/* Sizes - Dynamic */}
-              <div className="my-4 col-span-3">
+              <div className="my-4 col-span-3 border p-4 border-gray-300 rounded-md">
                 <FormLabel>Sizes</FormLabel>
                 {sizeFields.map((field, index) => (
                   <div
@@ -1243,11 +1243,11 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
                         <FormControl>
                           <Input
                             placeholder="Enter size name"
-                            {...register(`sizes.${index}.colorName`)}
+                            {...register(`sizes.${index}.sizeName`)}
                           />
                         </FormControl>
                         <FormDescription className="text-red-400 text-xs min-h-4">
-                          {formState.errors?.sizes?.[index]?.colorName?.message}
+                          {formState.errors?.sizes?.[index]?.sizeName?.message}
                         </FormDescription>
                       </FormItem>
 
@@ -1302,7 +1302,7 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
                   type="button"
                   onClick={() =>
                     appendSize({
-                      colorName: "",
+                      sizeName: "",
                       images: [],
                     })
                   }
@@ -1316,7 +1316,7 @@ export const ProductDetailsSheet: FC<Props> = ({ product }) => {
               </div>
 
               {/* Set - Dynamic with Images */}
-              <div className="my-4 col-span-3">
+              <div className="my-4 col-span-3 border p-4 border-gray-300 rounded-md">
                 <FormLabel>Sets</FormLabel>
                 {setFields.map((field, index) => (
                   <div

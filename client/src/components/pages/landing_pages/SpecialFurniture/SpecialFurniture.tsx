@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TProduct } from "@/types";
@@ -10,13 +11,27 @@ interface SpecialFurnitureProps {
     data: {
       result: {
         products: TProduct[];
+        childCategory?: {
+          image: string;
+          name?: string;
+        };
       };
     };
   };
 }
 
+
+
 const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+
+  const products = specialProducts?.data?.result?.products || [];
+  const childCategory = specialProducts?.data?.result?.childCategory;
+
+  if (!products || products.length === 0) {
+    return null;
+  }
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % specialProducts.data.result.products.length);
@@ -55,7 +70,7 @@ const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
             <div className="relative bg-white rounded shadow-lg overflow-hidden w-[300px] sm:w-[350px] md:w-[500px] lg:w-[700px] h-[300px] md:h-[400px] lg:h-[500px] mx-auto aspect-square">
               <Image
                 src={`${apiBaseUrl}${specialProducts?.data?.result?.childCategory?.image}`}
-                alt={specialProducts.data.result.products[currentIndex].name}
+                alt={specialProducts.data.result.products[currentIndex].name ?? "product"}
                 fill
                 className="object-cover"
               />
@@ -75,7 +90,7 @@ const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
               <div className="flex gap-3 overflow-hidden rounded-md">
                 {specialProducts?.data?.result?.products.slice(0, 4).map((item, index) => (
                   <div
-                    key={`${item.id}-${index}`}
+                    key={`${item._id}-${index}`}
                     onClick={() => setCurrentIndex(index)}
                     className={`bg-white w-[200px] h-[200px] md:w-[200px] md:h-[230px] rounded-md overflow-hidden cursor-pointer transition-all ${currentIndex === index ? '' : ''
                       }`}
@@ -83,17 +98,17 @@ const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
                     <div className="relative w-[200px] h-[200px] md:w-[200px] md:h-[170px]">
                       <Image
                         src={`${apiBaseUrl}${item?.thumbnailImage}`}
-                        alt={item.name}
+                        alt={item?.name ?? "product"}
                         fill
                         className="object-cover rounded-md"
                       />
                     </div>
                     <div className="p-3 text-center mt-1">
-                      {item.setName && (
-                        <p className="text-sm text-gray-500 truncate">{item.setName}</p>
+                      {item.set?.[0]?.setName && (
+                        <p className="text-sm text-gray-500 truncate">{item?.set?.[0]?.setName}</p>
                       )}
                       <p className="text-base font-semibold text-gray-900 truncate">
-                        {item.name}
+                        {item?.name}
                       </p>
                     </div>
                   </div>

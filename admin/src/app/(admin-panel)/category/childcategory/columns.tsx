@@ -106,7 +106,7 @@ export const getColumns = (
           const anyActive = tableData.some(
             (item) => item._id !== sub._id && item.isSpecial === true
           );
-
+          
           if (checked && anyActive) {
             alert("A special sub-category is already active!");
             return;

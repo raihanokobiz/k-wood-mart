@@ -38,7 +38,7 @@ import FurnitureCurtainGallery from "@/components/pages/landing_pages/FurnitureC
 import ReviewSection from "@/components/pages/landing_pages/ReviewSection/ReviewSection";
 import EMI from "@/components/pages/landing_pages/EMI/EMI";
 // import CategorySection from "@/components/pages/landing_pages/CategorySection/CategorySection";
-import { getThreeSubCategorys, getTwoSubCategorys } from "@/services/subCategorys";
+import { getThreeSubCategorys } from "@/services/subCategorys";
 import SpecialFurniture from "@/components/pages/landing_pages/SpecialFurniture/SpecialFurniture";
 import { getFeaturedProducts, getSpecialProducts } from "@/services/products";
 import { getNewArrivals } from "@/services/newArrivals/newArrivals";

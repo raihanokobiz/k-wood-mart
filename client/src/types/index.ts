@@ -79,7 +79,6 @@ export type TBrands = {
   __v: number;
 };
 
-
 export type TInventoryItem = {
   price: string;
   mrpPrice?: number;
@@ -98,7 +97,7 @@ export type TInventoryRef = {
   soldQuantity: number;
   holdQuantity: number;
   color: string;
-  colors?: string[]; 
+  colors?: string[];
   name: string;
   price: string;
   mrpPrice: string;
@@ -180,6 +179,7 @@ export type TProduct = {
   set?: {
     setName?: string;
     images?: string[];
+    _id?: string;
   }[];
 };
 
@@ -198,7 +198,6 @@ export type TResponse = {
   data: any;
   filterOptions: TProduct[];
 };
-
 
 export interface TShopSideBarResponsive {
   // filterOptions: {

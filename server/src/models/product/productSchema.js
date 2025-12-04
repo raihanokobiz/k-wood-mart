@@ -28,6 +28,7 @@ const Productschema = new Schema(
     // },
     price: {
       type: Number,
+       required: false,
     },
     // mrpPrice: {
     //   type: Number,

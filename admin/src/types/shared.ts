@@ -317,6 +317,7 @@ export type TChildCategory = {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  isSpecial?: boolean;
 };
 
 export type TSubChildCategory = {
@@ -389,6 +390,13 @@ export type TProduct = {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  isNewArrival: boolean;
+  material?: string;
+  // Add these
+  fabrics?: Array<{ colorCode: string; colorName: string; images: string[] }>;
+  colors?: Array<{ colorCode: string; colorName: string; images: string[] }>;
+  sizes?: Array<{ colorCode: string; colorName: string; images: string[] }>;
+  set?: Array<{ setName: string; images: string[] }>;
 };
 
 export interface TBulkOrder {

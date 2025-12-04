@@ -32,7 +32,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
 
   const [levelError, setLevelError] = useState(false);
   const [colorError, setColorError] = useState(false);
-  const [setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const controls = useAnimation();
 
@@ -53,7 +53,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     inventoryRef,
     inventoryType,
     images,
-    // _id,
+    _id,
     productId,
     // ADD THESE
     material,
@@ -65,9 +65,6 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
 
   const handleIncrement = () => setCount((prev) => prev + 1);
   const handleDecrement = () => setCount((prev) => (prev > 1 ? prev - 1 : 1));
-
-
-  console.log(product, "ok");
 
 
   //  Calculate Discounted Price from MRP
@@ -119,14 +116,14 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
     // Fallback to first item if nothing selected
     if (
       !selectedItem &&
-      Array.isArray(inventoryRef) &&
+      Array?.isArray(inventoryRef) &&
       inventoryRef.length > 0
     ) {
       if (
         inventoryType === "colorLevelInventory" &&
-        inventoryRef[0]?.colors?.length > 0
+        (inventoryRef[0]?.colors?.length ?? 0) > 0
       ) {
-        selectedItem = inventoryRef[0].colors[0];
+        selectedItem = inventoryRef[0]?.colors![0];
       } else {
         selectedItem = inventoryRef[0];
       }
@@ -239,79 +236,79 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
   //   }
   // };
 
-  // const handleAddToCart = async () => {
-  //   const user = await getUser();
-  //   setLoading(true);
-  //   if (!user) {
-  //     toast.error("Please login to add product to cart.");
-  //     router.push("/login");
-  //     return;
-  //   }
-  //   if (
-  //     (inventoryType === "levelInventory" ||
-  //       inventoryType === "colorLevelInventory") &&
-  //     !selectedLevel
-  //   ) {
-  //     setLevelError(true);
-  //     setLoading(false);
-  //     return;
-  //   }
+  const handleAddToCart = async () => {
+    const user = await getUser();
+    setLoading(true);
+    if (!user) {
+      toast.error("Please login to add product to cart.");
+      router.push("/login");
+      return;
+    }
+    if (
+      (inventoryType === "levelInventory" ||
+        inventoryType === "colorLevelInventory") &&
+      !selectedLevel
+    ) {
+      setLevelError(true);
+      setLoading(false);
+      return;
+    }
 
-  //   if (
-  //     (inventoryType === "colorLevelInventory" ||
-  //       inventoryType === "colorInventory") &&
-  //     !selectedColor
-  //   ) {
-  //     setColorError(true);
-  //     setLoading(false);
-  //     return;
-  //   }
-  //   try {
-  //     controls.set({ x: 0, y: 0, scale: 1 });
-  //     const product: {
-  //       quantity: number;
-  //       productRef: string;
-  //       userRef: string | undefined;
-  //       inventoryRef?: string | null;
-  //     } = {
-  //       quantity: count,
-  //       productRef: _id,
-  //       userRef: user?.id,
-  //     };
+    if (
+      (inventoryType === "colorLevelInventory" ||
+        inventoryType === "colorInventory") &&
+      !selectedColor
+    ) {
+      setColorError(true);
+      setLoading(false);
+      return;
+    }
+    try {
+      controls.set({ x: 0, y: 0, scale: 1 });
+      const product: {
+        quantity: number;
+        productRef: string;
+        userRef: string | undefined;
+        inventoryRef?: string | null;
+      } = {
+        quantity: count,
+        productRef: _id,
+        userRef: user?.id,
+      };
 
-  //     if (inventoryType === "inventory") {
-  //       product.inventoryRef = Array.isArray(inventoryRef)
-  //         ? inventoryRef[0]._id
-  //         : undefined;
-  //     } else if (inventoryType === "levelInventory") {
-  //       product.inventoryRef = selectedLevel;
-  //     } else if (inventoryType === "colorInventory") {
-  //       product.inventoryRef = selectedColor;
-  //     } else if (inventoryType === "colorLevelInventory") {
-  //       product.inventoryRef = selectedColor;
-  //     }
+      if (inventoryType === "inventory") {
+        product.inventoryRef = Array.isArray(inventoryRef)
+          ? inventoryRef[0]._id
+          : undefined;
+      } else if (inventoryType === "levelInventory") {
+        product.inventoryRef = selectedLevel;
+      } else if (inventoryType === "colorInventory") {
+        product.inventoryRef = selectedColor;
+      } else if (inventoryType === "colorLevelInventory") {
+        product.inventoryRef = selectedColor;
+      }
 
-  //     await addToCart(product);
-  //     toast.success("Product added to cart!");
-  //     setLevelError(false);
-  //     setColorError(false);
-  //     controls.start({
-  //       scale: 0.01,
-  //       x: 1200,
-  //       y: -200,
-  //       transition: { duration: 0.6, ease: "easeInOut" },
-  //     });
+      await addToCart(product);
+      toast.success("Product added to cart!");
+      setLevelError(false);
+      setColorError(false);
+      controls.start({
+        scale: 0.01,
+        x: 1200,
+        y: -200,
+        transition: { duration: 0.6, ease: "easeInOut" },
+      });
 
-  //     setTimeout(() => {
-  //       controls.set({ x: 10, scale: 0 });
-  //     }, 1000);
-  //   } catch (err) {
-  //     console.error("Failed to add to cart:", err);
-  //     toast.error("Failed to add product to cart.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      setTimeout(() => {
+        controls.set({ x: 10, scale: 0 });
+      }, 1000);
+    } catch (err) {
+      console.error("Failed to add to cart:", err);
+      toast.error("Failed to add product to cart.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   //  FIXED IMAGE DISPLAY FUNCTION
   const getDisplayImages = () => {
@@ -819,7 +816,11 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                             (item) => item._id === selectedLevel
                           )
                           : undefined;
-                        colorItems = levelItem?.colors || [];
+                        colorItems = levelItem?.colors?.map((color, index) => ({
+                          _id: `${levelItem._id}-${index}`, 
+                          color: color,
+                          name: levelItem.name,
+                        })) || [];
                       } else if (inventoryType === "colorInventory") {
                         colorItems = Array.isArray(inventoryRef)
                           ? inventoryRef
@@ -880,9 +881,8 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                     <FiPlus />
                   </button>
                 </div>
-
                 {/* Action Buttons */}
-                {/* <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
+                <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
                   <button
                     onClick={handleAddToCart}
                     disabled={loading}
@@ -892,29 +892,28 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                     <span>{loading ? "Adding..." : "Add To Cart"}</span>
                   </button>
 
-                  <button
+                  {/* <button
                     onClick={handleBuyNow}
                     disabled={loading}
                     className="cursor-pointer flex-1 bg-[#262626] hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 px-6 py-4 font-bold text-base rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     {loading ? "Processing..." : "Buy Now"}
-                  </button>
-                </div> */}
-                <Link href="/contact" className="flex-1 w-full">
-                  <button
-                    className="flex-1 w-full bg-gradient-to-r from-[#D4A373] to-[#CCD5AE] hover:from-[#CCD5AE] hover:to-[#D4A373] transition-all duration-500 px-8 py-4 font-bold text-lg rounded-lg text-white shadow-lg hover:shadow-md  flex items-center justify-center gap-3 group cursor-pointer"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span>Get a Quote</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </Link>
-
+                  </button> */}
+                </div>
               </div>
+              <Link href="/contact" className="flex-1 w-full">
+                <button
+                  className="flex-1 w-full bg-gradient-to-r from-[#D4A373] to-[#CCD5AE] hover:from-[#CCD5AE] hover:to-[#D4A373] transition-all duration-500 px-8 py-4 font-bold text-lg rounded-lg text-white shadow-lg hover:shadow-md  flex items-center justify-center gap-3 group cursor-pointer"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Get a Quote</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </Link>
             </div>
 
             {/* EMI Plan */}

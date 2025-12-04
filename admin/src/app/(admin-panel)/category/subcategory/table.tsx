@@ -17,7 +17,7 @@ import {
 import { Label } from "@radix-ui/react-label";
 import { Card } from "@/components/ui/card";
 import { TSubCategory } from "@/types/shared";
-import { columns, getColumns } from "./columns";
+import { getColumns } from "./columns";
 import { DataTablePagination } from "@/components/ui/data-table-pagination";
 
 interface Props {

@@ -5,7 +5,23 @@ import Link from 'next/link';
 import React from 'react';
 import { motion } from "framer-motion";
 
-export default function FurnitureCurtainGallery({ response }) {
+interface Item {
+  name: string;
+  slug: string;
+  image: string;
+  categoryRef?: {
+    name?: string;
+  };
+}
+
+interface GalleryProps {
+  response: {
+    data: Item[];
+  };
+}
+
+
+export default function FurnitureCurtainGallery({ response } : GalleryProps) {
 
   const items = response?.data || [];
 
@@ -48,9 +64,8 @@ export default function FurnitureCurtainGallery({ response }) {
                     src={apiBaseUrl + first.image}
                     alt={first.name}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110 rounded-md"
+                    className="object-cover transition-transform duration-700 group-hover:scale-102 rounded-md"
                   />
-
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     <div className="absolute bottom-0 left-0 right-0 p-8 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                       <h3 className="text-3xl font-bold mb-2">{first.name}</h3>
@@ -82,7 +97,7 @@ export default function FurnitureCurtainGallery({ response }) {
                       src={apiBaseUrl + second.image}
                       alt={second.name}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110 rounded-md"
+                      className="object-cover transition-transform duration-700 group-hover:scale-102 rounded-md"
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -114,7 +129,7 @@ export default function FurnitureCurtainGallery({ response }) {
                       src={apiBaseUrl + third.image}
                       alt={third.name}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110 rounded-md"
+                      className="object-cover transition-transform duration-700 group-hover:scale-102 rounded-md"
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">

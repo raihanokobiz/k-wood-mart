@@ -605,7 +605,7 @@ export const CreateProductForm: React.FC = () => {
               />
 
               {/* Fabrics - Dynamic with Color & Images */}
-              <div className="my-4 col-span-3">
+              <div className="my-4 col-span-3 border p-4 border-gray-300 rounded-md">
                 <FormLabel>Fabrics</FormLabel>
                 {fabricFields.map((field, index) => (
                   <div
@@ -724,7 +724,7 @@ export const CreateProductForm: React.FC = () => {
               </div>
 
               {/* Colors - Dynamic */}
-              <div className="my-4 col-span-3">
+              <div className="my-4 col-span-3 border p-4 border-gray-300 rounded-md">
                 <FormLabel>Colors</FormLabel>
                 {colorFields.map((field, index) => (
                   <div
@@ -814,7 +814,7 @@ export const CreateProductForm: React.FC = () => {
               </div>
 
               {/* Sizes - Dynamic */}
-              <div className="my-4 col-span-3">
+              <div className="my-4 col-span-3 border p-4 border-gray-300 rounded-md">
                 <FormLabel>Sizes</FormLabel>
                 {sizeFields.map((field, index) => (
                   <div
@@ -823,7 +823,6 @@ export const CreateProductForm: React.FC = () => {
                   >
                     <div className="grid grid-cols-3 gap-2 mb-2">
                       {/* size Name */}
-                     // Sizes - Dynamic section এ
                       <FormItem>
                         <FormLabel>Size Name</FormLabel>
                         <FormControl>
@@ -902,7 +901,7 @@ export const CreateProductForm: React.FC = () => {
               </div>
 
               {/* Set - Dynamic with Images */}
-              <div className="my-4 col-span-3">
+              <div className="my-4 col-span-3 border p-4 border-gray-300 rounded-md">
                 <FormLabel>Sets</FormLabel>
                 {setFields.map((field, index) => (
                   <div

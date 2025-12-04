@@ -24,7 +24,7 @@ export const productFormSchema = z.object({
       colorName: z.string().optional(),
       size: z.string().optional(),
       // quantity: z.string().nonempty("Quantity is required"),
-      mrpPrice: z.string().nonempty("Price is required"),
+      mrpPrice: z.string().optional(),
     })
   ),
 
