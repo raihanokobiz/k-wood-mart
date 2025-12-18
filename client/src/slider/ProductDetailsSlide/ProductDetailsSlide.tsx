@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
-
 interface Props {
   // thumbnailImage: string;
   // backViewImage?: string;
@@ -31,20 +30,57 @@ const ProductDetailsSlide: React.FC<Props> = ({
     // ...(backViewImage ? [apiBaseUrl + backViewImage] : []),
     // ...images.map((img) => apiBaseUrl + img),
     // ...(videoUrl ? [videoUrl] : []), // Add video as last item
-     ...images, 
-  ...(videoUrl ? [videoUrl] : []),
+    ...images,
+    ...(videoUrl ? [videoUrl] : []),
   ];
 
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const thumbnailContainerRef = React.useRef<HTMLDivElement>(null);
 
   const selectedItem = allMedia[selectedIndex];
   const isVideo = selectedItem?.includes("youtube.com");
+
+  // Touch/Mouse drag handlers
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!thumbnailContainerRef.current) return;
+    setIsDragging(true);
+    const pageX = "touches" in e ? e.touches[0].pageX : e.pageX;
+    setStartX(pageX - thumbnailContainerRef.current.offsetLeft);
+    setScrollLeft(thumbnailContainerRef.current.scrollLeft);
+  };
+
+  const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDragging || !thumbnailContainerRef.current) return;
+    e.preventDefault();
+    const pageX = "touches" in e ? e.touches[0].pageX : e.pageX;
+    const x = pageX - thumbnailContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    thumbnailContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
 
   return (
     <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
       {/* Thumbnail Gallery - Vertical on large screens */}
       <div className="bg-gray-100 p-4 rounded-md order-2 lg:order-1">
-        <div className=" w-[330px] md:w-full flex lg:flex-col flex-row gap-3 lg:max-h-[550px] overflow-x-auto lg:overflow-y-auto scrollbar-hide">
+        <div
+          ref={thumbnailContainerRef}
+          onMouseDown={handleDragStart}
+          onMouseMove={handleDragMove}
+          onMouseUp={handleDragEnd}
+          onMouseLeave={handleDragEnd}
+          onTouchStart={handleDragStart}
+          onTouchMove={handleDragMove}
+          onTouchEnd={handleDragEnd}
+          className="w-[330px] md:w-full lg:w-full flex lg:flex-col flex-row gap-3 lg:max-h-[550px] overflow-x-auto lg:overflow-y-auto scrollbar-hide"
+          style={{ userSelect: "none" }}
+        >
           {allMedia.map((item, index) => {
             const isVideoThumb = item.includes("youtube.com");
             const isSelected = index === selectedIndex;
@@ -102,7 +138,11 @@ const ProductDetailsSlide: React.FC<Props> = ({
                         stroke="currentColor"
                         strokeWidth={3}
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     </motion.div>
                   )}
@@ -166,7 +206,11 @@ const ProductDetailsSlide: React.FC<Props> = ({
           <>
             {/* Previous Button */}
             <button
-              onClick={() => setSelectedIndex(selectedIndex > 0 ? selectedIndex - 1 : allMedia.length - 1)}
+              onClick={() =>
+                setSelectedIndex(
+                  selectedIndex > 0 ? selectedIndex - 1 : allMedia.length - 1
+                )
+              }
               className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-sm p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 group z-10"
               aria-label="Previous image"
             >
@@ -178,13 +222,21 @@ const ProductDetailsSlide: React.FC<Props> = ({
                 stroke="currentColor"
                 strokeWidth={2.5}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
 
             {/* Next Button */}
             <button
-              onClick={() => setSelectedIndex(selectedIndex < allMedia.length - 1 ? selectedIndex + 1 : 0)}
+              onClick={() =>
+                setSelectedIndex(
+                  selectedIndex < allMedia.length - 1 ? selectedIndex + 1 : 0
+                )
+              }
               className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-sm p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 group z-10"
               aria-label="Next image"
             >
@@ -196,7 +248,11 @@ const ProductDetailsSlide: React.FC<Props> = ({
                 stroke="currentColor"
                 strokeWidth={2.5}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           </>
@@ -209,10 +265,11 @@ const ProductDetailsSlide: React.FC<Props> = ({
               <button
                 key={index}
                 onClick={() => setSelectedIndex(index)}
-                className={`transition-all duration-300 rounded-full ${index === selectedIndex
-                  ? "w-8 bg-[#D4A373]"
-                  : "w-2 bg-white/60 hover:bg-white/90"
-                  } h-2`}
+                className={`transition-all duration-300 rounded-full ${
+                  index === selectedIndex
+                    ? "w-8 bg-[#D4A373]"
+                    : "w-2 bg-white/60 hover:bg-white/90"
+                } h-2`}
                 aria-label={`Go to image ${index + 1}`}
               />
             ))}
@@ -221,13 +278,14 @@ const ProductDetailsSlide: React.FC<Props> = ({
       </div>
 
       <style jsx>{`
-          .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-          }
-          .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-       }`}</style>
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 };
