@@ -21,13 +21,12 @@ interface SpecialFurnitureProps {
 }
 
 
-
 const SpecialFurniture = ({ specialProducts }: SpecialFurnitureProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
 
   const products = specialProducts?.data?.result?.products || [];
-  const childCategory = specialProducts?.data?.result?.childCategory;
+  // const childCategory = specialProducts?.data?.result?.childCategory;
 
   if (!products || products.length === 0) {
     return null;
