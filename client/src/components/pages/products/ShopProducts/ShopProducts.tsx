@@ -53,6 +53,7 @@ const ShopProducts: React.FC<ShopProductsProps> = ({
         categorySlug,
         subCategorySlug,
         childCategorySlug,
+        brand,
         page,
       });
 
