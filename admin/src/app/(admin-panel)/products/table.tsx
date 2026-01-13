@@ -1,0 +1,156 @@
+"use client";
+
+import React from "react";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Label } from "@radix-ui/react-label";
+import { Card } from "@/components/ui/card";
+import { TProduct } from "@/types/shared";
+import { getColumns } from "./columns";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface Props {
+  data: TProduct[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+  };
+}
+
+export const ProductTable: React.FC<Props> = ({ data, pagination }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentCategory = searchParams.get("categorySlug") || "";
+
+  const handleCategoryChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value && value !== "all") {
+      params.set("categorySlug", value);
+    } else {
+      params.delete("categorySlug");
+    }
+    params.set("page", "1"); // Reset to first page
+    router.push(`?${params.toString()}`);
+  };
+
+  const columns = getColumns(data);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    columnResizeMode: "onChange",
+    pageCount: Math.ceil(pagination.total / pagination.limit),
+    state: {
+      pagination: {
+        pageIndex: pagination.page - 1,
+        pageSize: pagination.limit,
+      },
+    },
+  });
+
+  return (
+    <Card className="m-6 p-4 rounded-lg">
+      <div className="flex justify-between items-center">
+        <Label className="text-xl font-semibold mb-4">Product List</Label>
+        <Select value={currentCategory || "all"} onValueChange={handleCategoryChange}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Select Category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="furniture">Furniture</SelectItem>
+            <SelectItem value="curtains">Curtains</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <Table className="rounded-lg overflow-hidden">
+        <TableHeader className="bg-primary">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: header.getSize(), // Apply width from columnDef.size
+                    }}
+                    className={
+                      (header.column.columnDef.meta as any)?.align
+                        ? "h-8 text-white text-" +
+                        (header.column.columnDef.meta as any)?.align
+                        : "h-8 text-white"
+                    }
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell
+                    key={cell.id}
+                    style={{
+                      width: cell.column.getSize(),
+                    }}
+                    className={
+                      (cell.column.columnDef.meta as any)?.align
+                        ? "py-1 text-" +
+                        (cell.column.columnDef.meta as any)?.align
+                        : "py-1"
+                    }
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+
+      <DataTablePagination table={table} />
+    </Card>
+  );
+};

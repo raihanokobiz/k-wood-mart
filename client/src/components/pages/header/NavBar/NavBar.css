@@ -1,0 +1,25 @@
+.menuTitle {
+    position: relative;
+}
+
+.menuTitle::before {
+    position: absolute;
+    content: "";
+    width: 50%;
+    height: 2px;
+    left: 20px;
+    bottom: -5px;
+    background-color: #D4A373;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s;
+}
+
+.menuTitle:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.menuTitle:not(:hover)::before {
+    transform-origin: right;
+}

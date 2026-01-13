@@ -1,0 +1,344 @@
+"use client";
+
+import Image from "next/image";
+import React, { useState, useEffect } from "react";
+import { menuList } from "@/utilits/menuList";
+import Link from "next/link";
+import { BsCart2 } from "react-icons/bs";
+import { FiUser } from "react-icons/fi";
+import DropDownMenu from "../DropDownMenu/DropDownMenu";
+import { AnimatePresence, motion } from "framer-motion";
+import ResponsiveSearchForm from "../ResponsiveSearchForm/ResponsiveSearchForm";
+import ResponsiveNavSidBar from "../ResponsiveNavSidBar/ResponsiveNavSidBar";
+import "../NavBar/NavBar.css";
+import Logo from "../../../../assets/logo/Logo.png";
+
+import {
+  getCurtainsSubCategory,
+  getFurnitureSubCategory,
+} from "@/services/shopSidebar";
+// import { getCartProducts } from "@/services/cart";
+import { getUser, setCorrelation } from "@/services/auth";
+
+import UserPopover from "@/shared/UserPopover/UserPopover";
+import { TUser } from "@/types";
+import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
+
+// import { useCartRefresh } from "@/context/CartRefreshContext";
+
+type ChildCategory = {
+  _id: string;
+  name: string;
+  slug: string;
+  status: boolean;
+  subCategoryRef: string;
+};
+
+
+type SubCategory = {
+  _id: string;
+  name: string;
+  slug: string;
+  status: boolean;
+  categoryRef: string;
+  childCategories: ChildCategory[];
+};
+
+
+type CategoryData = {
+  _id: string;
+  name: string;
+  slug: string;
+  subCategories: SubCategory[];
+};
+
+
+interface NavBarProps {
+  userCartProducts: {
+    cartDetails: any[]; // Replace 'any' with the specific type if known
+  };
+}
+
+const NavBar: React.FC<NavBarProps> = ({ userCartProducts }) => {
+  // const { shouldRefresh, doneRefresh } = useCartRefresh();
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showSideMenu, setShowSideMenu] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [furnitureSubCategory, setFurnitureSubCategory] = useState<CategoryData | null>(null);
+  const [curtainsSubCategory, setCurtainsSubCategory] = useState<CategoryData | null>(null);
+  // const [productsByUser, setProductsByUser] = useState<{
+  //   cartDetails: any[];
+  // } | null>(null);
+  const [usersId, setUsersId] = useState<TUser | null>(null);
+
+  const isActive = (link: string) => {
+    if (link === "/") return pathname === "/";
+    return pathname.startsWith(link);
+  };
+
+
+  const pathname = usePathname();
+  const isShopPage = pathname === "/shop";
+  // const { shouldRefresh, doneRefresh } = useCartRefresh();
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+        setShowSideMenu(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const fetchSidebarData = async () => {
+      try {
+        const { data: furniture } = await getFurnitureSubCategory();
+        setFurnitureSubCategory(furniture);
+        const { data: curtain } = await getCurtainsSubCategory();
+        setCurtainsSubCategory(curtain);
+      } catch (error) {
+        console.error("Error fetching sidebar data:", error);
+      }
+    };
+
+    fetchSidebarData();
+  }, []);
+
+  useEffect(() => {
+    const userData = async () => {
+      try {
+        const user = await getUser();
+
+        setUsersId(user);
+      } catch (error) {
+        console.error("get user:", error);
+      }
+    };
+
+    userData();
+  }, []);
+
+  // const userId = usersId?.id;
+  const userName = usersId?.name;
+
+  useEffect(() => {
+    const setCorrelationAsync = async () => {
+      await setCorrelation();
+    };
+    setCorrelationAsync();
+  }, []);
+
+  // Helper function to get correct sidebar data
+  const getSidebarData = (menuTitle: string) => {
+    if (menuTitle === "Furniture") return furnitureSubCategory;
+    if (menuTitle === "Curtains") return curtainsSubCategory;
+    return null;
+  };
+
+  const pagesWithWhiteBg = [
+    "/product/",
+    "/contact",
+    "/blogs",
+    "/about",
+    "/shop",
+    "/emi",
+    "/cart",
+    "/checkout",
+    "/login",
+    "/register",
+    "/collections",
+    "/thank-you",
+    "/privacyPolicy",
+    "/orderPolicy",
+    "/returnPolicy",
+    "/terms-condition",
+    "/quote",
+  ];
+
+  const shouldHaveWhiteBg = pagesWithWhiteBg.some((page) =>
+    pathname.startsWith(page)
+  );
+
+  return (
+    <>
+      {/* Desktop Navbar */}
+      <div
+        className={`hidden lg:block w-full py-2 z-50 transition-all duration-300 fixed top-0 ${isScrolled || shouldHaveWhiteBg
+          ? "shadow bg-white text-black"
+          : "bg-transparent text-white"
+          }`}
+      >
+        <div className="px-4 md:px-6 lg:px-8 2xl:px-12">
+          <div className="flex items-center justify-between relative">
+            <div>
+              <div className="flex items-center lg:gap-0 gap-2">
+                <div className="w-[80px]">
+                  <Link href="/">
+                    <Image
+                      src={Logo || null}
+                      alt="K Wood Mart | Best E-commerce platform in BD"
+                      width={100}
+                      height={80}
+                      className="w-full h-full"
+                    />
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center  2xl:gap-16   gap-2 xl:relative">
+              <div className="lg:flex hidden items-center justify-center  ml-8">
+                {menuList?.map((menu, index) => (
+                  <div
+                    onMouseEnter={() => setActiveMenu(menu.title)}
+                    onMouseLeave={() => setActiveMenu(null)}
+                    key={index}
+                    className="relative"
+                  >
+                    <Link href={menu.link}>
+                      <li
+                        className={`list-none py-0 text-lg tracking-wider duration-300 xl:px-6 px-4 menuTitle
+    ${isActive(menu.link)
+                            ? "text-primary font-semibold"
+                            : "hover:text-[#1E3E96]"
+                          }
+  `}
+                      >
+                        {menu.title}
+                      </li>
+                    </Link>
+                    {menu?.subMenu === true && activeMenu === menu.title && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.3 }}
+                        className={`absolute left-0 top-full ${menu.title === "Curtains" ? "w-[350px]" : "w-[470px]"
+                          }`}
+                      >
+
+                        {getSidebarData(menu.title) && (
+                          <DropDownMenu menu={getSidebarData(menu.title)!} />
+                        )}
+
+                      </motion.div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center justify-center xl:gap-4 gap-2">
+              {/* <Link href="/cart">
+                <div className="px-2 py-2 border rounded relative">
+                  <BsCart2 />
+                  <p className="top-[-12px] right-[-8px] absolute w-[20px] h-[20px] text-sm text-[#fff] text-center rounded-full bg-[#D4A373]">
+                    {userCartProducts?.cartDetails?.length || 0}
+                  </p>
+                </div>
+              </Link> */}
+              <div>
+                {userName ? (
+                  <div className="p-1 border rounded">
+                    <UserPopover />
+                  </div>
+                ) : (
+                  // Show login link if userId is not present
+                  <Link href="/login">
+                    <div className="px-2 py-2 border rounded">
+                      <FiUser />
+                    </div>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* md and Mobile Navbar */}
+      <div
+        className={`bg-white z-50 px-4 shadow-md border border-gray-200 fixed w-full top-0 transition-all duration-300 lg:hidden `}
+      >
+        <div className="">
+          <div className="flex items-center justify-between relative">
+            <div className="flex space-x-3 lg:gap-0 gap-2">
+              <div className="w-[70px]">
+                <Link href="/">
+                  <Image
+                    src={Logo || null}
+                    alt="K Wood Mart"
+                    width={100}
+                    height={60}
+                    className="w-full h-full rounded-full py-1"
+                  />
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center 2xl:gap-16 xl:gap-8 lg:gap-4 gap-2 xl:relative">
+              <div className="flex items-center justify-center xl:gap-4 gap-2">
+                <Link href="/cart">
+                  <div className="px-2 py-2 border rounded relative">
+                    <BsCart2 />
+
+                    <p className="top-[-12px] right-[-8px] absolute w-[20px] h-[20px] text-sm text-[#fff] text-center rounded-full bg-[#D4A373]">
+                      {userCartProducts?.cartDetails?.length || 0}
+                    </p>
+                  </div>
+                </Link>
+                <div>
+                  {userName ? (
+                    <div className="p-1 border rounded">
+                      <UserPopover />
+                    </div>
+                  ) : (
+                    // Show login link if userId is not present
+                    <Link href="/login">
+                      <div className="px-2 py-2 border rounded">
+                        <FiUser />
+                      </div>
+                    </Link>
+                  )}
+                </div>
+                <div
+                  onClick={() => setShowSideMenu(!showSideMenu)}
+                  className={`-ml-1.5 border-gray-300 cursor-pointer ${isShopPage ? "lg:hidden" : "lg:block"
+                    }`}
+                >
+                  {showSideMenu ? (
+                    <X className="w-12 h-12" />
+                  ) : (
+                    <Menu className="w-12 h-12" />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <AnimatePresence>
+        {showSearch && (
+          <ResponsiveSearchForm onClose={() => setShowSearch(false)} />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showSideMenu && (
+          <ResponsiveNavSidBar
+            onClose={() => setShowSideMenu(false)}
+            menuList={menuList}
+            furnitureSubCategory={furnitureSubCategory}
+            curtainsSubCategory={curtainsSubCategory}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+export default NavBar;
