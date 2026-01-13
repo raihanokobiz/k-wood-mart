@@ -11,6 +11,61 @@ import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/config/config";
 import { toast } from "sonner";
 import { Switch } from "antd";
+import { getProductById } from "@/services/product";
+import { Loader2 } from "lucide-react";
+
+// Action cell component that fetches full product data
+const ProductActionCell = ({ product }: { product: TProduct }) => {
+  const [fullProduct, setFullProduct] = React.useState<TProduct | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpenSheet = async () => {
+    if (fullProduct) {
+      setOpen(true);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await getProductById(String(product._id));
+      setFullProduct(response.data);
+      setOpen(true);
+    } catch (error) {
+      toast.error("Failed to load product details");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {fullProduct && (
+        <ProductDetailsSheet
+          product={fullProduct}
+          isOpen={open}
+          onOpenChange={setOpen}
+        />
+      )}
+      <button
+        onClick={handleOpenSheet}
+        disabled={isLoading}
+        className="inline-flex items-center justify-center gap-2 px-3 py-1 text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-50 rounded"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Loading...
+          </>
+        ) : (
+          "Edit"
+        )}
+      </button>
+    </>
+  );
+};
+
 
 export const getColumns = (
   tableData: TProduct[]
@@ -40,26 +95,26 @@ export const getColumns = (
         );
       },
     },
-    // {
-    //   header: "Additional Images",
-    //   accessorKey: "images",
-    //   cell: ({ row }) => {
-    //     return (
-    //       <div>
-    //         {row.original.images &&
-    //           row.original.images.map((img) => (
-    //             <Image
-    //               src={fileUrlGenerator(img)}
-    //               alt={row.original.name || ""}
-    //               width={600}
-    //               height={200}
-    //               className="w-32 object-cover"
-    //             />
-    //           ))}
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      header: "Additional Images",
+      accessorKey: "images",
+      cell: ({ row }) => {
+        return (
+          <div>
+            {row.original.images &&
+              row.original.images.map((img) => (
+                <Image
+                  src={fileUrlGenerator(img)}
+                  alt={row.original.name || ""}
+                  width={600}
+                  height={200}
+                  className="w-32 object-cover"
+                />
+              ))}
+          </div>
+        );
+      },
+    },
     {
       header: "Barcode",
       cell: ({ row }) => {
@@ -302,7 +357,7 @@ export const getColumns = (
     {
       header: "Action",
       cell: ({ row }) => {
-        return <ProductDetailsSheet product={row.original} />;
+        return <ProductActionCell product={row.original} />;
       },
     },
   ];

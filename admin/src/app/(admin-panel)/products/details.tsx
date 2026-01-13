@@ -20,7 +20,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileUp, MoreHorizontal, Paperclip, Plus, Trash } from "lucide-react";
-import React, { useEffect, useMemo, useState, lazy, Suspense } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { deleteProductAction, updateFormAction } from "./actions";
@@ -52,6 +52,7 @@ import Image from "next/image";
 import { getAllCategory } from "@/services/category";
 import { getAllSubCategory } from "@/services/sub-category";
 import { getAllChildCategory } from "@/services/child-category";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { discountTypes, inventoryTypes } from "./form";
 import { Label } from "@/components/ui/label";
@@ -59,8 +60,6 @@ import { upperCase, upperFirst } from "lodash";
 import { getAllBrand } from "@/services/brand";
 import imageCompression from "browser-image-compression";
 
-// Lazy load ReactQuill - CRITICAL for performance
-const ReactQuill = lazy(() => import("react-quill"));
 
 const compressionOptions = {
   maxSizeMB: 0.07,          // 30 KB target
@@ -69,26 +68,39 @@ const compressionOptions = {
   initialQuality: 0.5,     // important
 };
 
-// Compress single image with better error handling
+// Compress single image
 const compressImage = async (file: File): Promise<File> => {
   try {
+
     const fileSizeKB = file.size / 1024;
+
     if (fileSizeKB <= 70) return file;
 
+    console.log(`Original: ${(file.size / 1024).toFixed(2)} KB`);
     const compressedBlob = await imageCompression(file, compressionOptions);
-    return new File([compressedBlob], file.name, {
-      type: file.type,
-      lastModified: Date.now(),
-    });
+    console.log(`Compressed: ${(compressedBlob.size / 1024).toFixed(2)} KB`);
+
+    //  Blob File এconvert 
+    const compressedFile = new File(
+      [compressedBlob],
+      file.name,
+      {
+        type: file.type,
+        lastModified: Date.now(),
+      }
+    );
+
+    return compressedFile;
   } catch (error) {
     console.error("Compression error:", error);
     return file;
   }
 };
 
-// Compress multiple images in parallel
+// Compress multiple images
 const compressMultipleImages = async (files: File[]): Promise<File[]> => {
-  return Promise.all(files.map(file => compressImage(file)));
+  const promises = files.map(file => compressImage(file));
+  return Promise.all(promises);
 };
 
 interface Props {
@@ -120,6 +132,20 @@ export const ProductDetailsSheet = ({ product }: Props) => {
   );
 
 
+  // pabric
+  const [fabricImageFileLists, setFabricImageFileLists] = useState<
+    Record<number, any[]>
+  >({});
+  const [colorImageFileLists, setColorImageFileLists] = useState<
+    Record<number, any[]>
+  >({});
+  const [sizeImageFileLists, setSizeImageFileLists] = useState<
+    Record<number, any[]>
+  >({});
+  const [setImageFileLists, setSetImageFileLists] = useState<
+    Record<number, any[]>
+  >({});
+
   const [thumbnailFileList, setThumbnailFileList] = useState<UploadFile<any>[]>(
     [
       {
@@ -131,6 +157,25 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     ]
   );
 
+  const [backViewFileList, setBackViewFileList] = useState<UploadFile<any>[]>([
+    {
+      uid: "-1",
+      name: String(product.backViewImage).split("/").pop() || "",
+      status: "done",
+      url: fileUrlGenerator(product.backViewImage || ""),
+    },
+  ]);
+
+  const [sizeChartFileList, setSizeChartFileList] = useState<UploadFile<any>[]>(
+    [
+      {
+        uid: "-1",
+        name: String(product.sizeChartImage).split("/").pop() || "",
+        status: "done",
+        url: fileUrlGenerator(product.sizeChartImage || ""),
+      },
+    ]
+  );
 
   const [brands, setBrands] = useState<TBrand[]>([]);
   const [categories, setCategories] = useState<TCategory[]>([]);
@@ -159,65 +204,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
       materials: [{ name: "" }],
     },
   });
-
-
-  const selectedCategoryId = form.watch("categoryRef");
-  const selectedSubCategoryId = form.watch("subCategoryRef");
-
-  const { control, register, watch, formState } = form;
-  const selectedInventoryType = watch("inventoryType");
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "inventories",
-  });
-
-  // fabric, material, color, size field arrays
-  const {
-    fields: fabricFields,
-    append: appendFabric,
-    remove: removeFabric,
-  } = useFieldArray({
-    control,
-    name: "fabrics",
-  });
-
-  const {
-    fields: colorFields,
-    append: appendColor,
-    remove: removeColor,
-  } = useFieldArray({
-    control,
-    name: "colors",
-  });
-
-  const {
-    fields: sizeFields,
-    append: appendSize,
-    remove: removeSize,
-  } = useFieldArray({
-    control,
-    name: "sizes",
-  });
-
-  const {
-    fields: setFields,
-    append: appendSet,
-    remove: removeSet,
-  } = useFieldArray({
-    control,
-    name: "set",
-  });
-
-  const {
-    fields: materialFields,
-    append: appendMaterial,
-    remove: removeMaterial,
-  } = useFieldArray({
-    control,
-    name: "materials",
-  });
-
 
   //  Step 2: Product form reset 
   useEffect(() => {
@@ -252,6 +238,7 @@ export const ProductDetailsSheet = ({ product }: Props) => {
         videoUrl: product.videoUrl || "",
         material: product.material || "",
 
+        // ❌ fabrics, colors, sizes, set 
       });
 
 
@@ -311,6 +298,63 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     }
   }, [product]);
 
+  const selectedCategoryId = form.watch("categoryRef");
+  const selectedSubCategoryId = form.watch("subCategoryRef");
+
+  const { control, register, watch, formState } = form;
+  const selectedInventoryType = watch("inventoryType");
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "inventories",
+  });
+
+  // fabric, material, color, size field arrays
+  const {
+    fields: fabricFields,
+    append: appendFabric,
+    remove: removeFabric,
+  } = useFieldArray({
+    control,
+    name: "fabrics",
+  });
+
+  const {
+    fields: colorFields,
+    append: appendColor,
+    remove: removeColor,
+  } = useFieldArray({
+    control,
+    name: "colors",
+  });
+
+  const {
+    fields: sizeFields,
+    append: appendSize,
+    remove: removeSize,
+  } = useFieldArray({
+    control,
+    name: "sizes",
+  });
+
+  const {
+    fields: setFields,
+    append: appendSet,
+    remove: removeSet,
+  } = useFieldArray({
+    control,
+    name: "set",
+  });
+
+  const {
+    fields: materialFields,
+    append: appendMaterial,
+    remove: removeMaterial,
+  } = useFieldArray({
+    control,
+    name: "materials",
+  });
+
 
   const getDefaultInventory = () => {
     const base = { id: "", quantity: "", mrpPrice: "" };
@@ -353,7 +397,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     );
   }, [subCategories, selectedSubCategoryId]);
 
-
   useEffect(() => {
     if (product.thumbnailImage) {
       const fetchExistingThumbnail = async () => {
@@ -377,6 +420,149 @@ export const ProductDetailsSheet = ({ product }: Props) => {
       fetchExistingThumbnail();
     }
   }, [product.thumbnailImage]);
+
+  // Load existing fabric images
+  React.useEffect(() => {
+    if (product.fabrics && product.fabrics.length > 0) {
+      const fabricLists: Record<number, any[]> = {};
+
+      product.fabrics.forEach(async (fabric: any, index: number) => {
+        if (fabric.images && fabric.images.length > 0) {
+          // Preview এর জন্য fileList
+          fabricLists[index] = fabric.images.map(
+            (img: string, imgIndex: number) => ({
+              uid: `fabric-${index}-${imgIndex}`,
+              name:
+                String(img).split("/").pop() || `fabric-${index}-${imgIndex}`,
+              status: "done",
+              url: fileUrlGenerator(img),
+            })
+          );
+
+          //  Form value  File objects 
+          const fileObjects = await Promise.all(
+            fabric.images.map(async (img: string) => {
+              const response = await fetch(fileUrlGenerator(img));
+              const blob = await response.blob();
+              return new File([blob], String(img).split("/").pop() || "image", {
+                type: blob.type,
+              });
+            })
+          );
+
+          form.setValue(`fabrics.${index}.images`, fileObjects);
+        }
+      });
+
+      setFabricImageFileLists(fabricLists);
+    }
+  }, [product.fabrics]);
+
+  // Load existing color images
+  React.useEffect(() => {
+    if (product.colors && product.colors.length > 0) {
+      const colorLists: Record<number, any[]> = {};
+
+      product.colors.forEach(async (color: any, index: number) => {
+        if (color.images && color.images.length > 0) {
+          colorLists[index] = color.images.map(
+            (img: string, imgIndex: number) => ({
+              uid: `color-${index}-${imgIndex}`,
+              name:
+                String(img).split("/").pop() || `color-${index}-${imgIndex}`,
+              status: "done",
+              url: fileUrlGenerator(img),
+            })
+          );
+
+          //  File objects
+          const fileObjects = await Promise.all(
+            color.images.map(async (img: string) => {
+              const response = await fetch(fileUrlGenerator(img));
+              const blob = await response.blob();
+              return new File([blob], String(img).split("/").pop() || "image", {
+                type: blob.type,
+              });
+            })
+          );
+
+          form.setValue(`colors.${index}.images`, fileObjects);
+        }
+      });
+
+      setColorImageFileLists(colorLists);
+    }
+  }, [product.colors]);
+
+  // Load existing size images
+  React.useEffect(() => {
+    if (product.sizes && product.sizes.length > 0) {
+      const sizeLists: Record<number, any[]> = {};
+
+      product.sizes.forEach(async (size: any, index: number) => {
+        if (size.images && size.images.length > 0) {
+          sizeLists[index] = size.images.map(
+            (img: string, imgIndex: number) => ({
+              uid: `size-${index}-${imgIndex}`,
+              name: String(img).split("/").pop() || `size-${index}-${imgIndex}`,
+              status: "done",
+              url: fileUrlGenerator(img),
+            })
+          );
+
+          //  File objects 
+          const fileObjects = await Promise.all(
+            size.images.map(async (img: string) => {
+              const response = await fetch(fileUrlGenerator(img));
+              const blob = await response.blob();
+              return new File([blob], String(img).split("/").pop() || "image", {
+                type: blob.type,
+              });
+            })
+          );
+
+          form.setValue(`sizes.${index}.images`, fileObjects);
+        }
+      });
+
+      setSizeImageFileLists(sizeLists);
+    }
+  }, [product.sizes]);
+
+  // Load existing set images
+  React.useEffect(() => {
+    if (product.set && product.set.length > 0) {
+      const setLists: Record<number, any[]> = {};
+
+      product.set.forEach(async (setItem: any, index: number) => {
+        if (setItem.images && setItem.images.length > 0) {
+          setLists[index] = setItem.images.map(
+            (img: string, imgIndex: number) => ({
+              uid: `set-${index}-${imgIndex}`,
+              name: String(img).split("/").pop() || `set-${index}-${imgIndex}`,
+              status: "done",
+              url: fileUrlGenerator(img),
+            })
+          );
+
+          //  File objects 
+          const fileObjects = await Promise.all(
+            setItem.images.map(async (img: string) => {
+              const response = await fetch(fileUrlGenerator(img));
+              const blob = await response.blob();
+              return new File([blob], String(img).split("/").pop() || "image", {
+                type: blob.type,
+              });
+            })
+          );
+
+          form.setValue(`set.${index}.images`, fileObjects);
+        }
+      });
+
+      setSetImageFileLists(setLists);
+    }
+  }, [product.set]);
 
 
 
@@ -412,6 +598,107 @@ export const ProductDetailsSheet = ({ product }: Props) => {
 
     // Sync with react-hook-form
     form.setValue("thumbnailImage", compressedFiles);
+  };
+
+  const handleBackViewFileChange = async ({ fileList }: any) => {
+    setBackViewFileList(fileList);
+
+    const rawFiles = fileList
+      .map((file: any) => {
+        if (file.originFileObj) {
+          return file.originFileObj;
+        }
+        return file.url;
+      })
+      .filter(Boolean);
+
+    const compressedFiles = await compressMultipleImages(rawFiles);
+
+    // Sync with react-hook-form
+    form.setValue("backViewImage", compressedFiles);
+  };
+
+
+
+  const handleFabricImageChange = async (index: number, { fileList }: any) => {
+    setFabricImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+
+    const rawFiles = fileList
+      .map((file: any) => {
+        if (file.originFileObj) {
+          return file.originFileObj;
+        }
+        return file.url; // ✅ এটা যোগ করুন - existing URL handle করবে
+      })
+      .filter(Boolean);
+
+
+    const compressedFiles = await compressMultipleImages(rawFiles);
+
+    form.setValue(`fabrics.${index}.images`, compressedFiles);
+  };
+
+  const handleColorImageChange = async (index: number, { fileList }: any) => {
+    setColorImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+
+    const rawFiles = fileList
+      .map((file: any) => {
+        if (file.originFileObj) {
+          return file.originFileObj;
+        }
+        return file.url; // ✅ এটা যোগ করুন
+      })
+      .filter(Boolean);
+
+    const compressedFiles = await compressMultipleImages(rawFiles);
+
+    form.setValue(`colors.${index}.images`, compressedFiles);
+  };
+
+  const handleSizeImageChange = async (index: number, { fileList }: any) => {
+    setSizeImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+
+    const rawFiles = fileList
+      .map((file: any) => {
+        if (file.originFileObj) {
+          return file.originFileObj;
+        }
+        return file.url; //  add this
+      })
+      .filter(Boolean);
+
+    const compressedFiles = await compressMultipleImages(rawFiles);
+
+    form.setValue(`sizes.${index}.images`, compressedFiles);
+  };
+
+  const handleSetImageChange = async (index: number, { fileList }: any) => {
+    setSetImageFileLists((prev) => ({
+      ...prev,
+      [index]: fileList,
+    }));
+
+    const rawFiles = fileList
+      .map((file: any) => {
+        if (file.originFileObj) {
+          return file.originFileObj;
+        }
+        return file.url; // ✅ এটা যোগ করুন
+      })
+      .filter(Boolean);
+
+    const compressedFiles = await compressMultipleImages(rawFiles);
+
+    form.setValue(`set.${index}.images`, compressedFiles);
   };
 
   const onSubmitUpdate = async (values: z.infer<typeof productFormSchema>) => {
@@ -456,8 +743,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     }
     setDeleting(false);
   };
-
-  const ReactQuill = lazy(() => import("react-quill"));
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -516,6 +801,83 @@ export const ProductDetailsSheet = ({ product }: Props) => {
                 )}
               />
               <div className="grid grid-cols-3 gap-1">
+                {/* <FormField
+                  control={form.control}
+                  name="freeShipping"
+                  render={({ field }) => (
+                    <div className="flex items-end gap-2 w-full">
+                      <FormItem className="flex-1">
+                        <FormLabel>Free Shipping</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={String(field.value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select free shipping?" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="true">Yes</SelectItem>
+                              <SelectItem value="false">No</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {form.formState.errors.freeShipping?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+                  )}
+                /> */}
+                {/* <FormField
+                  control={form.control}
+                  name="discountType"
+                  render={({ field }) => (
+                    <div className="flex items-end gap-2 w-full">
+                      <FormItem className="flex-1">
+                        <FormLabel>Discount Type</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select discount type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {discountTypes.map((type) => (
+                                <SelectItem
+                                  key={type.key}
+                                  value={String(type.key)}
+                                >
+                                  {type.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormDescription className="text-red-400 text-xs min-h-4">
+                          {form.formState.errors.discountType?.message}
+                        </FormDescription>
+                      </FormItem>
+                    </div>
+                  )}
+                /> */}
+                {/* <FormField
+                  control={form.control}
+                  name="discount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Discount</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter product name" {...field} />
+                      </FormControl>
+                      <FormDescription className="text-red-400 text-xs min-h-4">
+                        {form.formState.errors.discount?.message}
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                /> */}
                 <FormField
                   control={form.control}
                   name="brandRef"
@@ -1233,6 +1595,27 @@ export const ProductDetailsSheet = ({ product }: Props) => {
               </div>
 
               <div className="">
+                {/* <Label>Backview Image (Max 1 File)</Label>
+                <FormField
+                  control={form.control}
+                  name="backViewImage"
+                  render={({ field }) => (
+                    <div>
+                      <Upload
+                        listType="picture-card"
+                        beforeUpload={() => false}
+                        fileList={backViewFileList}
+                        onChange={handleBackViewFileChange}
+                        multiple={false}
+                      >
+                        <div>
+                          <UploadOutlined />
+                          <div style={{ marginTop: 8 }}>Upload</div>
+                        </div>
+                      </Upload>
+                    </div>
+                  )}
+                /> */}
 
                 <div className="mt-4">
                   {form.getValues("backViewImage") &&
