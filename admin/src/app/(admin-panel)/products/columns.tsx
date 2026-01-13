@@ -299,7 +299,6 @@ export const getColumns = (
         );
       },
     },
-
     {
       header: "Action",
       cell: ({ row }) => {

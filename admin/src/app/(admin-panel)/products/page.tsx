@@ -29,10 +29,6 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   const { data } = await getProductWithPagination(page, limit, categorySlug);
 
-
-  console.log(data, "ok");
-
-
   return (
     <ContentLayout title="Product">
       <CreateProductForm />
