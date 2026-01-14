@@ -20,7 +20,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileUp, MoreHorizontal, Paperclip, Plus, Trash } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { deleteProductAction, updateFormAction } from "./actions";
@@ -132,19 +132,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
   );
 
 
-  // pabric
-  const [fabricImageFileLists, setFabricImageFileLists] = useState<
-    Record<number, any[]>
-  >({});
-  const [colorImageFileLists, setColorImageFileLists] = useState<
-    Record<number, any[]>
-  >({});
-  const [sizeImageFileLists, setSizeImageFileLists] = useState<
-    Record<number, any[]>
-  >({});
-  const [setImageFileLists, setSetImageFileLists] = useState<
-    Record<number, any[]>
-  >({});
 
   const [thumbnailFileList, setThumbnailFileList] = useState<UploadFile<any>[]>(
     [
@@ -157,25 +144,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     ]
   );
 
-  const [backViewFileList, setBackViewFileList] = useState<UploadFile<any>[]>([
-    {
-      uid: "-1",
-      name: String(product.backViewImage).split("/").pop() || "",
-      status: "done",
-      url: fileUrlGenerator(product.backViewImage || ""),
-    },
-  ]);
-
-  const [sizeChartFileList, setSizeChartFileList] = useState<UploadFile<any>[]>(
-    [
-      {
-        uid: "-1",
-        name: String(product.sizeChartImage).split("/").pop() || "",
-        status: "done",
-        url: fileUrlGenerator(product.sizeChartImage || ""),
-      },
-    ]
-  );
 
   const [brands, setBrands] = useState<TBrand[]>([]);
   const [categories, setCategories] = useState<TCategory[]>([]);
@@ -205,98 +173,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     },
   });
 
-  //  Step 2: Product form reset 
-  useEffect(() => {
-    if (product) {
-      form.reset({
-        name: product.name,
-        description: product.description,
-        discountType: product.discountType || "",
-        discount: String(product.discount) || "",
-        freeShipping: String(product.freeShipping),
-        brandRef: product.brandRef?._id,
-        categoryRef: product.categoryRef?._id,
-        subCategoryRef: product.subCategoryRef?._id,
-        childCategoryRef: product.childCategoryRef?._id,
-        inventoryType: product.inventoryType,
-        featured: product.featured,
-        images: [],
-        thumbnailImage: [],
-        backViewImage: [],
-        sizeChartImage: [],
-        inventories: product.inventoryRef?.length
-          ? product.inventoryRef.map((item: any) => ({
-            quantity: String(item.quantity),
-            ...(item._id && { id: item._id || "" }),
-            ...(item.color && { color: item.color }),
-            ...(item.name && { colorName: upperFirst(item.name) }),
-            ...(item.level && { size: upperCase(item.level) }),
-            ...(item.price && { price: upperCase(item.price) }),
-            ...(item.mrpPrice && { mrpPrice: upperCase(item.mrpPrice) }),
-          }))
-          : [{ quantity: product.mainInventory }],
-        videoUrl: product.videoUrl || "",
-        material: product.material || "",
-
-        // ❌ fabrics, colors, sizes, set 
-      });
-
-
-      while (materialFields.length > 0) {
-        removeMaterial(0);
-      }
-      //  Manually handle Fabrics
-      //  clear 
-      while (fabricFields.length > 0) {
-        removeFabric(0);
-      }
-      //  product 
-      if (product.fabrics?.length) {
-        product.fabrics.forEach((fabric: any) => {
-          appendFabric(fabric);
-        });
-      } else {
-        //  product , default 
-        appendFabric({ colorCode: "#1677ff", colorName: "", images: [] });
-      }
-
-      // Manually handle Colors
-      while (colorFields.length > 0) {
-        removeColor(0);
-      }
-      if (product.colors?.length) {
-        product.colors.forEach((color: any) => {
-          appendColor(color);
-        });
-      } else {
-        appendColor({ colorName: "", images: [] });
-      }
-
-      //  Manually handle Sizes
-      while (sizeFields.length > 0) {
-        removeSize(0);
-      }
-      if (product.sizes?.length) {
-        product.sizes.forEach((size: any) => {
-          appendSize(size);
-        });
-      } else {
-        appendSize({ sizeName: "", images: [] });
-      }
-
-      // Manually handle Set
-      while (setFields.length > 0) {
-        removeSet(0);
-      }
-      if (product.set?.length) {
-        product.set.forEach((setItem: any) => {
-          appendSet(setItem);
-        });
-      } else {
-        appendSet({ setName: "", images: [] });
-      }
-    }
-  }, [product]);
 
   const selectedCategoryId = form.watch("categoryRef");
   const selectedSubCategoryId = form.watch("subCategoryRef");
@@ -309,11 +185,13 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     name: "inventories",
   });
 
+
   // fabric, material, color, size field arrays
   const {
     fields: fabricFields,
     append: appendFabric,
     remove: removeFabric,
+    replace: replaceFabric,
   } = useFieldArray({
     control,
     name: "fabrics",
@@ -323,6 +201,7 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     fields: colorFields,
     append: appendColor,
     remove: removeColor,
+    replace: replaceColor,
   } = useFieldArray({
     control,
     name: "colors",
@@ -332,6 +211,7 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     fields: sizeFields,
     append: appendSize,
     remove: removeSize,
+    replace: replaceSize,
   } = useFieldArray({
     control,
     name: "sizes",
@@ -341,6 +221,7 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     fields: setFields,
     append: appendSet,
     remove: removeSet,
+    replace: replaceSet,
   } = useFieldArray({
     control,
     name: "set",
@@ -350,10 +231,86 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     fields: materialFields,
     append: appendMaterial,
     remove: removeMaterial,
+    replace: replaceMaterial,
   } = useFieldArray({
     control,
     name: "materials",
   });
+
+  const initializedRef = useRef(false);
+
+  //  Step 2: Product form reset 
+  useEffect(() => {
+    if (!product) return;
+    if (initializedRef.current) return;
+
+    initializedRef.current = true;
+
+    form.reset({
+      name: product.name,
+      description: product.description,
+      discountType: product.discountType || "",
+      discount: String(product.discount || ""),
+      freeShipping: String(product.freeShipping),
+      brandRef: product.brandRef?._id,
+      categoryRef: product.categoryRef?._id,
+      subCategoryRef: product.subCategoryRef?._id,
+      childCategoryRef: product.childCategoryRef?._id,
+      inventoryType: product.inventoryType,
+      featured: product.featured,
+      images: [],
+      thumbnailImage: [],
+      backViewImage: [],
+      sizeChartImage: [],
+      inventories:
+        product.inventoryRef?.length
+          ? product.inventoryRef.map((item: any) => ({
+            quantity: String(item.quantity),
+            ...(item._id && { id: item._id }),
+            ...(item.color && { color: item.color }),
+            ...(item.name && { colorName: upperFirst(item.name) }),
+            ...(item.level && { size: upperCase(item.level) }),
+            ...(item.price && { price: item.price }),
+            ...(item.mrpPrice && { mrpPrice: item.mrpPrice }),
+          }))
+          : [{ quantity: String(product.mainInventory) }],
+      videoUrl: product.videoUrl || "",
+      material: product.material || "",
+    });
+
+    // Materials replace
+    replaceMaterial(
+      product.materials?.length
+        ? product.materials
+        : [{ name: "" }]
+    );
+
+    //  replace 
+    replaceFabric(
+      product.fabrics?.length
+        ? product.fabrics
+        : [{ colorCode: "#1677ff", colorName: "", images: [] }]
+    );
+
+    replaceColor(
+      product.colors?.length
+        ? product.colors
+        : [{ colorName: "", images: [] }]
+    );
+
+    replaceSize(
+      product.sizes?.length
+        ? product.sizes
+        : [{ sizeName: "", images: [] }]
+    );
+
+    replaceSet(
+      product.set?.length
+        ? product.set
+        : [{ setName: "", images: [] }]
+    );
+
+  }, [product]);
 
 
   const getDefaultInventory = () => {
@@ -421,150 +378,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     }
   }, [product.thumbnailImage]);
 
-  // Load existing fabric images
-  React.useEffect(() => {
-    if (product.fabrics && product.fabrics.length > 0) {
-      const fabricLists: Record<number, any[]> = {};
-
-      product.fabrics.forEach(async (fabric: any, index: number) => {
-        if (fabric.images && fabric.images.length > 0) {
-          // Preview এর জন্য fileList
-          fabricLists[index] = fabric.images.map(
-            (img: string, imgIndex: number) => ({
-              uid: `fabric-${index}-${imgIndex}`,
-              name:
-                String(img).split("/").pop() || `fabric-${index}-${imgIndex}`,
-              status: "done",
-              url: fileUrlGenerator(img),
-            })
-          );
-
-          //  Form value  File objects 
-          const fileObjects = await Promise.all(
-            fabric.images.map(async (img: string) => {
-              const response = await fetch(fileUrlGenerator(img));
-              const blob = await response.blob();
-              return new File([blob], String(img).split("/").pop() || "image", {
-                type: blob.type,
-              });
-            })
-          );
-
-          form.setValue(`fabrics.${index}.images`, fileObjects);
-        }
-      });
-
-      setFabricImageFileLists(fabricLists);
-    }
-  }, [product.fabrics]);
-
-  // Load existing color images
-  React.useEffect(() => {
-    if (product.colors && product.colors.length > 0) {
-      const colorLists: Record<number, any[]> = {};
-
-      product.colors.forEach(async (color: any, index: number) => {
-        if (color.images && color.images.length > 0) {
-          colorLists[index] = color.images.map(
-            (img: string, imgIndex: number) => ({
-              uid: `color-${index}-${imgIndex}`,
-              name:
-                String(img).split("/").pop() || `color-${index}-${imgIndex}`,
-              status: "done",
-              url: fileUrlGenerator(img),
-            })
-          );
-
-          //  File objects
-          const fileObjects = await Promise.all(
-            color.images.map(async (img: string) => {
-              const response = await fetch(fileUrlGenerator(img));
-              const blob = await response.blob();
-              return new File([blob], String(img).split("/").pop() || "image", {
-                type: blob.type,
-              });
-            })
-          );
-
-          form.setValue(`colors.${index}.images`, fileObjects);
-        }
-      });
-
-      setColorImageFileLists(colorLists);
-    }
-  }, [product.colors]);
-
-  // Load existing size images
-  React.useEffect(() => {
-    if (product.sizes && product.sizes.length > 0) {
-      const sizeLists: Record<number, any[]> = {};
-
-      product.sizes.forEach(async (size: any, index: number) => {
-        if (size.images && size.images.length > 0) {
-          sizeLists[index] = size.images.map(
-            (img: string, imgIndex: number) => ({
-              uid: `size-${index}-${imgIndex}`,
-              name: String(img).split("/").pop() || `size-${index}-${imgIndex}`,
-              status: "done",
-              url: fileUrlGenerator(img),
-            })
-          );
-
-          //  File objects 
-          const fileObjects = await Promise.all(
-            size.images.map(async (img: string) => {
-              const response = await fetch(fileUrlGenerator(img));
-              const blob = await response.blob();
-              return new File([blob], String(img).split("/").pop() || "image", {
-                type: blob.type,
-              });
-            })
-          );
-
-          form.setValue(`sizes.${index}.images`, fileObjects);
-        }
-      });
-
-      setSizeImageFileLists(sizeLists);
-    }
-  }, [product.sizes]);
-
-  // Load existing set images
-  React.useEffect(() => {
-    if (product.set && product.set.length > 0) {
-      const setLists: Record<number, any[]> = {};
-
-      product.set.forEach(async (setItem: any, index: number) => {
-        if (setItem.images && setItem.images.length > 0) {
-          setLists[index] = setItem.images.map(
-            (img: string, imgIndex: number) => ({
-              uid: `set-${index}-${imgIndex}`,
-              name: String(img).split("/").pop() || `set-${index}-${imgIndex}`,
-              status: "done",
-              url: fileUrlGenerator(img),
-            })
-          );
-
-          //  File objects 
-          const fileObjects = await Promise.all(
-            setItem.images.map(async (img: string) => {
-              const response = await fetch(fileUrlGenerator(img));
-              const blob = await response.blob();
-              return new File([blob], String(img).split("/").pop() || "image", {
-                type: blob.type,
-              });
-            })
-          );
-
-          form.setValue(`set.${index}.images`, fileObjects);
-        }
-      });
-
-      setSetImageFileLists(setLists);
-    }
-  }, [product.set]);
-
-
 
   const handleImageFileChange = ({ fileList }: any) => {
     setImageFileList(fileList);
@@ -581,6 +394,7 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     // Sync with react-hook-form
     form.setValue("images", rawFiles);
   };
+
 
   const handleThumbnailFileChange = async ({ fileList }: any) => {
     setThumbnailFileList(fileList);
@@ -600,106 +414,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
     form.setValue("thumbnailImage", compressedFiles);
   };
 
-  const handleBackViewFileChange = async ({ fileList }: any) => {
-    setBackViewFileList(fileList);
-
-    const rawFiles = fileList
-      .map((file: any) => {
-        if (file.originFileObj) {
-          return file.originFileObj;
-        }
-        return file.url;
-      })
-      .filter(Boolean);
-
-    const compressedFiles = await compressMultipleImages(rawFiles);
-
-    // Sync with react-hook-form
-    form.setValue("backViewImage", compressedFiles);
-  };
-
-
-
-  const handleFabricImageChange = async (index: number, { fileList }: any) => {
-    setFabricImageFileLists((prev) => ({
-      ...prev,
-      [index]: fileList,
-    }));
-
-    const rawFiles = fileList
-      .map((file: any) => {
-        if (file.originFileObj) {
-          return file.originFileObj;
-        }
-        return file.url; // ✅ এটা যোগ করুন - existing URL handle করবে
-      })
-      .filter(Boolean);
-
-
-    const compressedFiles = await compressMultipleImages(rawFiles);
-
-    form.setValue(`fabrics.${index}.images`, compressedFiles);
-  };
-
-  const handleColorImageChange = async (index: number, { fileList }: any) => {
-    setColorImageFileLists((prev) => ({
-      ...prev,
-      [index]: fileList,
-    }));
-
-    const rawFiles = fileList
-      .map((file: any) => {
-        if (file.originFileObj) {
-          return file.originFileObj;
-        }
-        return file.url; // ✅ এটা যোগ করুন
-      })
-      .filter(Boolean);
-
-    const compressedFiles = await compressMultipleImages(rawFiles);
-
-    form.setValue(`colors.${index}.images`, compressedFiles);
-  };
-
-  const handleSizeImageChange = async (index: number, { fileList }: any) => {
-    setSizeImageFileLists((prev) => ({
-      ...prev,
-      [index]: fileList,
-    }));
-
-    const rawFiles = fileList
-      .map((file: any) => {
-        if (file.originFileObj) {
-          return file.originFileObj;
-        }
-        return file.url; //  add this
-      })
-      .filter(Boolean);
-
-    const compressedFiles = await compressMultipleImages(rawFiles);
-
-    form.setValue(`sizes.${index}.images`, compressedFiles);
-  };
-
-  const handleSetImageChange = async (index: number, { fileList }: any) => {
-    setSetImageFileLists((prev) => ({
-      ...prev,
-      [index]: fileList,
-    }));
-
-    const rawFiles = fileList
-      .map((file: any) => {
-        if (file.originFileObj) {
-          return file.originFileObj;
-        }
-        return file.url; // ✅ এটা যোগ করুন
-      })
-      .filter(Boolean);
-
-    const compressedFiles = await compressMultipleImages(rawFiles);
-
-    form.setValue(`set.${index}.images`, compressedFiles);
-  };
 
   const onSubmitUpdate = async (values: z.infer<typeof productFormSchema>) => {
     setUpdating(true);
@@ -713,11 +427,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
       setSheetOpen(false);
       setImageFileList([]);
       setThumbnailFileList([]);
-      setBackViewFileList([]);
-      setFabricImageFileLists({});
-      setColorImageFileLists({});
-      setSizeImageFileLists({});
-      setSetImageFileLists({});
     } catch (error: any) {
       toast({
         title: "Failed to update product",
@@ -801,83 +510,6 @@ export const ProductDetailsSheet = ({ product }: Props) => {
                 )}
               />
               <div className="grid grid-cols-3 gap-1">
-                {/* <FormField
-                  control={form.control}
-                  name="freeShipping"
-                  render={({ field }) => (
-                    <div className="flex items-end gap-2 w-full">
-                      <FormItem className="flex-1">
-                        <FormLabel>Free Shipping</FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={String(field.value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select free shipping?" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="true">Yes</SelectItem>
-                              <SelectItem value="false">No</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormDescription className="text-red-400 text-xs min-h-4">
-                          {form.formState.errors.freeShipping?.message}
-                        </FormDescription>
-                      </FormItem>
-                    </div>
-                  )}
-                /> */}
-                {/* <FormField
-                  control={form.control}
-                  name="discountType"
-                  render={({ field }) => (
-                    <div className="flex items-end gap-2 w-full">
-                      <FormItem className="flex-1">
-                        <FormLabel>Discount Type</FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select discount type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {discountTypes.map((type) => (
-                                <SelectItem
-                                  key={type.key}
-                                  value={String(type.key)}
-                                >
-                                  {type.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormDescription className="text-red-400 text-xs min-h-4">
-                          {form.formState.errors.discountType?.message}
-                        </FormDescription>
-                      </FormItem>
-                    </div>
-                  )}
-                /> */}
-                {/* <FormField
-                  control={form.control}
-                  name="discount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Discount</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter product name" {...field} />
-                      </FormControl>
-                      <FormDescription className="text-red-400 text-xs min-h-4">
-                        {form.formState.errors.discount?.message}
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                /> */}
                 <FormField
                   control={form.control}
                   name="brandRef"
@@ -1217,7 +849,7 @@ export const ProductDetailsSheet = ({ product }: Props) => {
                   {sizeFields.map((field, index) => (
                     <div
                       key={field.id}
-                      className=" relative"
+                      className="relative"
                     >
                       <div className="gap-2 mb-2">
                         {/* size Name */}
@@ -1437,7 +1069,7 @@ export const ProductDetailsSheet = ({ product }: Props) => {
                           </FormDescription>
                         </FormItem> */}
 
-                        <FormItem>
+                        {/* <FormItem>
                           <FormLabel>
                             MRP (Maximum Retail Price){" "}
                           </FormLabel>
@@ -1453,7 +1085,7 @@ export const ProductDetailsSheet = ({ product }: Props) => {
                                 ?.message
                             }
                           </FormDescription>
-                        </FormItem>
+                        </FormItem> */}
                       </>
                     )}
 

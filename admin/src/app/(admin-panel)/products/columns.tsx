@@ -66,7 +66,6 @@ const ProductActionCell = ({ product }: { product: TProduct }) => {
   );
 };
 
-
 export const getColumns = (
   tableData: TProduct[]
 ): ColumnDef<TProduct>[] => [
@@ -86,7 +85,7 @@ export const getColumns = (
                 alt={row.original.name || ""}
                 width={600}
                 height={200}
-                className="w-32 object-cover"
+                className="w-20 mb-1 rounded-md object-cover"
                 loading="lazy"
                 quality={75}
               />
@@ -108,7 +107,7 @@ export const getColumns = (
                   alt={row.original.name || ""}
                   width={600}
                   height={200}
-                  className="w-32 object-cover"
+                  className="w-20 mb-1 rounded-md object-cover"
                 />
               ))}
           </div>
@@ -357,7 +356,7 @@ export const getColumns = (
     {
       header: "Action",
       cell: ({ row }) => {
-        return <ProductActionCell product={row.original} />;
+        return <ProductDetailsSheet product={row.original} />;
       },
     },
   ];

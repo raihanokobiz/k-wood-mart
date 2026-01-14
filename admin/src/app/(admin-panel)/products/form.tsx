@@ -168,7 +168,7 @@ export const CreateProductForm: React.FC = () => {
   const selectedSubCategoryId = form.watch("subCategoryRef");
 
   const { control, register, watch, formState } = form;
-  
+
   const selectedInventoryType = watch("inventoryType");
 
   const { fields, append, remove } = useFieldArray({
@@ -687,7 +687,7 @@ export const CreateProductForm: React.FC = () => {
                   {materialFields.map((field, index) => (
                     <div
                       key={field.id}
-                      className="border p-4 mb-2 rounded-md relative"
+                      className=" mb-2 rounded-md relative"
                     >
                       <FormItem>
                         <FormControl>

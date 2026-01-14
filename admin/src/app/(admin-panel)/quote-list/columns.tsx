@@ -186,13 +186,31 @@ export const columns: ColumnDef<any>[] = [
     header: "Message",
     cell: ({ row }) => {
       const { message } = row.original;
+      const [expanded, setExpanded] = React.useState(false);
+
+      if (!message) {
+        return <p className="text-sm min-w-[150px]">N/A</p>;
+      }
+
       return (
-        <div className="text-sm min-w-[150px]">
-          <p className="truncate">{message || "N/A"}</p>
+        <div className="text-sm min-w-[200px]">
+          <p className={expanded ? "" : "line-clamp-2"}>
+            {message}
+          </p>
+
+          {message.length > 100 && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="text-blue-600 text-xs mt-1 hover:underline"
+            >
+              {expanded ? "Read less" : "Read more"}
+            </button>
+          )}
         </div>
       );
     },
   },
+
 
   {
     header: "Status",

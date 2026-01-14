@@ -11,7 +11,7 @@ import { revalidatePath } from "next/cache";
 export async function createFormAction(data: FormData) {
 
   console.log(FormData, "form data in action ts........");
-  
+
 
   try {
     const inventoryType = data.get("inventoryType");
@@ -181,7 +181,7 @@ export async function createFormAction(data: FormData) {
       const images = data.getAll(`sizes[${index}][images]`);
 
       sizeData.push({
-         sizeName,
+        sizeName,
         images: images.length > 0 ? images : [],
       });
 
@@ -259,7 +259,7 @@ export async function updateFormAction(id: string, data: FormData) {
     const inventoryType = data.get("inventoryType");
     const inventoryEntries = data.getAll("inventories") as string[];
     const parsed = inventoryEntries.map((inv) => JSON.parse(inv));
-    console.log("parsed inventory entries", parsed);
+
     let inventoryArray: any[] = [];
 
     if (inventoryType === "colorLevelInventory") {
@@ -313,7 +313,7 @@ export async function updateFormAction(id: string, data: FormData) {
 
     const updatedFormData = new FormData();
 
-    // ✅ Process fabrics data for update as well (mirror create behavior)
+    //  Process fabrics data for update as well (mirror create behavior)
     const fabricData: any[] = [];
     const fabricKeys = Array.from(data.keys()).filter((key) =>
       key.startsWith("fabrics[")
@@ -381,11 +381,11 @@ export async function updateFormAction(id: string, data: FormData) {
     );
 
     sizeIndices.forEach((index) => {
-      const colorName = data.get(`sizes[${index}][colorName]`) as string;
+      const sizeName = data.get(`sizes[${index}][sizeName]`) as string;
       const images = data.getAll(`sizes[${index}][images]`);
 
       sizeData.push({
-        colorName,
+        sizeName,
         images: images.length > 0 ? images : [],
       });
     });
@@ -442,7 +442,6 @@ export async function updateFormAction(id: string, data: FormData) {
       "colors",
       JSON.stringify(
         colorData.map((c) => ({
-          colorCode: c.colorCode,
           colorName: c.colorName,
           images: [],
         }))
@@ -453,8 +452,7 @@ export async function updateFormAction(id: string, data: FormData) {
       "sizes",
       JSON.stringify(
         sizeData.map((s) => ({
-          colorCode: s.colorCode,
-          colorName: s.colorName,
+          sizeName: s.sizeName,
           images: [],
         }))
       )
